@@ -177,6 +177,23 @@ const body = (extra = '') =>
     d2.actions.every((a) => !('remove' in a) && !('delete' in a)));
 }
 
+// ---- 9. 依据时效提示（计划 5 过期降级的展示层）----
+{
+  const { staleHint, monthsBetween, STALE_MONTHS } = await import('../scripts/lib/stale-hint.mjs');
+  const NOW = new Date('2026-11-25T00:00:00Z');
+  const rule = (n, checkedAt, status = 'verified') => ({
+    evidence: Array.from({ length: n }, () => ({ status, checkedAt })),
+  });
+  check('单条依据 4 年前核实 → 提示', /较旧/.test(staleHint(rule(1, '2022-11-01'), NOW)), staleHint(rule(1, '2022-11-01'), NOW));
+  check('单条依据 4 年内 → 不提示', staleHint(rule(1, '2023-11-01'), NOW) === '', staleHint(rule(1, '2023-11-01'), NOW));
+  check('多条依据即使很旧也不提示（互相印证）', staleHint(rule(2, '2018-01-01'), NOW) === '');
+  check('status 非 verified（stale/pending）不重复提示', staleHint(rule(1, '2018-01-01', 'stale'), NOW) === '');
+  check('checkedAt 缺失不提示', staleHint({ evidence: [{ status: 'verified' }] }, NOW) === '');
+  check('恰好 48 个月整不算过期', staleHint(rule(1, '2022-11-25'), NOW) === '');
+  check('monthsBetween 计算正确（2022-11-01 → 约 48 个月）', monthsBetween('2022-11-01', NOW) >= 48, String(monthsBetween('2022-11-01', NOW)));
+  check('阈值常量是 48', STALE_MONTHS === 48, String(STALE_MONTHS));
+}
+
 console.log(`\n${pass}/${pass + fails.length} 通过`);
 if (fails.length) {
   console.log('失败项：\n' + fails.map((f) => `  · ${f}`).join('\n'));

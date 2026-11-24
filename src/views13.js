@@ -14,6 +14,7 @@
  */
 import { catalogById, itemNames, ruleLabel } from './engine.js';
 import { evCount, evRows, splitOrg, stOf, liveEv } from './evfmt.js';
+import { staleHint } from '../scripts/lib/stale-hint.mjs';
 
 const esc = (s = '') => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -87,6 +88,8 @@ export const atomHTML = (rule, idx, key, ctx) => {
     ${/* 分歧说明写在这条项目卡内（老板定的口径），不放顶部模块。
           样式沿用 .tip 的字号与颜色，只加一道细左边线做安静的视觉标记。 */ ''}
     ${ctx.disputeFor && ctx.disputeFor(rule.id) ? `<p class="tip atom-dispute"><b>指南结论有分歧：</b>${esc(ctx.disputeFor(rule.id))}</p>` : ''}
+    ${/* 依据较旧提示（计划 5）：48 个月+仅单条依据才出现，同款 .tip 形态、琥珀色左线。 */ ''}
+    ${staleHint(rule) ? `<p class="tip atom-stale"><b>这条依据可能旧了：</b>${esc(staleHint(rule))}</p>` : ''}
     ${soft ? `<p class="tip">${FREQ_BASIS[rule.frequency.basis] || ''}${rule.frequency.basisNote ? '：' + esc(rule.frequency.basisNote) : ''}</p>` : ''}
     ${(rule.redFlags || []).length ? `<p class="tip"><b>出现这些情况要去看医生：</b>${rule.redFlags.map(esc).join('、')}</p>` : ''}
     ${tellDoctorHTML(rule)}

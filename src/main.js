@@ -10,7 +10,7 @@ import { emptyProfile, evaluate, evaluateDetailed, upcoming, ruleLabel, vaccines
 import { gateMessage, vaccinesDeferred } from '../scripts/lib/safety.mjs';
 import { questions, activeQuestions, SHAPE_OPTIONS } from './questions.js';
 import { bmiOf, bodyLevel, cutsFor, bodyOf, BODY_EVIDENCE } from './body.js';
-import { decodeProfile, buildShareUrl, copyText, encodeProfile, decodeSnapshot, buildSnapshotEvidenceUrl, SNAPSHOT_VERSION } from './share.js';
+import { decodeProfile, copyText, encodeProfile, decodeSnapshot, buildSnapshotEvidenceUrl, SNAPSHOT_VERSION } from './share.js';
 import { readEnv, detectEnv, copyFor } from './env.js';
 import { referrals, REFERRAL_NOTE, CGA_EVIDENCE } from './referral.js';
 import { eggFor } from './egg.js';
@@ -1500,14 +1500,6 @@ const renderResult = () => {
              与其让他到处找，不如直接告诉他替代路径。 */ ''}
         ${UI.showPrint ? '' : '<p class="print-tip">想打印：点上面的「存成一张图」，拿去打印店或单位打印机。</p>'}
       </div>
-      ${!state.snapshot ? `
-      <details class="full-share">
-        <summary>需要原样保存这次的完整问卷答案？（含敏感信息，一般不推荐）</summary>
-        <div>
-          <p>默认分享的是脱敏结果快照，不含你的病史答案。下面这条完整链接会把家族史、既往病史等原始答案也编码进去，只有确实需要复现同一份答案时才用；发出去等于把健康信息告诉对方，请自行取舍。</p>
-          <code class="full-share-code">${esc(buildShareUrl(p))}</code>
-        </div>
-      </details>` : ''}
     </div>
   </div>
 

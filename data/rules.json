@@ -236,7 +236,19 @@
           ]
         }
       ],
-      "notes": "口径差异：2025 防癌体检指南用的是评分法（年龄、性别、吸烟、BMI、家族史、未做过肠镜累加≥4 分算高风险），不是\"到 45 岁就查\"。本工具取 45 岁起（USPSTF 2021 与国内筛查指南的年龄口径），比评分法覆盖更宽——按评分法算不到 4 分的人，在这里也会被建议筛查。这是有意的偏保守。"
+      "notes": "口径差异：2025 防癌体检指南用的是评分法（年龄、性别、吸烟、BMI、家族史、未做过肠镜累加≥4 分算高风险），不是\"到 45 岁就查\"。本工具取 45 岁起（USPSTF 2021 与国内筛查指南的年龄口径），比评分法覆盖更宽——按评分法算不到 4 分的人，在这里也会被建议筛查。这是有意的偏保守。",
+      "clause": {
+        "version": "2025",
+        "population": {
+          "include": [
+            "45–75 岁一般人群",
+            "一级亲属有结直肠癌史者从 40 岁起筛查"
+          ]
+        },
+        "evidenceRole": "primary",
+        "conflictPolicy": "guidelines-merged",
+        "followup_path": "复查"
+      }
     },
     {
       "id": "lung-ldct-high-risk",
@@ -254,41 +266,96 @@
         "any": [
           {
             "all": [
-              { "packYears": { "gte": 20 } },
+              {
+                "packYears": {
+                  "gte": 20
+                }
+              },
               {
                 "any": [
-                  { "smoking": "yes" },
-                  { "all": [{ "smoking": "quit" }, { "smokingQuitYears": "lt5" }] }
-                ]
-              }
-            ]
-          },
-          { "secondhandYears": "ge20" },
-          {
-            "all": [
-              { "occupationYears": { "in": ["ge5", "high1"] } },
-              {
-                "any": [
-                  { "occupationAgents": "radon" },
-                  { "occupationAgents": "arsenic" },
-                  { "occupationAgents": "beryllium" },
-                  { "occupationAgents": "chromium" },
-                  { "occupationAgents": "asbestos" },
-                  { "occupationAgents": "chloromethyl" },
-                  { "occupationAgents": "silica" },
-                  { "occupationAgents": "coke" },
-                  { "occupationAgents": "soot" }
+                  {
+                    "smoking": "yes"
+                  },
+                  {
+                    "all": [
+                      {
+                        "smoking": "quit"
+                      },
+                      {
+                        "smokingQuitYears": "lt5"
+                      }
+                    ]
+                  }
                 ]
               }
             ]
           },
           {
+            "secondhandYears": "ge20"
+          },
+          {
             "all": [
-              { "familyHistory": "lung" },
+              {
+                "occupationYears": {
+                  "in": [
+                    "ge5",
+                    "high1"
+                  ]
+                }
+              },
               {
                 "any": [
-                  { "packYears": { "gte": 15 } },
-                  { "secondhandYears": { "in": ["ge20", "ge15"] } }
+                  {
+                    "occupationAgents": "radon"
+                  },
+                  {
+                    "occupationAgents": "arsenic"
+                  },
+                  {
+                    "occupationAgents": "beryllium"
+                  },
+                  {
+                    "occupationAgents": "chromium"
+                  },
+                  {
+                    "occupationAgents": "asbestos"
+                  },
+                  {
+                    "occupationAgents": "chloromethyl"
+                  },
+                  {
+                    "occupationAgents": "silica"
+                  },
+                  {
+                    "occupationAgents": "coke"
+                  },
+                  {
+                    "occupationAgents": "soot"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "all": [
+              {
+                "familyHistory": "lung"
+              },
+              {
+                "any": [
+                  {
+                    "packYears": {
+                      "gte": 15
+                    }
+                  },
+                  {
+                    "secondhandYears": {
+                      "in": [
+                        "ge20",
+                        "ge15"
+                      ]
+                    }
+                  }
                 ]
               }
             ]
@@ -396,41 +463,96 @@
         "none": [
           {
             "all": [
-              { "packYears": { "gte": 20 } },
+              {
+                "packYears": {
+                  "gte": 20
+                }
+              },
               {
                 "any": [
-                  { "smoking": "yes" },
-                  { "all": [{ "smoking": "quit" }, { "smokingQuitYears": "lt5" }] }
-                ]
-              }
-            ]
-          },
-          { "secondhandYears": "ge20" },
-          {
-            "all": [
-              { "occupationYears": { "in": ["ge5", "high1"] } },
-              {
-                "any": [
-                  { "occupationAgents": "radon" },
-                  { "occupationAgents": "arsenic" },
-                  { "occupationAgents": "beryllium" },
-                  { "occupationAgents": "chromium" },
-                  { "occupationAgents": "asbestos" },
-                  { "occupationAgents": "chloromethyl" },
-                  { "occupationAgents": "silica" },
-                  { "occupationAgents": "coke" },
-                  { "occupationAgents": "soot" }
+                  {
+                    "smoking": "yes"
+                  },
+                  {
+                    "all": [
+                      {
+                        "smoking": "quit"
+                      },
+                      {
+                        "smokingQuitYears": "lt5"
+                      }
+                    ]
+                  }
                 ]
               }
             ]
           },
           {
+            "secondhandYears": "ge20"
+          },
+          {
             "all": [
-              { "familyHistory": "lung" },
+              {
+                "occupationYears": {
+                  "in": [
+                    "ge5",
+                    "high1"
+                  ]
+                }
+              },
               {
                 "any": [
-                  { "packYears": { "gte": 15 } },
-                  { "secondhandYears": { "in": ["ge20", "ge15"] } }
+                  {
+                    "occupationAgents": "radon"
+                  },
+                  {
+                    "occupationAgents": "arsenic"
+                  },
+                  {
+                    "occupationAgents": "beryllium"
+                  },
+                  {
+                    "occupationAgents": "chromium"
+                  },
+                  {
+                    "occupationAgents": "asbestos"
+                  },
+                  {
+                    "occupationAgents": "chloromethyl"
+                  },
+                  {
+                    "occupationAgents": "silica"
+                  },
+                  {
+                    "occupationAgents": "coke"
+                  },
+                  {
+                    "occupationAgents": "soot"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "all": [
+              {
+                "familyHistory": "lung"
+              },
+              {
+                "any": [
+                  {
+                    "packYears": {
+                      "gte": 15
+                    }
+                  },
+                  {
+                    "secondhandYears": {
+                      "in": [
+                        "ge20",
+                        "ge15"
+                      ]
+                    }
+                  }
                 ]
               }
             ]
@@ -546,6 +668,17 @@
       "notes": "间隔不要照\"年年做\"来理解：指南对\"内镜没查出问题\"的高危人群给的是 5 年一次。真正的加密来自癌前病变的分层随访，那是医生按病理结果定的，不是体检套餐能替代的。本工具 A 档上限取 74 岁，75 岁以上按高龄原则与医生商量（指南本身未设上限）。 另有《中国胃癌筛查与早诊早治指南（2022，北京）》结论一致（45 岁起、限高危），全文在《中国肿瘤》期刊付费墙内，未作为引用。 原文的高危条件还包括\"居住于胃癌/食管癌高发地区（县级标化发病率阈值）\"\"高盐、腌制、热烫饮食\"\"慢性食管炎、Barrett 食管、贲门失弛缓、反流性食管炎等\"以及食管癌前病变史。本工具没有采集地区和饮食习惯，这几类人即使这里显示\"不属于高危\"，也应当主动告诉医生。",
       "manualCheck": {
         "ages": "指南只写\"年龄≥45 岁\"，没有给上限；74 岁是承接 75 岁以上规则（stomach-gastroscopy-75plus）的算术边界。"
+      },
+      "clause": {
+        "version": "2025",
+        "population": {
+          "include": [
+            "年龄≥45 岁且符合任一高危条件（幽门螺杆菌阳性 / 癌前病史 / 一级亲属胃癌史 / 重度饮酒 / 吸烟）"
+          ]
+        },
+        "evidenceRole": "primary",
+        "conflictPolicy": "single-guideline",
+        "followup_path": "复查"
       }
     },
     {
@@ -689,7 +822,18 @@
           ]
         }
       ],
-      "notes": "间隔两家权威说的不一样：国家癌症中心《健康体检机构防癌体检指南（2025 年版）》给一般风险人群的是每 1–2 年 1 次乳腺超声；USPSTF 给的是 40–74 岁每 2 年一次钼靶。本工具按\"每 1–2 年\"写，不主张比这更密——年年查并不比两年查更能降低死亡率，反而多出假阳性。"
+      "notes": "间隔两家权威说的不一样：国家癌症中心《健康体检机构防癌体检指南（2025 年版）》给一般风险人群的是每 1–2 年 1 次乳腺超声；USPSTF 给的是 40–74 岁每 2 年一次钼靶。本工具按\"每 1–2 年\"写，不主张比这更密——年年查并不比两年查更能降低死亡率，反而多出假阳性。",
+      "clause": {
+        "version": "2025",
+        "population": {
+          "include": [
+            "40–74 岁女性（无乳腺/卵巢癌家族史）"
+          ]
+        },
+        "evidenceRole": "primary",
+        "conflictPolicy": "guidelines-merged",
+        "followup_path": "复查"
+      }
     },
     {
       "id": "breast-cancer-screening-high-risk",
@@ -763,6 +907,17 @@
       "notes": "高风险人群的间隔比一般风险更密：国家癌症中心 2025 年版防癌体检指南写的是\"每年 1 次乳腺超声联合乳腺 X 线摄影\"，BRCA1/2 突变携带者还要加乳腺 MRI。这里的\"每年\"是有条文的，和一般风险那条的\"每 1–2 年\"不是一回事。",
       "manualCheck": {
         "ages": "指南对高风险人群只写\"从 40 岁起筛\"，没有上限；74 岁是承接 75 岁以上规则（breast-cancer-75plus）的边界。"
+      },
+      "clause": {
+        "version": "2025",
+        "population": {
+          "include": [
+            "40 岁起筛的乳腺癌/卵巢癌高危女性（一级亲属患乳腺癌或卵巢癌；本工具按承接边界与更高年龄段规则衔接）"
+          ]
+        },
+        "evidenceRole": "primary",
+        "conflictPolicy": "guidelines-merged",
+        "followup_path": "转诊"
       }
     },
     {
@@ -824,7 +979,18 @@
           ],
           "strength": "strong"
         }
-      ]
+      ],
+      "clause": {
+        "version": "2025",
+        "population": {
+          "include": [
+            "25–64 岁女性"
+          ]
+        },
+        "evidenceRole": "primary",
+        "conflictPolicy": "single-guideline",
+        "followup_path": "复查"
+      }
     },
     {
       "id": "liver-cancer-screening",
@@ -920,7 +1086,21 @@
           ]
         }
       ],
-      "notes": "两家权威给的间隔不一样：国家癌症中心的防癌体检指南写\"每年 1 次\"，原发性肝癌诊疗指南写\"至少每隔 6 个月 1 次\"。本工具显示 6 个月——因为乙肝/丙肝加肝硬化这类人进展快，间隔取短更安全，而且 6 个月本身也是诊疗指南认可的下限。如果你已经在专科随访，按专科的节奏走。"
+      "notes": "两家权威给的间隔不一样：国家癌症中心的防癌体检指南写\"每年 1 次\"，原发性肝癌诊疗指南写\"至少每隔 6 个月 1 次\"。本工具显示 6 个月——因为乙肝/丙肝加肝硬化这类人进展快，间隔取短更安全，而且 6 个月本身也是诊疗指南认可的下限。如果你已经在专科随访，按专科的节奏走。",
+      "clause": {
+        "version": "2024",
+        "population": {
+          "include": [
+            "乙型或（和）丙型肝炎病毒慢性感染且年龄≥40 岁",
+            "肝硬化（不限年龄）",
+            "一级亲属有肝癌史且年龄≥40 岁",
+            "长期过量饮酒等高危暴露者"
+          ]
+        },
+        "evidenceRole": "primary",
+        "conflictPolicy": "single-guideline",
+        "followup_path": "转诊"
+      }
     },
     {
       "id": "hp-test-once",
@@ -999,7 +1179,18 @@
           ],
           "strength": "strong"
         }
-      ]
+      ],
+      "clause": {
+        "version": "2025",
+        "population": {
+          "include": [
+            "65 岁及以上女性"
+          ]
+        },
+        "evidenceRole": "primary",
+        "conflictPolicy": "single-guideline",
+        "followup_path": "复查"
+      }
     },
     {
       "id": "chest-xray-routine",
@@ -1288,13 +1479,13 @@
         "ageMin": 50,
         "ageMax": 69
       },
-      "verdict": "查与不查，获益和代价接近。想查就查，不想查也不算错 —— 前提是两边的账你都知道了。",
+      "verdict": "这件事两份权威指南说法不同：中国指南建议 50 岁以上男性都查一次 PSA，美国预防服务工作组认为应由你和医生商量后决定。建议把下面的账看完，找医生聊一次再定。",
       "reason": "中国《健康体检机构防癌体检指南（2025年版）》把\"年龄≥50 岁的男性\"直接列为前列腺癌高风险人群并推荐检测血清 PSA；而 USPSTF 对 55–69 岁只给 C 级（个体化决定），70 岁以上给 D 级（不推荐）。两份指南一个推荐、一个谨慎，恰说明这件事取决于你自己的取舍——所以我们不放进\"该做\"，放进\"和医生商量\"。",
       "whatItFinds": "能早期发现前列腺癌；也会查出大量终身不会造成问题的癌，带来穿刺、感染和过度治疗。",
       "frequency": {
         "type": "interval",
         "years": 2,
-        "text": "如查：高风险人群每 2 年 1 次；PSA<1 ng/mL 的 60 岁以上男性可考虑停止"
+        "text": "如果决定查：高风险人群每 2 年 1 次；PSA<1 ng/mL 的 60 岁以上男性可考虑停止"
       },
       "evidence": [
         {
@@ -1532,7 +1723,18 @@
           ],
           "strength": "strong"
         }
-      ]
+      ],
+      "clause": {
+        "version": "2019",
+        "population": {
+          "include": [
+            "65–75 岁男性且有吸烟史"
+          ]
+        },
+        "evidenceRole": "primary",
+        "conflictPolicy": "single-guideline",
+        "followup_path": "复查"
+      }
     },
     {
       "id": "hepatitis-bc-screening",
@@ -1572,7 +1774,18 @@
             "推荐意见8:在不涉及入托、入学和入职的健康体格检查或就医时,应进行HBsAg筛查。对一般人群均应进行HBsAg筛查,特别是人类免疫缺陷病毒"
           ]
         }
-      ]
+      ],
+      "clause": {
+        "version": "2022",
+        "population": {
+          "include": [
+            "一般人群（不限高危；成年起可在健康体检中筛查 HBsAg）"
+          ]
+        },
+        "evidenceRole": "primary",
+        "conflictPolicy": "single-guideline",
+        "followup_path": "转诊"
+      }
     },
     {
       "id": "echo-routine",
@@ -1707,7 +1920,7 @@
       "when": {
         "ageMin": 18
       },
-      "verdict": "查一次不贵，能发现没症状的甲减；代价是可能牵出一串后续检查。由你的症状、家族史和是否备孕来定。",
+      "verdict": "查一次不贵，能发现没症状的甲减；代价是可能牵出一串后续检查。要不要查，主要看你的症状、家族史和是否备孕 —— 拿不准就在体检时和医生说一声，让他帮你定。",
       "reason": "两边说法相反：国内《健康体检基本项目专家共识（2022）》把甲功列进了基本项目；USPSTF 则认为无症状非孕成人筛查甲状腺功能异常的获益与伤害证据不足（I 级）。甲减症状隐匿、检测便宜，查一次不算过度医疗，但它也不像血压血糖那样有明确的人群获益证据——所以放在\"与医生商量\"，由你的症状、家族史和是否备孕决定。备孕和孕期女性应按产科要求检查。",
       "whatItFinds": "能发现甲亢、甲减；单查 TSH 异常时需加查 FT3、FT4 明确。",
       "frequency": {
@@ -2042,41 +2255,96 @@
         "any": [
           {
             "all": [
-              { "packYears": { "gte": 20 } },
+              {
+                "packYears": {
+                  "gte": 20
+                }
+              },
               {
                 "any": [
-                  { "smoking": "yes" },
-                  { "all": [{ "smoking": "quit" }, { "smokingQuitYears": "lt5" }] }
-                ]
-              }
-            ]
-          },
-          { "secondhandYears": "ge20" },
-          {
-            "all": [
-              { "occupationYears": { "in": ["ge5", "high1"] } },
-              {
-                "any": [
-                  { "occupationAgents": "radon" },
-                  { "occupationAgents": "arsenic" },
-                  { "occupationAgents": "beryllium" },
-                  { "occupationAgents": "chromium" },
-                  { "occupationAgents": "asbestos" },
-                  { "occupationAgents": "chloromethyl" },
-                  { "occupationAgents": "silica" },
-                  { "occupationAgents": "coke" },
-                  { "occupationAgents": "soot" }
+                  {
+                    "smoking": "yes"
+                  },
+                  {
+                    "all": [
+                      {
+                        "smoking": "quit"
+                      },
+                      {
+                        "smokingQuitYears": "lt5"
+                      }
+                    ]
+                  }
                 ]
               }
             ]
           },
           {
+            "secondhandYears": "ge20"
+          },
+          {
             "all": [
-              { "familyHistory": "lung" },
+              {
+                "occupationYears": {
+                  "in": [
+                    "ge5",
+                    "high1"
+                  ]
+                }
+              },
               {
                 "any": [
-                  { "packYears": { "gte": 15 } },
-                  { "secondhandYears": { "in": ["ge20", "ge15"] } }
+                  {
+                    "occupationAgents": "radon"
+                  },
+                  {
+                    "occupationAgents": "arsenic"
+                  },
+                  {
+                    "occupationAgents": "beryllium"
+                  },
+                  {
+                    "occupationAgents": "chromium"
+                  },
+                  {
+                    "occupationAgents": "asbestos"
+                  },
+                  {
+                    "occupationAgents": "chloromethyl"
+                  },
+                  {
+                    "occupationAgents": "silica"
+                  },
+                  {
+                    "occupationAgents": "coke"
+                  },
+                  {
+                    "occupationAgents": "soot"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "all": [
+              {
+                "familyHistory": "lung"
+              },
+              {
+                "any": [
+                  {
+                    "packYears": {
+                      "gte": 15
+                    }
+                  },
+                  {
+                    "secondhandYears": {
+                      "in": [
+                        "ge20",
+                        "ge15"
+                      ]
+                    }
+                  }
                 ]
               }
             ]

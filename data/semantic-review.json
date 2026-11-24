@@ -16,5 +16,59 @@
     "reviewedAt": "2026-11-24",
     "by": "ai-session",
     "note": "'筛查终止年龄应重视个体化风险评估'与'无法耐受手术建议停止'均为快照原句；80 岁数字在引文'50-80岁'中命中。"
+  },
+  "colorectal-screening": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "45–75 取 USPSTF 原文（45 to 49 / 50 to 75），家族史 40 岁起取中国防癌指南（40~74）；两指南方向一致取并集，无冲突。"
+  },
+  "stomach-gastroscopy-high-risk": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "「年龄≥45岁且符合以下任意一项」为原句；Hp/癌前病史/家族史/饮酒/吸烟均在 when 中一一对应。"
+  },
+  "breast-cancer-screening": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "40–74 取 USPSTF 原文（women aged 40 to 74）；中国超声推荐方向一致（guidelines-merged）。"
+  },
+  "breast-cancer-screening-high-risk": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "「高风险人群宜从40岁起筛」为原句；一级亲属乳腺癌/卵巢癌史与引文 a) 一致；先遗传评估再筛查，方向一致。"
+  },
+  "cervical-cancer-screening": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "「25-64周岁女性」为原句；每3-5年与引文一致。"
+  },
+  "liver-cancer-screening": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "「乙型或(和)丙型肝炎病毒慢性感染且年龄≥40岁者」为原句；肝硬化为指南高危定义项（2024版）；每6个月与引文一致。"
+  },
+  "aaa-screening": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "65–75 岁男性有吸烟史为 USPSTF 2019 原文；一次性筛查方向一致。"
+  },
+  "bone-density-65f": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "「women 65 years」为原句；复查间隔引文支持。"
+  },
+  "hepatitis-bc-screening": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "「对一般人群均应进行HBsAg筛查」为原句；version 2022 与《慢性乙型肝炎防治指南（2022年版）》出处一致。"
   }
 }

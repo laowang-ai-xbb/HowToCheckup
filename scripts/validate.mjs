@@ -562,7 +562,7 @@ for (const { rule, ev } of evidenceList) {
 const CLAUSE_REQUIRED = ['version', 'population', 'evidenceRole', 'conflictPolicy', 'followup_path'];
 const CLAUSE_ENUMS = {
   evidenceRole: ['primary', 'secondary', 'dispute-only'],
-  conflictPolicy: ['strict-first-dispute', 'single-guideline', 'patient-doctor'],
+  conflictPolicy: ['strict-first-dispute', 'single-guideline', 'guidelines-merged', 'patient-doctor'],
   followup_path: ['复查', '转诊', '观察', '咨询医生'],
 };
 const semanticReview = (() => {

@@ -499,15 +499,19 @@ try {
   /* 等这一份 52 岁画像真的渲染出来，不能只等 .actions：
    * 从上一页 hash 切过来时旧结果页节点可能还在，拿到手会是别人的清单。 */
   await waitFor(`!!document.querySelector('.actions') && /52 岁/.test((document.querySelector('.rwho') || {}).innerText || '')`, '结果页（52 岁画像）');
-  /* 留住这一份画像的 p= 码：下面的回补/腰围两轮会把页面导航走，后面要回到同一份画像。
-     默认分享按钮产出产品首页（老板 2026-11-24 定的口径）；
-     完整画像链接收在结果页的「完整问卷答案」折叠里。 */
-  const firstShareCode = await evaluate(`(() => {
-    const el = document.querySelector('.full-share-code');
-    const m = (el ? el.textContent : '').match(/#p=([^\\s]+)/);
-    return m ? m[1] : '';
-  })()`);
-  check('能从结果页拿到本份画像码', firstShareCode.length > 20, firstShareCode.slice(0, 40));
+  /* 留住一份画像的 p= 码：下面的回补/腰围两轮会把页面导航走，后面排版轮次要回到结果页。
+     老板 2026-11-25 走查后「完整问卷答案」折叠块已整体移除（复制到剪贴板的入口一律不带用户信息），
+     所以这里直接手造一份同档画像码 —— 排版测试不依赖具体答案，只要 52 岁 · 男 的结果页结构。 */
+  const firstShareCode = Buffer.from(JSON.stringify({
+    age: 52, gender: 'male', smoking: 'no', packYears: 0, alcohol: 'none',
+  })).toString('base64url');
+  check('能构造后续排版轮所需的画像码', firstShareCode.length > 10, firstShareCode.slice(0, 40));
+  // 泄露门禁：结果页上不允许再出现任何可复制的画像链接（老板 2026-11-25）
+  const leakScan = await evaluate(`(() => ({
+    fullShare: !!document.querySelector('.full-share'),
+    pInActions: ((document.querySelector('.actions') || {}).innerText || '').includes('#p='),
+  }))()`);
+  check('结果页不再有完整问卷链接入口', !leakScan.fullShare && !leakScan.pInActions, JSON.stringify(leakScan));
   const result = await evaluate(`(() => {
     const q = (s) => [...document.querySelectorAll(s)];
     return {

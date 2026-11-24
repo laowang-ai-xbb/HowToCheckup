@@ -392,5 +392,155 @@ const ids = (b, cat) => b[cat].filter((r) => !r.hidden).map((r) => r.id);
   }
 }
 
+// ---- 10. 生成式金标准：扩到 260 条（老板 2026-11-25 定的配比）----
+// 74 条边界临界（50%）+ 59 条真实流行率加权（40%）+ 15 条人群分布加权（10%）。
+// 全部确定性生成（固定种子，重跑结果一致），用画像键去重，绝不生成重复画像。
+// 断言用"规格 oracle"：lungLDCT2025（规格实现，已由前 9 组校准）+ 独立写的高危判定，
+// 考的是 引擎输出 ↔ 规格函数 的一致性 + 卡片互斥 + 三态标签，不照抄引擎内部。
+{
+  // --- 确定性伪随机（LCG，固定种子） ---
+  let seed = 20261125;
+  const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+  const pick = (pairs) => { const r = rnd(); let acc = 0; for (const [v, w] of pairs) { acc += w; if (r < acc) return v; } return pairs[pairs.length - 1][0]; };
+
+  const seen = new Set();
+
+  // --- 独立规格实现：2025 版 LDCT 高危条件（按问卷语义写，不 import 引擎内部） ---
+  const specHighRisk = (p) =>
+    (p.packYears >= 20 && (p.smoking === 'yes' || (p.smoking === 'quit' && p.smokingQuitYears === 'lt5')))
+    || p.secondhandYears === 'ge20'
+    || ((p.occupationYears === 'ge5' || p.occupationYears === 'high1') && (p.occupationAgents || []).length > 0)
+    || (Array.isArray(p.familyHistory) && p.familyHistory.includes('lung')
+      && (p.packYears >= 15 || p.secondhandYears === 'ge20' || p.secondhandYears === 'ge15'));
+
+  // --- oracle 断言：引擎输出必须和规格决策表一致 ---
+  const oracleCheck = (name, over) => {
+    const key = JSON.stringify(Object.entries(over).sort((a, b) => a[0].localeCompare(b[0])));
+    if (seen.has(key)) return false;
+    seen.add(key);
+    const prof = P(over);
+    const facts = toFacts(prof);
+    const lung = lungLDCT2025(facts);
+    const [b, meta] = evaluateDetailed(prof);
+    const gate = meta.gate;
+    const gateOn = gate.symptomStop || gate.frailDowngrade || gate.ageOutOfScope;
+    let ok; let why;
+    if (gateOn) {
+      // 有闸时判定由闸接管：LDCT 卡不按高危逻辑出，断言闸文案存在
+      ok = !!gateMessage(meta); why = 'gate';
+    } else if (lung.indeterminate) {
+      ok = !has(b, 'A', 'lung-ldct-high-risk') && !has(b, 'B', 'lung-ldct-80plus') && !has(b, 'C', 'lung-ldct-not-high-risk')
+        && meta.indeterminate.some((x) => x.key === 'lung-ldct');
+      why = 'indeterminate';
+    } else if (lung.eligible) {
+      // 指南区间是 50–80 闭区间；产品把 80 岁整分流到 B 档 80plus 承接卡（rules.notes 写明），
+      // A 档只到 79 —— oracle 按这个分工断言
+      if (Number(over.age || prof.age) >= 80) {
+        ok = has(b, 'B', 'lung-ldct-80plus') && !has(b, 'A', 'lung-ldct-high-risk');
+      } else {
+        ok = has(b, 'A', 'lung-ldct-high-risk');
+      }
+      why = 'eligible';
+    } else {
+      const hr = specHighRisk(over);
+      const age = Number(over.age || prof.age);
+      if (hr && age >= 80) { ok = has(b, 'B', 'lung-ldct-80plus'); why = '80plus'; }
+      else if (hr) { ok = !has(b, 'A', 'lung-ldct-high-risk') && !has(b, 'C', 'lung-ldct-not-high-risk'); why = 'age-out-of-range'; }
+      else { ok = has(b, 'C', 'lung-ldct-not-high-risk'); why = 'not-high-risk'; }
+    }
+    // 通用不变量：A 与 C 的 LDCT 互斥；三态标签正确
+    const mutex = !(has(b, 'A', 'lung-ldct-high-risk') && has(b, 'C', 'lung-ldct-not-high-risk'));
+    const tags = b.A.filter((r) => !r.hidden).every((r) => r.clinicalStatus === 'confirmed')
+      && b.C.filter((r) => !r.hidden).every((r) => r.clinicalStatus === 'baseline');
+    check('生成·' + name, ok && mutex && tags, `${why} | A=${ids(b, 'A').join(',')} C=${ids(b, 'C').slice(0, 3).join(',')}`);
+    return true;
+  };
+
+  // --- 10A. 边界临界 74 条（系统性枚举临界组合） ---
+  let nBoundary = 0;
+  const ages6 = [49, 50, 51, 79, 80, 81];
+  for (const age of ages6) for (const pk of [19, 20, 21]) for (const qy of ['lt5', 'ge5']) {
+    if (oracleCheck(`边界·吸烟${pk}包年·戒烟${qy}·${age}岁`, { age, gender: 'male', smoking: 'quit', packYears: pk, smokingQuitYears: qy })) nBoundary++;
+  }
+  for (const age of [49, 50, 79, 80]) for (const sh of ['lt15', 'ge15', 'ge20']) {
+    if (oracleCheck(`边界·二手烟${sh}·${age}岁`, { age, gender: 'female', smoking: 'no', secondhand: 'yes', secondhandYears: sh })) nBoundary++;
+  }
+  for (const age of [49, 50, 79, 80]) for (const oy of ['lt5', 'ge5', 'high1']) {
+    if (oracleCheck(`边界·职业${oy}·${age}岁`, { age, gender: 'male', smoking: 'no', occupationDust: 'yes', occupationAgents: ['asbestos'], occupationYears: oy })) nBoundary++;
+  }
+  for (const age of [49, 50, 79, 80]) for (const pk of [14, 15]) {
+    if (oracleCheck(`边界·家族史+包年${pk}·${age}岁`, { age, gender: 'male', smoking: 'yes', packYears: pk, familyHistory: ['lung'] })) nBoundary++;
+  }
+  for (const sh of ['ge15', 'ge20']) {
+    if (oracleCheck(`边界·家族史+二手烟${sh}·50岁`, { age: 50, gender: 'female', smoking: 'no', secondhand: 'yes', secondhandYears: sh, familyHistory: ['lung'] })) nBoundary++;
+  }
+  for (const age of [50, 80]) {
+    if (oracleCheck(`边界·戒烟年限未答·${age}岁`, { age, gender: 'male', smoking: 'quit', packYears: 25, smokingQuitYears: 'unknown' })) nBoundary++;
+    if (oracleCheck(`边界·包年未答·${age}岁`, { age, gender: 'male', smoking: 'yes', packYears: 'unknown' })) nBoundary++;
+  }
+  // 补足到 74：家族史包年 15/16 边界 × 中间年龄
+  for (const age of [60, 70]) for (const pk of [15, 16]) {
+    if (nBoundary >= 74) break;
+    if (oracleCheck(`边界·家族史+包年${pk}·${age}岁`, { age, gender: 'male', smoking: 'yes', packYears: pk, familyHistory: ['lung'] })) nBoundary++;
+  }
+
+  // --- 10B. 真实流行率加权 59 条（40%）---
+  // 分布依据：中国成人现在吸烟率（男≈50%、女≈2%）；城市体检人群 Hp 阳性率≈35%；
+  // HBV 携带≈6%；糖尿病患病≈12%；体检人群年龄重心在 35–64。权重是量级近似，不是精确统计。
+  let nPrevalence = 0;
+  while (nPrevalence < 59) {
+    const gender = pick([['male', 0.5], ['female', 0.5]]);
+    const age = Number(pick([['28', 0.2], ['42', 0.3], ['56', 0.3], ['70', 0.15], ['84', 0.05]])) + (gender === 'male' ? 1 : 0);
+    const over = { age, gender };
+    over.smoking = gender === 'male'
+      ? pick([['yes', 0.5], ['quit', 0.1], ['no', 0.4]])
+      : pick([['yes', 0.02], ['quit', 0.03], ['no', 0.95]]);
+    if (over.smoking === 'yes') {
+      over.packYears = pick([[10, 0.35], [18, 0.2], [22, 0.3], [30, 0.15]]);
+      if (rnd() < 0.08) over.packYears = 'unknown';
+    } else if (over.smoking === 'quit') {
+      over.packYears = pick([[20, 0.5], [30, 0.5]]);
+      over.smokingQuitYears = pick([['lt5', 0.3], ['ge5', 0.7]]);
+    }
+    if (pick([['shY', gender === 'female' ? 0.35 : 0.25], ['shN', 0.75 - (gender === 'female' ? 0.35 : 0.25)]])[0] === 'shY') {
+      over.secondhand = 'yes';
+      over.secondhandYears = pick([['ge20', 0.4], ['ge15', 0.25], ['lt15', 0.25], ['unknown', 0.1]]);
+    }
+    if (pick([['dustY', 0.1], ['dustN', 0.9]])[0] === 'dustY') {
+      over.occupationDust = 'yes';
+      over.occupationAgents = [pick([['asbestos', 0.3], ['silica', 0.25], ['soot', 0.2], ['chromium', 0.25]])];
+      over.occupationYears = pick([['lt5', 0.4], ['ge5', 0.4], ['high1', 0.1], ['unknown', 0.1]]);
+    }
+    if (pick([['hpP', 0.35], ['hpN', 0.65]])[0] === 'hpP') over.hpStatus = 'positive';
+    const fam = [];
+    for (const [k, w] of [['lung', 0.06], ['colorectal', 0.08], ['stomach', 0.07], ['breast', 0.05], ['liver', 0.04], ['diabetes', 0.15]]) {
+      if (rnd() < w) fam.push(k);
+    }
+    if (fam.length) over.familyHistory = fam;
+    if (pick([['hbvY', 0.06], ['n', 0.94]])[0] === 'hbvY') over.pastHistory = ['hbv'];
+    if (pick([['alc', gender === 'male' ? 0.12 : 0.02], ['n', 0.88]])[0] === 'alc') over.alcohol = 'heavy';
+    if (oracleCheck(`流行率·${gender === 'male' ? '男' : '女'}${age}·${over.smoking === 'yes' ? `吸${over.packYears}包年` : over.smoking === 'quit' ? `戒烟${over.smokingQuitYears}` : '不吸'}`, over)) nPrevalence++;
+  }
+
+  // --- 10C. 人群分布加权 15 条（10%）---
+  // 按全人群年龄金字塔（低流行率、更多低龄健康人），与体检人群画像形成对照。
+  let nPop = 0;
+  while (nPop < 15) {
+    const gender = pick([['male', 0.51], ['female', 0.49]]);
+    const age = Number(pick([['24', 0.25], ['38', 0.27], ['52', 0.24], ['68', 0.17], ['88', 0.07]])) + (gender === 'male' ? 1 : 0);
+    const over = { age, gender };
+    over.smoking = gender === 'male'
+      ? pick([['yes', 0.5], ['quit', 0.08], ['no', 0.42]])
+      : pick([['no', 0.97], ['quit', 0.02], ['yes', 0.01]]);
+    if (over.smoking === 'yes') over.packYears = pick([[15, 0.4], [25, 0.4], [35, 0.2]]);
+    else if (over.smoking === 'quit') { over.packYears = 20; over.smokingQuitYears = pick([['lt5', 0.4], ['ge5', 0.6]]); }
+    if (rnd() < 0.3) { over.secondhand = 'yes'; over.secondhandYears = pick([['lt15', 0.5], ['ge15', 0.2], ['ge20', 0.2], ['unknown', 0.1]]); }
+    if (rnd() < 0.08) { over.familyHistory = [pick([['diabetes', 0.3], ['stomach', 0.2], ['colorectal', 0.2], ['lung', 0.15], ['breast', 0.15]])]; }
+    if (oracleCheck(`人群分布·${gender === 'male' ? '男' : '女'}${age}`, over)) nPop++;
+  }
+
+  console.log(`生成明细：边界 ${nBoundary} / 流行率 ${nPrevalence} / 人群分布 ${nPop}（去重后）`);
+}
+
 console.log(`\n${pass}/${pass + fail} 通过`);
 if (fail) process.exit(1);
