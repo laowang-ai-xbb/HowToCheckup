@@ -76,18 +76,27 @@ jobs:
           for i in $(seq 1 20); do
             sleep 15
             # 带随机参数绕过 CDN 缓存，保证拿到的是刚发布的版本
-            HTML=$(curl -fsSL "$URL?verify=$GITHUB_RUN_ID-$RANDOM" || true)
+            HTML=$(curl -fsSL "$URL?verify=$GITHUB_RUN_ID-$i" 2>/dev/null || true)
             if [ -z "$HTML" ]; then echo "第 $i 次：拉取失败，继续等"; continue; fi
-            if echo "$HTML" | grep -qF "$BAD"; then
-              echo "线上仍是源代码版（Pages 旧部署覆盖了 artifact），触发自愈重部署"
-              gh workflow run deploy-pages.yml --ref main
+            if printf '%s' "$HTML" | grep -qF "$BAD"; then
+              echo "第 $i 次：线上仍是源代码版（Pages 旧部署覆盖了 artifact），触发自愈重部署"
+              # 不用 gh CLI：直接调 REST API，出错时把响应原样打出来，下次失败日志里能自查
+              RESP=$(curl -s -X POST \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/deploy-pages.yml/dispatches" \
+                -d '{"ref":"main"}' \
+                -w 'HTTP_STATUS:%{http_code}')
+              echo "dispatch 响应：$RESP"
+              echo "$RESP" | grep -q 'HTTP_STATUS:204' && { echo "已触发重部署"; exit 0; }
+              echo "::error::dispatch 失败（非 204），多半是 token 权限不够"
+              exit 1
+            fi
+            if printf '%s' "$HTML" | grep -qE 'assets/main-'; then
+              echo "第 $i 次：线上是构建产物，验收通过"
               exit 0
             fi
-            if echo "$HTML" | grep -qE 'assets/main-'; then
-              echo "线上是构建产物，验收通过（第 $i 次轮询）"
-              exit 0
-            fi
-            echo "第 $i 次：既没看到源代码特征也没看到构建产物，继续等"
+            echo "第 $i 次：两个特征都没看到（可能 CDN 未刷新），继续等"
           done
           echo "::warning::轮询 5 分钟仍未确认构建产物上线，请到 Actions 页面手动重跑本工作流"
           exit 1
