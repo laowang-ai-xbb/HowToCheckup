@@ -479,7 +479,10 @@
     .doc > .toc a { justify-content: flex-start; border: 0; background: none; padding: 6px 8px; border-radius: 8px; font-size: 13.5px; }
     .doc > .toc a.on { background: var(--card); border: 0; }
     .doc > .docbody { grid-area: body; }
-    .docbody { max-width: 780px; }
+    /* 桌面端一列只认一个宽度（老板 2026-11-24 走查：横幅 888 / 正文 780 / 卡片 760，
+       三档宽窄不一看着散）。页头、横幅、正文、卡片统一收到 760，左右边缘全部对齐。 */
+    .docbody { max-width: 760px; }
+    .rhead { max-width: 760px; }
 
     /* B：两列 */
     .tl { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 34px; align-items: start; }

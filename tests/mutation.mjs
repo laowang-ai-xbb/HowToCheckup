@@ -369,6 +369,20 @@ const MUTATIONS = [
     to: 'if (state.exitArmed === "never") {',
     desc: '「再点一次回首页」那段被拆了，第二下只会重复出提示',
   },
+  {
+    inv: 'hp-negative-no-retest',
+    file: 'data/rules.json',
+    from: '{ "hpStatus": "negative" }',
+    to: '{ "hpStatus": "unknown" }',
+    desc: 'hp-test-once 又不排除阴性了，查过阴性的用户被推荐重测',
+  },
+  {
+    inv: 'upcoming-only-new-items',
+    file: 'src/engine.js',
+    from: 'const fresh = (rule.catalogIds || []).filter((id) => !presentIds.has(canon(id)));',
+    to: 'const fresh = (rule.catalogIds || []).slice();',
+    desc: '「再过几年」不再滤老面孔，便潜血又挂回预告里',
+  },
 ];
 
 let pass = 0;

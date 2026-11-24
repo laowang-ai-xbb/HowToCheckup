@@ -15,6 +15,12 @@ import { match } from '../scripts/lib/match.mjs';
 
 export const rules = rulesJson.rules;
 export const catalogById = new Map(catalogJson.items.map((i) => [i.id, i]));
+
+/* 别名归一：FIT ≡ 便潜血这类"同一项两个名字"统一成一个 id。
+ * evaluate（当前清单去重）和 upcoming（只报新面孔）都要用它，
+ * 必须放模块层 —— 藏在 evaluate 里的话 upcoming 一引用就 ReferenceError，
+ * 结果页整个渲染不出来（2026-11-24 修 Bug B 时踩过）。 */
+const canon = (id) => catalogById.get(id)?.sameAs || id;
 export const vaccineMeta = vaccinesJson;
 
 /**
@@ -103,7 +109,6 @@ export const evaluate = (profile) => {
    *   · rule.shownIds = 这条规则实际要展示的项目；空了的整张卡不渲染。
    * 别把这项合并写进规则里 —— 规则一改，理由和依据就跟着乱。
    */
-  const canon = (id) => catalogById.get(id)?.sameAs || id;
   const claimed = new Map(); // 规范 id → 认领它的规则 id
   for (const key of ['A', 'B', 'C']) {
     for (const rule of buckets[key]) {
@@ -192,6 +197,19 @@ export const mutexNotes = (buckets) => {
 export const upcoming = (profile, buckets) => {
   if (!profile.age) return [];
   const already = new Set(buckets.A.map((r) => r.id).concat(buckets.B.map((r) => r.id)));
+  /* 「再过几年」只报新面孔。
+   * 2026-11-24 老板走查：44 岁的预告里出现「便潜血」，可它就在今年的基础套餐里——
+   * 同一项既在"今年要做"又在"过两年要加"，用户会以为自己漏了什么。
+   * 所以把当前清单里真实在展示的项目（规范化后）收进来，预告规则先滤掉这些老面孔，
+   * 只剩新项目的才预告；一张卡里也只说新加的那几项（肠镜后面不再挂着便潜血）。
+   * 只认 A/B（真正在让人做的事），不算 C——「不必做」卡里的项目不该挡住将来的推荐。 */
+  const presentIds = new Set();
+  for (const key of ['A', 'B']) {
+    for (const r of buckets[key]) {
+      if (r.hidden) continue;
+      for (const id of r.shownIds || []) presentIds.add(canon(id));
+    }
+  }
   const out = [];
   for (const rule of rules) {
     if (rule.category !== 'A' || already.has(rule.id)) continue;
@@ -199,6 +217,9 @@ export const upcoming = (profile, buckets) => {
       const age = profile.age + gap;
       if (age > 100) break;
       if (match(rule.when, { ...profile, age })) {
+        const fresh = (rule.catalogIds || []).filter((id) => !presentIds.has(canon(id)));
+        if ((rule.catalogIds || []).length > 0 && fresh.length === 0) break;
+        rule.shownIds = fresh;
         out.push({ rule, gap });
         break;
       }

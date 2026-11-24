@@ -841,6 +841,32 @@ export const INVARIANTS = [
       return null;
     },
   },
+  {
+    id: 'hp-negative-no-retest',
+    why: '老板 2026-11-24 走查：问卷里答了「查过，阴性」，结果页还让他做呼气试验——hp-test-once 的 when 只看了年龄没看答案。必须显式排除阴性；阳性保留（卡里带着规范根除/复查的提示，45+ 由胃癌高风险规则接去胃镜），别顺手把阳性也藏了。',
+    check(f) {
+      let rules;
+      try { rules = (JSON.parse(f['data/rules.json'] || '{}').rules) || []; } catch { return 'rules.json 不是合法 JSON'; }
+      const r = rules.find((x) => x.id === 'hp-test-once');
+      if (!r) return '找不到 hp-test-once 规则';
+      const none = (r.when && r.when.none) || [];
+      if (!none.some((c) => c && c.hpStatus === 'negative')) return 'hp-test-once 没有排除「查过阴性」，阴性用户会再被推荐吹气';
+      return null;
+    },
+  },
+  {
+    id: 'upcoming-only-new-items',
+    why: '老板 2026-11-24 走查：44 岁的「再过几年要加上」里出现便潜血——它就在今年的基础套餐里，同一项既"今年要做"又"过两年要加"，用户以为自己漏了什么。根修在 upcoming()：先收当前清单真实展示的项目（只认 A/B，「不必做」卡不挡将来的推荐），预告规则滤掉老面孔；全是老面孔的整条不预告；卡片只说新加的几项（肠镜后面不再挂着便潜血）。',
+    check(f) {
+      const e = (f['src/engine.js'] || '').replace(/\r\n/g, '\n');
+      if (!/const presentIds = new Set\(\);/.test(e)) return 'upcoming 没有收集当前已展示的项目';
+      if (!/for \(const key of \['A', 'B'\]\)/.test(e)) return 'presentIds 没有只认 A/B（C「不必做」不该挡住将来的推荐）';
+      if (!/const fresh = \(rule\.catalogIds \|\| \[\]\)\.filter\(\(id\) => !presentIds\.has\(canon\(id\)\)\);/.test(e)) return 'upcoming 没有过滤已展示的项目（老面孔会再次预告）';
+      if (!/fresh\.length === 0\) break;/.test(e)) return '全是老面孔的规则没有被跳过';
+      if (!/rule\.shownIds = fresh;/.test(e)) return '预告卡没有只展示新加的项目（标题会重新挂上便潜血）';
+      return null;
+    },
+  },
 ];
 
 /** 跑一遍全部不变量，返回 [{id, ok, msg}] */

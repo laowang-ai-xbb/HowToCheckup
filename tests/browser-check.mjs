@@ -853,6 +853,32 @@ try {
       await evaluate(`!!document.querySelector('.evsec[id^="soon-"] .evc')`));
   }
 
+  // ---- 3.5c 老板 2026-11-24 走查抓出的两个判定 bug ----
+  // A：幽门螺杆菌答「查过，阴性」不能再被推荐吹气；阳性必须保留（卡里有规范根除/复查提示）
+  {
+    const pn = Buffer.from(JSON.stringify({ age: 52, gender: 'male', hpStatus: 'negative' })).toString('base64url');
+    await goto(BASE + '/r.html#p=' + pn);
+    await waitFor(`!!document.querySelector('.docbody')`, '阴性 52 岁男结果页');
+    check('查过阴性不再被推荐幽门螺杆菌检测',
+      !/一生至少检测一次幽门螺杆菌/.test(await evaluate(`document.body.innerText`)));
+    const pp = Buffer.from(JSON.stringify({ age: 52, gender: 'male', hpStatus: 'positive' })).toString('base64url');
+    await goto(BASE + '/r.html#p=' + pp);
+    await waitFor(`!!document.querySelector('.docbody')`, '阳性 52 岁男结果页');
+    check('查过阳性仍保留幽门螺杆菌卡（带着根除/复查提示）',
+      /一生至少检测一次幽门螺杆菌/.test(await evaluate(`document.body.innerText`)));
+  }
+  // B：「再过几年要加上」只报新面孔 —— 便潜血每年都在做，不能再预告一遍
+  {
+    const p = Buffer.from(JSON.stringify({ age: 44, gender: 'male', smoking: 'no' })).toString('base64url');
+    await goto(BASE + '/r.html#p=' + p);
+    await waitFor(`!!document.querySelector('.soon')`, '再过几年模块');
+    const soon = await evaluate(`(() => ({ all: document.body.innerText, soon: document.querySelector('.soon').innerText }))()`);
+    check('「再过几年」预告了肠镜（44 岁明年该加的）', /肠镜/.test(soon.soon), soon.soon.slice(0, 60));
+    check('「再过几年」不再出现便潜血 / FIT（它们就在今年的清单里）',
+      !/便潜血/.test(soon.soon) && !/粪便免疫化学/.test(soon.soon), soon.soon.replace(/\s+/g, ' ').slice(0, 80));
+    check('便潜血仍在今年的基础套餐里（没有被误删）', /便潜血/.test(soon.all), '');
+  }
+
   // ---- 3.6 50+ 女性：不问备孕题，但要留孕产兜底 ----
   {
     const p = Buffer.from(JSON.stringify({ age: 52, gender: 'female' })).toString('base64url');
