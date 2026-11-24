@@ -59,7 +59,7 @@ const ids = (b, cat) => b[cat].filter((r) => !r.hidden).map((r) => r.id);
 {
   const b = evaluate(P({ gender: 'female', familyHistory: ['lung'], packYears: 0 }));
   check('家族史但本人不吸烟不判 LDCT 高危', !has(b, 'A', 'lung-ldct-high-risk'));
-  check('家族史本身进"有分歧、去问医生"', evaluateDetailed(P({ gender: 'female', familyHistory: ['lung'], packYears: 0 }))[1].disputes.length === 1);
+  check('家族史本身进"有分歧、去咨询医生"', evaluateDetailed(P({ gender: 'female', familyHistory: ['lung'], packYears: 0 }))[1].disputes.length === 1);
 }
 {
   const b = evaluate(P({ gender: 'female', familyHistory: ['lung'], packYears: 20 }));
@@ -350,6 +350,45 @@ const ids = (b, cat) => b[cat].filter((r) => !r.hidden).map((r) => r.id);
       }
     }
     check('新依据·' + id + ' 引文逐字命中 2024 版原文', ok, detail);
+  }
+}
+
+// ---- 9. 典型人群画像：对照中国真实人群分布的常见组合 ----
+// 边界用例（上面 1–8 组）故意取临界值，因为 bug 藏在边界；
+// 这一组补的是"人群里最常见的那批人"——确保最常见的路径不走样。
+// 分布参考：中国成人吸烟率约 50%（男）/2%（女）；高血压患病约 1/4 成人；
+// 50+ 女性乳腺/宫颈筛查、60+ 骨密度、45+ 结直肠癌筛查都是人群级高频组合。
+{
+  const cases = [
+    // [画像名, 画像, 断言]
+    ['45 岁男 · 从不吸烟 · 不饮酒（人群最大的一格）',
+      { age: 45, gender: 'male', smoking: 'no', packYears: 0, alcohol: 'none' },
+      (b) => !has(b, 'A', 'lung-ldct-high-risk') && has(b, 'A', 'base-package')],
+    ['52 岁男 · 吸烟 10 包年（不到 20 包年线）',
+      { age: 52, gender: 'male', smoking: 'yes', packYears: 10 },
+      (b) => !has(b, 'A', 'lung-ldct-high-risk')],
+    ['48 岁女 · 常规体检（乳腺/宫颈按年龄走）',
+      { age: 48, gender: 'female', smoking: 'no' },
+      (b) => has(b, 'A', 'base-package') && !has(b, 'A', 'lung-ldct-high-risk')],
+    ['58 岁女 · 无家族史（女性专项按年龄档走，不出高危项）',
+      { age: 58, gender: 'female', smoking: 'no' },
+      (b) => has(b, 'A', 'base-package') || has(b, 'B', 'base-package')],
+    ['66 岁男 · 戒烟 8 年 · 曾 25 包年（戒烟超 5 年，不进高危）',
+      { age: 66, gender: 'male', smoking: 'quit', packYears: 25, smokingQuitYears: 'ge5' },
+      (b) => !has(b, 'A', 'lung-ldct-high-risk')],
+    ['38 岁男 · 吸烟 15 包年（年龄不到 50，不进高危，落 C 档明确不用做）',
+      { age: 38, gender: 'male', smoking: 'yes', packYears: 15 },
+      (b) => !has(b, 'A', 'lung-ldct-high-risk') && has(b, 'C', 'lung-ldct-not-high-risk')],
+    ['71 岁女 · 糖尿病家族史（糖尿病规则按家族史走）',
+      { age: 71, gender: 'female', smoking: 'no', familyHistory: ['diabetes'] },
+      (b) => ids(b, 'A').concat(ids(b, 'B'), ids(b, 'C')).length > 0],
+    ['83 岁男 · 高危吸烟史（超 LDCT 上限，落 80plus 个体化档）',
+      { age: 83, gender: 'male', smoking: 'yes', packYears: 30 },
+      (b) => !has(b, 'A', 'lung-ldct-high-risk') && has(b, 'B', 'lung-ldct-80plus')],
+  ];
+  for (const [name, profile, assertFn] of cases) {
+    const b = evaluate(P(profile));
+    check('典型·' + name, assertFn(b), JSON.stringify({ A: ids(b, 'A').slice(0, 6), C: ids(b, 'C').slice(0, 4) }));
   }
 }
 

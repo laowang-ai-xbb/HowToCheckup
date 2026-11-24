@@ -56,6 +56,22 @@
       "url": "https://www.cdc.gov/vaccines/hcp/imz-schedules/adult.html",
       "keywords": ["schedule", "adult", "vaccine", "influenza", "covid"],
       "note": "2026-11-24 新增：成人疫苗程序表，疫苗规则的权威交叉来源。"
+    },
+    {
+      "id": "liver-pdf-landing",
+      "org": "协和医学杂志（原发性肝癌诊疗指南落地页）",
+      "url": "https://xhyxzz.pumch.cn/cn/article/doi/10.12290/xhyxzz.2024-0304",
+      "keywords": ["原发性肝癌诊疗指南", "2025", "2026", "修订"],
+      "note": "2026-11-25 新增：PDF 巡检盲区的解法。指南更新时发布方不是改旧 PDF 的内容，而是传一份新 PDF、生成新 URL——盯旧 PDF 的 URL 永远发现不了。落地页盯的是'这篇文章'本身：标题、版本号一变（如 2024→2025），说明出新版了，再去挖新 PDF 地址。",
+      "watchFor": "liver-cancer-screening"
+    },
+    {
+      "id": "diabetes-pdf-landing",
+      "org": "中华糖尿病杂志（中国糖尿病防治指南落地页）",
+      "url": "https://rs.yiigle.com/cmaid/1525739",
+      "keywords": ["中国糖尿病防治指南", "2025", "2026", "更新"],
+      "note": "2026-11-25 新增：同上。糖尿病防治指南（2024版）的文章页；新版指南发布时这篇的关联/推荐位会出现新标题。",
+      "watchFor": "diabetes-followup,diabetes-family-history,cvd-family-carotid"
     }
   ]
 }

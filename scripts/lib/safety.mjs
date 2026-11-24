@@ -14,7 +14,7 @@
  */
 import { toFacts, gates, lungLDCT2025, UNKNOWN } from './facts.mjs';
 
-export const SAFETY_VERSION = 'p0p1-2026-11-24.1';
+export const SAFETY_VERSION = 'p0p1-2026-11-25.1';
 
 const clone = (r) => ({ ...r, shownIds: r.shownIds ? [...r.shownIds] : undefined });
 
@@ -111,11 +111,15 @@ export const applySafety = (profile, raw, opts = {}) => {
   const gateOn = gate.ageOutOfScope || gate.frailDowngrade || gate.symptomStop;
 
   if (!gateOn && (lung.indeterminate || !lung.eligible)) {
-    for (const x of [aLDCT, bLDCT]) {
-      if (!x) continue;
-      x.r.hidden = true;
-      x.r.suppressedBy = lung.indeterminate ? 'ldct-unknown' : 'ldct-ineligible';
-      meta.suppressed.push({ id: x.r.id, reason: lung.indeterminate ? '肺癌筛查条件算不出来' : '不符合 2025 版高危条件' });
+    // 只压 A 档高危和 C 档"不是高危"。80plus 这条 B 档不能压：
+    // 它的 when 本身就要求 ageMin 80 + 某条高危条件成立，能匹配上说明条件确凿，
+    // 此时 lung.eligible=false 纯粹是因为年龄超出 50–80 区间 —— 这正是它存在的意义
+    // （80 岁以上按预期寿命个体化判断）。压掉它，80+ 高危人群连一张 LDCT 卡都没有
+    // （2026-11-25 典型人群画像测试抓出来的回归）。
+    if (aLDCT) {
+      aLDCT.r.hidden = true;
+      aLDCT.r.suppressedBy = lung.indeterminate ? 'ldct-unknown' : 'ldct-ineligible';
+      meta.suppressed.push({ id: aLDCT.r.id, reason: lung.indeterminate ? '肺癌筛查条件算不出来' : '不符合 2025 版高危条件' });
     }
     if (cLDCT) {
       // 信息不足时不能说"不属于高危、不用做"——那等于替用户认了不知道的事
@@ -138,7 +142,7 @@ export const applySafety = (profile, raw, opts = {}) => {
   if (lung.legacyDispute && !lung.eligible && !lung.indeterminate) {
     meta.disputes.push({
       key: 'lung-ldct',
-      text: '你的情况按 2025 版中国 LDCT 指南不够高危条件，但按 USPSTF/ACS 等较宽松口径可能需要筛查。两版结论不一致，请带上吸烟和暴露年限去问医生。',
+      text: '你的情况按 2025 版中国 LDCT 指南不够高危条件，但按 USPSTF/ACS 等较宽松口径可能需要筛查。两版结论不一致，请带上吸烟和暴露年限去咨询医生。',
     });
   }
 

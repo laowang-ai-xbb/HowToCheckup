@@ -500,7 +500,8 @@ try {
    * 从上一页 hash 切过来时旧结果页节点可能还在，拿到手会是别人的清单。 */
   await waitFor(`!!document.querySelector('.actions') && /52 岁/.test((document.querySelector('.rwho') || {}).innerText || '')`, '结果页（52 岁画像）');
   /* 留住这一份画像的 p= 码：下面的回补/腰围两轮会把页面导航走，后面要回到同一份画像。
-     默认分享按钮产出脱敏快照（v=2&s=）；完整画像链接收在结果页的「完整问卷答案」折叠里。 */
+     默认分享按钮产出产品首页（老板 2026-11-24 定的口径）；
+     完整画像链接收在结果页的「完整问卷答案」折叠里。 */
   const firstShareCode = await evaluate(`(() => {
     const el = document.querySelector('.full-share-code');
     const m = (el ? el.textContent : '').match(/#p=([^\\s]+)/);
@@ -796,7 +797,7 @@ try {
   await send('Emulation.setEmulatedMedia', { features: [] });
   await sleep(150);
 
-  // ---- 3. 分享链接 ----
+  // ---- 3. 分享链接（老板 2026-11-24 定的口径：默认分享一律产品首页）----
   const shareUrl = await evaluate(`(() => {
     const orig = navigator.clipboard;
     let captured = '';
@@ -804,45 +805,55 @@ try {
     document.querySelector('[data-act=share]').click();
     return new Promise(r => setTimeout(() => { navigator.clipboard = orig; r(captured); }, 300));
   })()`);
-  check('分享文本含链接', /https?:\/\/\S+#v=2&s=/.test(shareUrl || ''), (shareUrl || '').slice(-80));
-  const link = (shareUrl.match(/https?:\/\/\S+#v=2&s=\S+/) || [])[0];
-  check('分享链接指向结果页入口 r.html', /\/r\.html#v=2&s=/.test(link || ''), (link || '').slice(0, 90));
-  // 隐私承诺的技术前提：# 之后的内容不发给服务器、不进 access log。
-  // 一旦有人把它改回 ?p=，年龄和家族史就会落到 CDN 日志里，所以这条必须钉住。
-  check('分享链接用 # 携带参数（不发往服务器）', !/\?/.test(link || ''), (link || '').slice(0, 90));
-  // 计划2 核心：默认分享是脱敏结果快照，链接里只有规则 ID，没有原始病史答案。
-  // 把 s= 之后那段 base64 解出来，确认不含 familyHistory/pastHistory/hpStatus 等字段。
-  {
-    const code = (link || '').split('s=')[1] || '';
-    let decoded = '';
-    try { decoded = decodeURIComponent(escape(atob(code.replace(/-/g, '+').replace(/_/g, '/')))); } catch { decoded = ''; }
-    check('快照不含原始病史字段',
-      decoded && !/familyHistory|pastHistory|hpStatus|smokingQuitYears|occupationAgents/.test(decoded)
-        && /"A"|"B"|"C"/.test(decoded),
-      decoded.slice(0, 120));
-  }
+  check('分享文本含链接', /https?:\/\/\S+/.test(shareUrl || ''), (shareUrl || '').slice(-80));
+  const link = (shareUrl.match(/https?:\/\/\S+/) || [])[0];
+  check('分享链接指向产品首页', /\/$|\/index\.html$/.test((link || '').split(/[?#]/)[0]), (link || '').slice(0, 90));
+  // 老板定的口径：链接里不带画像 #p=、不带快照 v=2&s= —— 没有传输，就没有泄露。
+  check('分享链接不带任何画像或快照参数', !/#p=|v=2&s=|[?&]p=/.test(link || ''), (link || '').slice(0, 90));
 
-  if (link) {
+  // 快照渲染路径仍需保留（老链接兼容）：手造一份快照 URL 验证只读视图不变。
+  // 横幅已按老板要求删除，这里只验"能还原同一份清单 + 不显示补答入口/体型卡"。
+  {
+    const code = Buffer.from(JSON.stringify({
+      v: 2, age: 52, gender: 'male', date: '2026-11-24',
+      A: ['base-package', 'colorectal-screening'],
+      B: [], C: ['lung-ldct-not-high-risk'],
+    })).toString('base64url');
     // 上一条测试已停在 r.html#p=...；同路径只换 hash，浏览器不会重载、main.js 也不会重读参数。
     // 先回首页再进快照链接，强制一次真实加载。
     await goto(BASE + '/');
-    await goto(link);
-    await waitFor(`!!document.querySelector('.snapshot-tip')`, '快照结果页');
+    await goto(`${BASE}/r.html#v=2&s=${code}`);
+    await waitFor(`!!document.querySelector('.actions')`, '快照结果页');
+    await sleep(300);
     const shared = await evaluate(`(() => ({
       who: document.querySelector('.rwho').innerText,
       a: [...document.querySelectorAll('#must .atom .an')].map(h => h.innerText).length,
       tip: (document.querySelector('.snapshot-tip') || {}).innerText || '',
-    }))()`);
-    check('快照链接能还原同一份清单', shared.a === result.a.length && /52 岁/.test(shared.who), JSON.stringify(shared));
-    check('快照页首说明是结果快照且以重测为准',
-      /结果快照/.test(shared.tip) && /测份自己的/.test(shared.tip) && /生成于/.test(shared.tip),
-      shared.tip.replace(/\s+/g, ' ').slice(0, 90));
-    // 快照页不应出现依赖原始病史的补答入口/彩蛋——它们会凭空多出来
-    const snapLeak = await evaluate(`(() => ({
       gaps: !!document.querySelector('.gaps'),
       body: !!document.querySelector('#body-card'),
     }))()`);
-    check('快照页不显示补答入口与体型卡', !snapLeak.gaps && !snapLeak.body, JSON.stringify(snapLeak));
+    check('快照链接能还原同一份清单',
+      shared.a === 1 && /52 岁/.test(shared.who), JSON.stringify(shared));
+    check('快照横幅已删除（老板要求）', shared.tip === '', JSON.stringify(shared.tip));
+    check('快照页不显示补答入口与体型卡', !shared.gaps && !shared.body, JSON.stringify(shared));
+  }
+
+  // ---- 3.2 分歧说明写在项目卡内（老板 2026-11-24 定的口径），不再有顶部模块 ----
+  {
+    const p = Buffer.from(JSON.stringify({
+      age: 52, gender: 'female', smoking: 'no', packYears: 0, familyHistory: ['lung'],
+    })).toString('base64url');
+    await goto(BASE + '/');
+    await goto(`${BASE}/r.html#p=${p}`);
+    await waitFor(`!!document.querySelector('.actions') && /52 岁/.test((document.querySelector('.rwho') || {}).innerText || '')`, '分歧画像结果页');
+    await sleep(200);
+    const disp = await evaluate(`(() => ({
+      top: !!document.querySelector('.safety-dispute'),
+      inCard: [...document.querySelectorAll('.atom-dispute')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 60)),
+      cardCount: document.querySelectorAll('.atom-dispute').length,
+    }))()`);
+    check('分歧说明出现在具体项目卡内', disp.cardCount >= 1 && /有分歧|咨询/.test(disp.inCard.join('')), JSON.stringify(disp));
+    check('顶部不再有分歧模块', !disp.top, JSON.stringify(disp));
   }
 
   // ---- 3.5 换一份人群画像再验一遍排版 ----

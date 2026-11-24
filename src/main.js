@@ -10,7 +10,7 @@ import { emptyProfile, evaluate, evaluateDetailed, upcoming, ruleLabel, vaccines
 import { gateMessage, vaccinesDeferred } from '../scripts/lib/safety.mjs';
 import { questions, activeQuestions, SHAPE_OPTIONS } from './questions.js';
 import { bmiOf, bodyLevel, cutsFor, bodyOf, BODY_EVIDENCE } from './body.js';
-import { decodeProfile, buildShareUrl, copyText, encodeProfile, decodeSnapshot, encodeSnapshot, buildSnapshotUrl, buildSnapshotEvidenceUrl, SNAPSHOT_VERSION } from './share.js';
+import { decodeProfile, buildShareUrl, copyText, encodeProfile, decodeSnapshot, buildSnapshotEvidenceUrl, SNAPSHOT_VERSION } from './share.js';
 import { readEnv, detectEnv, copyFor } from './env.js';
 import { referrals, REFERRAL_NOTE, CGA_EVIDENCE } from './referral.js';
 import { eggFor } from './egg.js';
@@ -1389,14 +1389,17 @@ const renderResult = () => {
   // 硬算会给出和原主人不一致、甚至凭空多出来的卡片。快照模式一律不显示。
   const refs = state.snapshot ? [] : referrals(p);
   const gateText = gateMessage(safety);
+  /* 分歧说明不再放顶部模块（老板 2026-11-24 定的口径）：写进具体那条项目卡内。
+   * dispute.key 对应规则 id 前缀（如 lung-ldct → lung-ldct-*），卡片渲染时按 id 认领。 */
+  const disputeTextFor = (ruleId) => {
+    const hit = safety.disputes.find((d) => ruleId.startsWith(d.key));
+    return hit ? hit.text : '';
+  };
   const safetyHTML = `
     ${gateText ? `<div class="safety-gate" role="status">${esc(gateText)}</div>` : ''}
     ${safety.indeterminate.length ? `<div class="safety-indet" role="status">
       <b>有几项还算不出来</b>
       <p>${safety.indeterminate.map((x) => `${esc(x.q)}：${esc(x.fields.join('、'))}。${esc(x.effect)}`).join('；')}</p>
-    </div>` : ''}
-    ${safety.disputes.length ? `<div class="safety-dispute">
-      ${safety.disputes.map((x) => `<p>${esc(x.text)}</p>`).join('')}
     </div>` : ''}`;
   /* 打印稿用屏幕上的同一份判定结果，不重新算引擎。
    * 顺序按定稿：A 表第一行是基础项目，之后是专项、洁牙；明细另起一页。 */
@@ -1414,6 +1417,7 @@ const renderResult = () => {
     cgaEvidence: CGA_EVIDENCE,
     refNote: REFERRAL_NOTE,
     vaccineWarn: vaccineMeta.severeWarn,
+    disputeFor: disputeTextFor,
   };
 
   /* 目录按清单实况生成：没有疫苗就不出现「疫苗」那一格。
@@ -1451,8 +1455,7 @@ const renderResult = () => {
           ? '<p class="preg-note">如果已经怀孕或正在做辅助生殖，请按产科医生安排，不要用这份常规清单。</p>'
           : ''}
       <button class="ls ls-result" data-act="ls" aria-pressed="${state.bigText}">${state.bigText ? '标准字' : '大字'}</button>
-      ${state.snapshot ? `<p class="snapshot-tip" role="status">这是别人分享的<b>结果快照</b>${state.snapshot.date ? `（生成于 ${esc(state.snapshot.date)}）` : ''}：清单按当时的答案定稿，不含对方的病史。规则日后若有更新，以<a href="./index.html">重新测一份</a>为准。<button class="linkish" data-act="restart">测份自己的 ›</button></p>` : ''}
-      ${state.fromShare && !state.snapshot ? '<p class="shared-tip">这是别人分享给你的清单。<button class="linkish" data-act="restart">测份自己的 ›</button></p>' : ''}
+      ${state.fromShare ? '<p class="shared-tip">这是别人分享给你的清单。<button class="linkish" data-act="restart">测份自己的 ›</button></p>' : ''}
       ${gapsTopHTML(gaps, {
         open: state.gapPanelOpen,
         editor: state.gapKey ? gapEditorHTML(state.gapKey) : '',
@@ -1589,18 +1592,14 @@ const shareLines = () => {
   };
 };
 
-/** 默认分享链接：结果快照，不含任何原始病史答案。
- *  普通模式：用当前清单的可见规则 ID 现编一份快照；
- *  快照模式：直接沿用收到的快照 code（没有画像可编，也不该重新判定）。 */
+/** 默认分享链接：产品首页（老板 2026-11-24 定的口径）。
+ *  链接里不带画像、不带快照、不带任何答案 —— 收到的人自己进来测一份，
+ *  这是把"隐私"问题从根上拿掉：没有传输，就没有泄露。 */
 const buildDefaultShareUrl = () => {
-  if (state.snapshot) return buildSnapshotUrl(state.snapshotRaw);
-  const b = evaluate(state.profile);
-  const ids = {
-    A: b.A.filter((r) => !r.hidden).map((r) => r.id),
-    B: b.B.filter((r) => !r.hidden).map((r) => r.id),
-    C: b.C.filter((r) => !r.hidden).map((r) => r.id),
-  };
-  return buildSnapshotUrl(encodeSnapshot(state.profile, ids));
+  const url = new URL('./', location.href);
+  url.search = '';
+  url.hash = '';
+  return url.toString();
 };
 
 const buildShareText = () => {

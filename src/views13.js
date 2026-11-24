@@ -84,6 +84,9 @@ export const atomHTML = (rule, idx, key, ctx) => {
       <span class="af">${esc(rule.frequency.text)}</span>
       ${mutex}
     </div>
+    ${/* 分歧说明写在这条项目卡内（老板定的口径），不放顶部模块。
+          样式沿用 .tip 的字号与颜色，只加一道细左边线做安静的视觉标记。 */ ''}
+    ${ctx.disputeFor && ctx.disputeFor(rule.id) ? `<p class="tip atom-dispute"><b>指南结论有分歧：</b>${esc(ctx.disputeFor(rule.id))}</p>` : ''}
     ${soft ? `<p class="tip">${FREQ_BASIS[rule.frequency.basis] || ''}${rule.frequency.basisNote ? '：' + esc(rule.frequency.basisNote) : ''}</p>` : ''}
     ${(rule.redFlags || []).length ? `<p class="tip"><b>出现这些情况要去看医生：</b>${rule.redFlags.map(esc).join('、')}</p>` : ''}
     ${tellDoctorHTML(rule)}

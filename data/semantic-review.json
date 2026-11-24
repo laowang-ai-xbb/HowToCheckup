@@ -1,0 +1,20 @@
+{
+  "lung-ldct-high-risk": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-24",
+    "by": "ai-session",
+    "note": "逐项对照快照 ab148f3a6c（PMC12972581）：50–80 岁、吸烟≥20包年且戒烟≤5年、被动吸烟≥20年、职业致癌物≥5年（高强度≥1年）、家族史合并≥15包年/被动≥15年，均为原文原句；排除项'无法耐受手术建议停止筛查'亦为原句。数字回读全部命中。"
+  },
+  "lung-ldct-not-high-risk": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-24",
+    "by": "ai-session",
+    "note": "指南原文把筛查对象限定为'同时符合以下两项条件者'（50-80 岁 + 高危条件），本条为其补集，方向一致，无扩大。"
+  },
+  "lung-ldct-80plus": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-24",
+    "by": "ai-session",
+    "note": "'筛查终止年龄应重视个体化风险评估'与'无法耐受手术建议停止'均为快照原句；80 岁数字在引文'50-80岁'中命中。"
+  }
+}

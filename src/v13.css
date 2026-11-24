@@ -641,6 +641,15 @@
   html[data-ls="big"] .safety-indet,
   html[data-ls="big"] .safety-dispute { font-size: 15px; }
 
+  /* 卡内分歧说明：字号、行距、颜色完全沿用 .tip（12px / ink-3 / 1.65），
+   * 与同卡其他提示一行一色，不另起模块；只加一道 2px 左线做安静的标记。
+   * 大字模式下自动跟随 .tip 的 14px，不需要单独写。 */
+  .atom-dispute {
+    border-left: 2px solid var(--teal);
+    padding-left: 8px;
+  }
+  .atom-dispute b { color: var(--ink-2); font-weight: 600; }
+
   /* ---- hover 只给真指针设备 ----
    * 触摸屏上 :hover 会"粘住"：手指抬起后那行底色还留着，用户以为还是选中的。
    * 这套样式原来只服务 demo（有人在电脑上看），现在产品也在用，所以按不变量

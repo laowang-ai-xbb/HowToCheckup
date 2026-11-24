@@ -25,13 +25,15 @@
     "test:lean": "node tests/lean-unit.mjs",
     "test:mutation": "node tests/mutation.mjs",
     "test": "npm run test:logic && npm run check:ui",
-    "test:logic": "npm run validate && npm run test:diff && npm run test:env && npm run test:lean && npm run test:questions && npm run test:body && npm run test:safety && npm run check:invariants && npm run check:lean && npm run check:research && npm run check:dupes && npm run test:mutation && npm run check:fingerprint",
+    "test:logic": "npm run validate && npm run test:diff && npm run test:env && npm run test:lean && npm run test:questions && npm run test:body && npm run test:safety && npm run check:invariants && npm run check:lean && npm run check:research && npm run check:dupes && npm run test:mutation && npm run check:fingerprint && npm run test:negative",
     "test:questions": "node tests/questions-unit.mjs",
     "check:research": "node scripts/check-research.mjs",
     "check:dupes": "node scripts/check-dupes.mjs",
     "test:body": "node tests/body-unit.mjs",
     "test:safety": "node tests/safety-unit.mjs",
-    "check:fingerprint": "node scripts/check-fingerprint.mjs"
+    "check:fingerprint": "node scripts/check-fingerprint.mjs",
+    "review:semantic": "node scripts/semantic-review.mjs",
+    "test:negative": "node tests/validate-negative.mjs"
   },
   "devDependencies": {
     "vite": "^5.4.11"

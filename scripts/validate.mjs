@@ -15,11 +15,17 @@ import { match } from './lib/match.mjs';
 import { squash } from './lib/source-fetch.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const load = (p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
+// --rules 支持绝对路径（负例测试传临时文件）；相对路径一律相对仓库根。
+const load = (p) => JSON.parse(readFileSync(/^([A-Za-z]:[/\\]|\/)/.test(p) ? p : join(root, p), 'utf8'));
+
+// --rules <path>：用一份临时规则文件跑同样的检查（对抗负例测试靠它：
+// 故意填错一个字段，校验器必须报错才算有效——校验器自己也得被测）。
+const rulesArgIdx = process.argv.indexOf('--rules');
+const RULES_PATH = rulesArgIdx >= 0 ? process.argv[rulesArgIdx + 1] : 'data/rules.json';
 
 const inputs = load('data/inputs.schema.json');
 const catalog = load('data/catalog.json');
-const rulesFile = load('data/rules.json');
+const rulesFile = load(RULES_PATH);
 const rulesSchema = load('data/rules.schema.json');
 
 const errors = [];
@@ -544,6 +550,71 @@ for (const { rule, ev } of evidenceList) {
       err(`${rule.id}：摘录在原文里找不到 →「${q.slice(0, 42)}…」`);
     }
   }
+}
+
+/* ---------------- 12.5 条款卡语义校验（计划 3 第一/三层）----------------
+   字符串逐字命中只保证"没编造"；这一节保证"结论能由原文推出来"：
+   ① 条款卡字段必须填齐、枚举合法（防半截数据冒充已核实）；
+   ② population 里写的人群数字，必须能在本规则引文里找到（数字回读）；
+   ③ version 必须能在证据出处里找到（防"张冠李戴"的版本号）；
+   ④ supersedes 必须指向真实存在的规则（防幽灵版本）；
+   ⑤ 每条条款卡要有语义复核记录（AI/人工交叉审读闭环，见 scripts/semantic-review.mjs）。 */
+const CLAUSE_REQUIRED = ['version', 'population', 'evidenceRole', 'conflictPolicy', 'followup_path'];
+const CLAUSE_ENUMS = {
+  evidenceRole: ['primary', 'secondary', 'dispute-only'],
+  conflictPolicy: ['strict-first-dispute', 'single-guideline', 'patient-doctor'],
+  followup_path: ['复查', '转诊', '观察', '咨询医生'],
+};
+const semanticReview = (() => {
+  try { return load('data/semantic-review.json'); } catch { return {}; }
+})();
+let clauseCount = 0;
+for (const r of rulesFile.rules) {
+  const c = r.clause;
+  if (!c) continue;
+  clauseCount += 1;
+  const tag = r.id;
+  for (const f of CLAUSE_REQUIRED) if (c[f] === undefined) err(`[${tag}] clause 缺少必填字段 ${f}`);
+  for (const [f, vals] of Object.entries(CLAUSE_ENUMS))
+    if (c[f] !== undefined && !vals.includes(c[f])) err(`[${tag}] clause.${f} 必须是 ${vals.join('/')}`);
+  if (c.population !== undefined && !Array.isArray(c.population?.include))
+    err(`[${tag}] clause.population.include 必须是数组`);
+  // 人群数字回读：条款卡里写的每个数字，都得能在引文里找到出处。
+  // 这是"字段填了但和原文不符"的第一道机器闸。
+  if (Array.isArray(c.population?.include)) {
+    const quotesText = normalizeText((r.evidence || []).flatMap((e) => e.quotes || (e.quote ? [e.quote] : [])).join(' '));
+    for (const inc of c.population.include) {
+      for (const num of String(inc).match(/\d+/g) || []) {
+        if (!quotesText.includes(num)) err(`[${tag}] clause.population 的数字 ${num}（「${String(inc).slice(0, 24)}…」）在本规则引文里没有出处`);
+      }
+    }
+  }
+  // 版本号必须能在证据出处里找到
+  if (c.version !== undefined) {
+    const hay = normalizeText((r.evidence || []).map((e) => `${e.org} ${e.year} ${e.point || ''}`).join(' '));
+    if (!hay.includes(normalizeText(String(c.version)))) err(`[${tag}] clause.version「${c.version}」在证据出处里找不到`);
+  }
+  if (c.supersedes !== undefined && !ids.has(c.supersedes)) err(`[${tag}] clause.supersedes 指向不存在的规则「${c.supersedes}」`);
+  // 语义复核闭环：没有 supported 记录就提醒（不阻塞——先让闭环跑起来）
+  const review = semanticReview[r.id];
+  if (!review || review.verdict !== 'supported')
+    warn(`[${tag}] 条款卡还没有语义复核记录（data/semantic-review.json），请跑 npm run review:semantic`);
+}
+
+/* ---------------- 12.6 依据时效（老板 2026-11-24 定：48 个月 + 仅单条依据）----------------
+   行业通行复审周期 2–5 年（WHO 手册 / NICE 3 年），48 个月取其中位偏保守。
+   多条依据互相印证时不提示——单条旧不构成风险，不该拿它打扰用户。 */
+const STALE_MONTHS = 48;
+const monthsSince = (iso) => {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.test(String(iso || '')) ? iso.match(/^(\d{4})-(\d{2})-(\d{2})$/).slice(1).map(Number) : null;
+  if (!m) return null;
+  return (Date.now() - new Date(Date.UTC(m[0], m[1] - 1, m[2])).getTime()) / (1000 * 60 * 60 * 24 * 30.44) / 1;
+};
+for (const r of rulesFile.rules) {
+  if ((r.evidence || []).length !== 1) continue;
+  const e = r.evidence[0];
+  const months = Math.floor(monthsSince(e.checkedAt) || 0);
+  if (months > STALE_MONTHS) warn(`[${r.id}] 唯一依据已 ${months} 个月未复核（阈值 ${STALE_MONTHS} 个月），建议复核或补充第二条依据`);
 }
 
 /* ---------------- 13. 「去哪一栏」（data/where.json） ----------------
