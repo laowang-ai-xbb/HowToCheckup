@@ -1,0 +1,47 @@
+{
+  "note": "发布方目录页监控。原巡检只看 rules.json 里已引用的 URL，结构上发现不了'指南发在新地址'。这里盯的是发布方栏目/列表页：出现新标题就报警，再由人判断是否要收进规则。抓不到不算产品错，只提醒链接可能改版。",
+  "sources": [
+    {
+      "id": "nhc-guideline",
+      "org": "国家卫生健康委员会",
+      "url": "https://www.nhc.gov.cn/wjw/zcwjnew/list.shtml",
+      "keywords": ["指南", "方案", "规范", "标准"],
+      "note": "卫健委政策文件栏目：筛查与早诊早治方案多在这里首发"
+    },
+    {
+      "id": "cicams",
+      "org": "国家癌症中心",
+      "url": "https://www.cicams.ac.cn/",
+      "keywords": ["指南", "筛查", "防癌", "共识"],
+      "note": "国家癌症中心首页/新闻栏目：防癌体检指南、肺癌筛查指南发布口"
+    },
+    {
+      "id": "cma-guideline",
+      "org": "中华医学会",
+      "url": "https://www.cma.org.cn/col/col42/index.html",
+      "keywords": ["指南", "共识", "分会", "防治"],
+      "note": "中华医学会指南与共识栏目"
+    },
+    {
+      "id": "chinacdc",
+      "org": "中国疾病预防控制中心",
+      "url": "https://www.chinacdc.cn/",
+      "keywords": ["指南", "技术指南", "免疫", "疫苗"],
+      "note": "疫苗与传染病相关技术文件"
+    },
+    {
+      "id": "uspstf",
+      "org": "美国预防服务工作组",
+      "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation-topics/uspstf-a-and-b-recommendations",
+      "keywords": ["screening", "recommendation", "cancer", "lung", "breast"],
+      "note": "A/B 级推荐列表页：新增或级别变化会先在这里出现"
+    },
+    {
+      "id": "cdc-acip",
+      "org": "美国疾控中心免疫实践咨询委员会",
+      "url": "https://www.cdc.gov/vaccines/acip/recommendations.html",
+      "keywords": ["recommendation", "vaccine", "schedule", "adult"],
+      "note": "ACIP 推荐列表：疫苗程序更新"
+    }
+  ]
+}

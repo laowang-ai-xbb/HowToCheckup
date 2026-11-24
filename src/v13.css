@@ -621,6 +621,26 @@
   html[data-ls="big"] .ul-lead,
   html[data-ls="big"] .ul-list li { font-size: 14.5px; }
 
+  /* ---- 临床安全提示（P0/P1）----
+   * 三态里"算不出来"和"有分歧"都不是结论卡：它们回答的是"这份清单为什么不完整"。
+   * 形态沿用 .tip 的字号与行距，不用橙底红字吓人；只在真触发时出现。 */
+  .safety-gate, .safety-indet, .safety-dispute {
+    margin: 14px 0 0;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--ink-2);
+  }
+  .safety-gate { border-left: 3px solid var(--teal); }
+  .safety-indet b, .safety-dispute b { color: var(--ink); }
+  .safety-indet p, .safety-dispute p { margin: 4px 0 0; }
+  html[data-ls="big"] .safety-gate,
+  html[data-ls="big"] .safety-indet,
+  html[data-ls="big"] .safety-dispute { font-size: 15px; }
+
   /* ---- hover 只给真指针设备 ----
    * 触摸屏上 :hover 会"粘住"：手指抬起后那行底色还留着，用户以为还是选中的。
    * 这套样式原来只服务 demo（有人在电脑上看），现在产品也在用，所以按不变量

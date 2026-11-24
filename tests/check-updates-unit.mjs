@@ -105,6 +105,27 @@ const body = (extra = '') =>
   check('"每两年"这种间隔仍要抓', keyNumbers('建议每两年复查一次').has('2年'));
 }
 
+/* ---------- 6. 发布方目录监控：新增标题要报，导航碎片不报 ---------- */
+{
+  const { extractTitles, newTitles } = await import('../scripts/lib/catalog-watch.mjs');
+  const page = [
+    '首页',
+    '中国肺癌低剂量CT筛查指南（2025年版）发布',
+    '    ',
+    '关于2024年度工作总结的公告',
+    'Recommendation: Lung Cancer Screening in Adults',
+    'Home  Search  Login  Contact  About  More',
+    '中华医学会糖尿病学分会 中国2型糖尿病防治指南（2025年版）',
+  ].join('\n');
+  const titles = extractTitles(page, ['指南', 'screening']);
+  check('目录抽取能抓到中文新指南', titles.some((t) => t.includes('肺癌低剂量CT筛查指南')), titles.join(' / '));
+  check('目录抽取能抓到英文新推荐', titles.some((t) => /Lung Cancer Screening/.test(t)));
+  check('目录抽取不把导航当标题', !titles.some((t) => /Home\s+Search/.test(t)));
+  check('首次没有基线时不报警（只建基线）', newTitles(titles, null) === null);
+  check('新增标题能被识别', newTitles(titles, [titles[0]]).length === titles.length - 1);
+  check('没有新标题时安静', newTitles(titles, titles).length === 0);
+}
+
 console.log(`\n${pass}/${pass + fails.length} 通过`);
 if (fails.length) {
   console.log('失败项：\n' + fails.map((f) => `  · ${f}`).join('\n'));

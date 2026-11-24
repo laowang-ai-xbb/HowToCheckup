@@ -376,12 +376,22 @@ for (const m of MUTATIONS) {
   const inv = INVARIANTS.find((i) => i.id === m.inv);
   if (!inv) { console.log(`FAIL 变异指向了不存在的不变量：${m.inv}`); continue; }
 
-  const src = base[m.file];
-  if (typeof src !== 'string') { console.log(`FAIL 找不到文件 ${m.file}`); continue; }
-  if (!src.includes(m.from)) { console.log(`FAIL ${m.inv}：变异锚点在 ${m.file} 里找不到（${m.from.slice(0, 40)}）`); continue; }
+  const raw = base[m.file];
+  if (typeof raw !== 'string') { console.log(`FAIL 找不到文件 ${m.file}`); continue; }
+  /* 工作区是 Windows / Git Bash：questions.js、v13.css、evidence.js 存的是 CRLF，
+   * 变异锚点写的是 LF。不做归一，锚点永远找不到 —— 检查看起来跑了，其实一条都没验。
+   * 只在这里归一，不碰磁盘上的文件；被检查的也是归一后的副本。 */
+  const LF = (s) => String(s).replace(/\r\n/g, '\n');
+  const src = LF(raw);
+  const from = LF(m.from);
+  const to = LF(m.to);
+  if (!src.includes(from)) { console.log(`FAIL ${m.inv}：变异锚点在 ${m.file} 里找不到（${from.slice(0, 40)}）`); continue; }
 
   // 只改这一份副本，不碰磁盘
-  const mutated = { ...base, [m.file]: src.replace(m.from, m.to) };
+  const normalized = Object.fromEntries(
+    Object.entries(base).map(([k, v]) => [k, typeof v === 'string' ? LF(v) : v]),
+  );
+  const mutated = { ...normalized, [m.file]: src.replace(from, to) };
   const msg = inv.check(mutated);
 
   if (msg) {

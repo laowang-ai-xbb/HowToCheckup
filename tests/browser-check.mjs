@@ -44,6 +44,9 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
+  // 连跑一百多步时，Windows/容器里的 /dev/shm 很容易被截图占满，Chrome 会假死，
+  // 表现为下一步 Runtime.evaluate 超时。这两项是稳定的无功能副作用的启动参数。
+  '--disable-dev-shm-usage', '--disable-background-timer-throttling',
   '--remote-debugging-port=' + PORT, '--user-data-dir=' + (process.env.TMP || '/tmp') + '/wb-cdp-profile',
   'about:blank',
 ], { stdio: 'ignore' });
@@ -57,18 +60,35 @@ const send = (method, params = {}) => {
   const id = ++seq;
   ws.send(JSON.stringify({ id, method, params }));
   return new Promise((res, rej) => {
-    pending.set(id, { res, rej });
-    setTimeout(() => { if (pending.has(id)) { pending.delete(id); rej(new Error('CDP 超时: ' + method)); } }, 20000);
+    // Windows 上 Chrome 在连续几十次导航后会偶发卡顿：20 秒会给"没反应"误判。
+    // 40 秒仍然是有界等待，不会因为放宽就变成假绿。
+    // 响应的定时器必须清掉：一轮验收有上千条 CDP 消息，留着会在 Node 事件循环里堆垃圾。
+    const timer = setTimeout(() => { if (pending.has(id)) { pending.delete(id); rej(new Error('CDP 超时: ' + method)); } }, 40000);
+    pending.set(id, { res, rej, timer });
   });
 };
 
-const evaluate = async (expr) => {
-  const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true });
+/* 只读表达式偶发 CDP 超时（连续导航 + 截图时 Chrome 会假死几秒）。
+ * 只对"不会改页面状态"的表达式重试两次；点击、赋值、派事件绝不重试，
+ * 否则第一次其实已执行、第二次又点一遍，反而制造假结果。 */
+const readOnlyExpr = (expr) =>
+  !/\.click\(|dispatchEvent|\.value\s*=|\.innerText\s*=|\.remove\(|appendChild|setAttribute|insertAdjacentHTML/.test(expr);
+const evaluate = async (expr, attempt = 0) => {
+  let r;
+  try {
+    r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true });
+  } catch (e) {
+    if (readOnlyExpr(expr) && /CDP 超时/.test(String(e.message)) && attempt < 2) {
+      await sleep(500);
+      return evaluate(expr, attempt + 1);
+    }
+    throw e;
+  }
   if (r.exceptionDetails) throw new Error('页面脚本报错: ' + JSON.stringify(r.exceptionDetails.exception?.description || r.exceptionDetails.text));
   return r.result?.value;
 };
 
-const waitFor = async (expr, label, timeout = 8000) => {
+const waitFor = async (expr, label, timeout = 15000) => {
   const t0 = Date.now();
   while (Date.now() - t0 < timeout) {
     if (await evaluate(expr)) return true;
@@ -78,6 +98,8 @@ const waitFor = async (expr, label, timeout = 8000) => {
 };
 
 const goto = async (url) => {
+  // 每次导航只留一个等待者：旧导航的 load 可能永远不来，堆着会拖慢整轮验收
+  listeners.length = 0;
   const loaded = new Promise((res) => { listeners.push({ type: 'Page.loadEventFired', res }); });
   await send('Page.navigate', { url });
   // 只改 hash 的导航（r.html#p=A → r.html#p=B）不会触发 load 事件，
@@ -143,8 +165,9 @@ try {
   ws.onmessage = (ev) => {
     const msg = JSON.parse(ev.data);
     if (msg.id && pending.has(msg.id)) {
-      const { res, rej } = pending.get(msg.id);
+      const { res, rej, timer } = pending.get(msg.id);
       pending.delete(msg.id);
+      clearTimeout(timer);
       if (msg.error) rej(new Error(msg.error.message)); else res(msg.result);
       return;
     }
@@ -473,7 +496,9 @@ try {
     await sleep(150);
   }
 
-  await waitFor(`!!document.querySelector('.actions')`, '结果页');
+  /* 等这一份 52 岁画像真的渲染出来，不能只等 .actions：
+   * 从上一页 hash 切过来时旧结果页节点可能还在，拿到手会是别人的清单。 */
+  await waitFor(`!!document.querySelector('.actions') && /52 岁/.test((document.querySelector('.rwho') || {}).innerText || '')`, '结果页（52 岁画像）');
   /* 留住这一份清单的分享码：下面新增的回补/腰围两轮会把页面导航走，
      后面「分享链接能还原同一份清单」要拿它回到同一份画像。 */
   const firstShareCode = await evaluate(`(() => {
@@ -487,7 +512,7 @@ try {
       r(m ? m[1] : '');
     }, 250));
   })()`);
-  check('能从结果页拿到本份清单的分享码', firstShareCode.length > 20, String(firstShareCode).slice(0, 24));
+  check('能从结果页拿到本份清单的分享码', firstShareCode.length > 20, firstShareCode);
   const result = await evaluate(`(() => {
     const q = (s) => [...document.querySelectorAll(s)];
     return {
@@ -654,7 +679,7 @@ try {
   await waitFor(`/你吸烟吗/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '吸烟题');
   await evaluate(`[...document.querySelectorAll('.opt')].find(b => /不方便说/.test(b.innerText)).click()`);
   for (let i = 0; i < 24; i++) {
-    if (await evaluate(`!!document.querySelector('.actions')`)) break;
+    if (await evaluate(`!!document.querySelector('.actions') && /52 岁/.test((document.querySelector('.rwho') || {}).innerText || '')`)) break;
     await evaluate(`(() => {
       const bodyDunno = document.querySelector('[data-act=body-dunno]');
       const none = document.querySelector('[data-act=none]');
@@ -665,7 +690,7 @@ try {
     })()`);
     await sleep(120);
   }
-  await waitFor(`!!document.querySelector('.actions')`, '问卷直入结果页');
+  await waitFor(`!!document.querySelector('.actions') && /52 岁/.test((document.querySelector('.rwho') || {}).innerText || '')`, '问卷直入结果页');
   const spaGaps = await evaluate(`(() => ({
     n: document.querySelectorAll('.gaps li').length,
     goto: document.querySelectorAll('.gaps [data-act=goto]').length,
@@ -1252,7 +1277,7 @@ try {
      * 这几条只有在真浏览器里才量得出来 —— 显隐是 opacity/visibility 的过渡，
      * 「一左一右不打架」要拿两颗按钮的实际坐标比。 */
     await goto(evHref);
-    await waitFor(`!!document.getElementById('backfab')`, '依据页悬浮回清单');
+    await waitFor(`/\\/e\\.html$/.test(location.pathname) && !!document.getElementById('backfab')`, '依据页悬浮回清单');
     const fabIdle = await evaluate(`(() => {
       const cs = getComputedStyle(document.getElementById('backfab'));
       return { op: cs.opacity, vis: cs.visibility, y: window.scrollY };
@@ -1354,7 +1379,9 @@ try {
   const b64url = (o) => Buffer.from(JSON.stringify(o), 'utf8').toString('base64url');
 
   await goto(BASE + '/r.html#p=' + b64url({ age: 68, gender: 'female', fallHistory: 'yes', memoryConcern: 'yes' }));
-  await waitFor(`!!document.querySelector('#vac')`, '疫苗区');
+  /* 必须等"这份画像"渲染完，不能只等 #vac：hash 导航后旧页可能残留下同样的节点，
+   * 断言一跑就在新旧两页之间，报出 ref 为 null 这种看着像产品 bug 的假红。 */
+  await waitFor(`/68 岁 · 女/.test(document.body.innerText) && !!document.querySelector('#vac') && !!document.querySelector('#ref')`, '68 岁女性结果页');
 
   const old = await evaluate(`(() => {
     const vac = document.querySelector('#vac');

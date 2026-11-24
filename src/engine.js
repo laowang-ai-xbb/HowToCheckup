@@ -12,6 +12,7 @@ import rulesJson from '../data/rules.json' with { type: 'json' };
 import catalogJson from '../data/catalog.json' with { type: 'json' };
 import vaccinesJson from '../data/vaccines.json' with { type: 'json' };
 import { match } from '../scripts/lib/match.mjs';
+import { applySafety } from '../scripts/lib/safety.mjs';
 
 export const rules = rulesJson.rules;
 export const catalogById = new Map(catalogJson.items.map((i) => [i.id, i]));
@@ -68,6 +69,15 @@ export const emptyProfile = () => ({
   weightLoss: '',
   occupationDust: '',
   occupationTypes: [],
+  // P0/P1.0 临床事实：戒烟/暴露年限、症状与衰弱闸。
+  // 默认值全部留空：空 = 没答过，'unknown' = 用户自己说不清，二者不能混。
+  smokingQuitYears: '',
+  secondhandYears: '',
+  occupationYears: '',
+  occupationAgents: [],
+  symptomFlags: [],
+  frailty: '',
+  recentHospital: '',
   province: '',
   familyHistory: [],
   pastHistory: [],
@@ -78,12 +88,14 @@ export const emptyProfile = () => ({
   memoryConcern: '',
 });
 
-/** 跑一遍规则，返回分好档、排好序的结果 */
-export const evaluate = (profile) => {
+/** 老判定：只做规则匹配，不做临床安全后处理。
+ *  保留它是为了回退与对照；页面和对外 API 一律走 evaluate()。 */
+export const evaluateRaw = (profile) => {
   const buckets = { A: [], B: [], C: [] };
   for (const rule of rules) {
     if (!match(rule.when, profile)) continue;
-    buckets[rule.category].push(rule);
+    // 必须复制：规则是模块级共享对象，直接往上打 hidden/shownIds 会污染下一次判定
+    buckets[rule.category].push({ ...rule });
   }
   const sortRule = (a, b) => (a.priority ?? 999) - (b.priority ?? 999);
   buckets.A.sort(sortRule);
@@ -126,6 +138,29 @@ export const evaluate = (profile) => {
   }
   return buckets;
 };
+
+/**
+ * 对外唯一判定入口：老规则匹配 + 临床安全后处理。
+ *
+ * 后处理做三件事（详见 scripts/lib/safety.mjs）：
+ *   ① C 档"不推荐"先抑制 A/B 里的同一项目；
+ *   ② 肺癌 LDCT 按 2025 版严格口径重判，年限不清就标"算不出来"；
+ *   ③ 症状 / 衰弱 / 年龄超范围三道闸，不符合筛查前提的先不下结论。
+ * 想临时回退，把这里改回 `return evaluateRaw(profile)` 即可，其余链路不用动。
+ */
+export const evaluate = (profile) => {
+  const [buckets] = applySafety(profile, evaluateRaw(profile), {
+    canon: (id) => catalogById.get(id)?.sameAs || id,
+  });
+  return buckets;
+};
+
+/** 带诊断信息的判定：结果页用它显示三态标签、回补入口与分歧提示 */
+export const evaluateDetailed = (profile) => applySafety(
+  profile,
+  evaluateRaw(profile),
+  { canon: (id) => catalogById.get(id)?.sameAs || id },
+);
 
 /** 规则对应的项目名（一条规则可能覆盖多个项目）
  *  只用 shownIds：被合并掉的项目不在这里重复出现。 */

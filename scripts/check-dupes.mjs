@@ -88,6 +88,10 @@ for (let n = 0; n < N; n++) {
   // 命中过的规则声明了什么，就该在某处出现（除非被同名别名或上游认领——那也算出现过）
   for (const key of ['A', 'B', 'C']) {
     for (const rule of b[key]) {
+      /* 2026-11-24：临床安全层会出于明确理由隐藏整张卡（LDCT 不够高危、
+       * 症状/衰弱闸、C 档抑制）。这是有意不展示，不是"合并把项目弄丢了"。
+       * 只有没有 suppressedBy 的 hidden（老链路的上游认领）才继续查有没有去处。 */
+      if (rule.hidden && rule.suppressedBy) continue;
       for (const id of rule.catalogIds || []) {
         declared++;
         if (!shownByAny.has(canon(id))) lostCases.push({ p, rule: rule.id, id });

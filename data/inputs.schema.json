@@ -58,6 +58,62 @@
       "label": "吸烟包年数",
       "note": "界面只问'跨没跨过 20 包年'，实际存入的是档位标记 20/10/0，不是真实包年数。规则统一用 >= 20 判定；新增更高阈值前必须先加档，否则规则永不触发（validate.mjs 会报错）。"
     },
+    "smokingQuitYears": {
+      "type": "enum",
+      "values": ["lt5", "ge5", "unknown"],
+      "required": false,
+      "label": "戒烟多久了",
+      "note": "2025 版中国肺癌 LDCT 指南：戒烟≤5 年可继续筛查，超过 5 年建议停止。unknown 是用户自己说不清；没答过留空串。老分享链接没有这题，必须落 unknown，不能当没戒或戒很久。"
+    },
+    "secondhandYears": {
+      "type": "enum",
+      "values": ["ge20", "ge15", "lt15", "unknown"],
+      "required": false,
+      "label": "被动吸烟多少年",
+      "note": "≥20 年可单独构成高危；≥15 年且有一级/二级亲属肺癌、本人也吸烟时构成高危。两个切点都要能从选项里选出来。"
+    },
+    "occupationYears": {
+      "type": "enum",
+      "values": ["ge5", "high1", "lt5", "unknown"],
+      "required": false,
+      "label": "职业致癌物暴露多久",
+      "note": "≥5 年，或高强度≥1 年。lt5 只用于提示口径分歧，不单独构成高危。"
+    },
+    "occupationAgents": {
+      "type": "array",
+      "items": ["radon", "arsenic", "beryllium", "chromium", "asbestos", "chloromethyl", "silica", "coke", "soot", "other"],
+      "required": false,
+      "informationalOnly": true,
+      "label": "具体接触过的职业致癌物",
+      "note": "2025 版指南点名的九类：氡、砷、铍、铬及其化合物、石棉、氯甲醚、二氧化硅、焦炉逸散物、煤烟。普通粉尘不等于明确致癌物；由 rules.json 与临床事实层共同消费。"
+    },
+    "symptomFlags": {
+      "type": "array",
+      "items": ["cough2w", "hemoptysis", "chestPain", "weightLoss", "breathless"],
+      "sentinelValues": ["none"],
+      "required": false,
+      "informationalOnly": true,
+      "label": "筛查前提：是否已有症状",
+      "note": "筛查只适用于无症状人群。勾了任何一项就说明该走门诊诊断路径，不是常规筛查；由临床事实层的症状闸消费。"
+    },
+    "frailty": {
+      "type": "enum",
+      "values": ["yes", "no", "unknown"],
+      "defaultOnly": ["unknown"],
+      "required": false,
+      "informationalOnly": true,
+      "label": "身体状况能否耐受检查与治疗",
+      "note": "对应指南的预期寿命与治疗耐受性前提。筛查获益要几年后才显现，衰弱者先让医生评估。"
+    },
+    "recentHospital": {
+      "type": "enum",
+      "values": ["ge2", "one", "none", "unknown"],
+      "defaultOnly": ["unknown"],
+      "required": false,
+      "informationalOnly": true,
+      "label": "最近一年住院次数",
+      "note": "≥2 次视为需要重新评估筛查获益的红旗；由衰弱闸消费。"
+    },
     "secondhand": {
       "type": "enum",
       "values": [
@@ -69,6 +125,7 @@
       "defaultOnly": [
         "unknown"
       ],
+      "informationalOnly": true,
       "required": false,
       "label": "二手烟暴露",
       "note": "「是/不是」型题只有 declined（不方便说），没有「不确定」——你自己家有没有人抽烟，不存在不知道。unknown 只作引擎默认值（没答过），用户选不出来。"
@@ -171,9 +228,10 @@
       "defaultOnly": [
         "unknown"
       ],
+      "informationalOnly": true,
       "required": false,
       "label": "是否长期接触粉尘/石棉/化工",
-      "note": "同 secondhand，只有 declined。"
+      "note": "同 secondhand，只有 declined。2026-11-24 起它只负责展开「具体致癌物 + 暴露年限」两道追问；是否高危由那两题决定，普通粉尘不构成指南说的职业致癌物暴露。"
     },
     "occupationTypes": {
       "type": "array",
@@ -249,9 +307,10 @@
       "note": "值域同 familyHistory。原 hp 项已删除：与 hpStatus 字段重复且语义冲突（hpStatus 区分阳性/阴性/未知，更精确）。2026-11-20 加 dementia（阿尔茨海默病 / 其他痴呆）。2026-11-21 已定案：它不参与 A/B/C 判定，只触发结果页彩蛋 —— 见 intentionalNoRule（这一条不再算欠账，但校验会每次把它念一遍，防止有人以为漏了）。",
       "intentionalNoRule": {
         "values": [
-          "dementia"
+          "dementia",
+          "chronicLung"
         ],
-        "reason": "R1 已定（2026-11-21 确认）：阿尔茨海默病不改变任何筛查项 —— USPSTF 2020 对无症状人群筛认知障碍给的是 I 级（证据不足）。它只用于触发结果页的彩蛋，所以\"勾了不改变结果\"是设计，不是欠账。"
+        "reason": "R1 已定（2026-11-21 确认）：阿尔茨海默病不改变任何筛查项 —— USPSTF 2020 对无症状人群筛认知障碍给的是 I 级（证据不足）。它只用于触发结果页的彩蛋。慢性肺病（慢阻肺/肺纤维化）2026-11-24 从 LDCT 高危条件里移除：《中国肺癌低剂量CT筛查指南（2025年版）》的高危清单没有把慢阻肺单列，只在'高发地区其他危险因素'里留了口子，不能据旧版给自己升高危。已有慢阻肺的人应到呼吸科随访，不是按健康人筛查清单处理。"
       }
     },
     "hpStatus": {

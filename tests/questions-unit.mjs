@@ -37,8 +37,22 @@ check('80 岁仍然问', SENSORY.every((k) => keysAt(80).has(k)));
 
 // 题量基准：首页不再显示「还剩 N 题」（老板第 10 条要求隐藏），但题量本身仍是设计基准，
 // 60 岁以上多出的三题会直接影响答题时长，所以这两条留着守住。
-check('59 岁不含年龄共 10 题', keysAt(59).size - 1 === 10, String(keysAt(59).size - 1));
+/* 2026-11-24 起 50+ 多一题「有没有症状」——筛查前提闸，不是可跳过的可选项。
+ * 基线由 10 改成 11；这一题不随年龄比较（59/60 都有），下面的差值仍是 +3。 */
+check('59 岁不含年龄共 11 题', keysAt(59).size - 1 === 11, String(keysAt(59).size - 1));
 check('60 岁起多 3 题', keysAt(60).size - keysAt(59).size === 3, String(keysAt(60).size - keysAt(59).size));
+
+/* 筛查前提与暴露年限：只在真正需要时展开，避免一上来多一堆题 */
+check('49 岁不问症状闸', !keysAt(49).has('symptomFlags'));
+check('50 岁问症状闸', keysAt(50).has('symptomFlags'));
+check('69 岁不问衰弱闸', !keysAt(69).has('frailty') && !keysAt(69).has('recentHospital'));
+check('70 岁问衰弱闸', keysAt(70).has('frailty') && keysAt(70).has('recentHospital'));
+const withQuit = new Set(activeQuestions({ ...emptyProfile(), age: 55, gender: 'male', smoking: 'quit' }).map((q) => q.key));
+check('只有戒烟者才问戒烟年限', withQuit.has('smokingQuitYears') && !keysAt(55).has('smokingQuitYears'));
+const withSH = new Set(activeQuestions({ ...emptyProfile(), age: 55, gender: 'male', secondhand: 'yes' }).map((q) => q.key));
+check('只有二手烟"是"才问年限', withSH.has('secondhandYears') && !keysAt(55).has('secondhandYears'));
+const withOcc = new Set(activeQuestions({ ...emptyProfile(), age: 55, gender: 'male', occupationDust: 'yes' }).map((q) => q.key));
+check('只有职业暴露"是"才问种类与年限', withOcc.has('occupationAgents') && withOcc.has('occupationYears'));
 
 const pk = new Set(questions.map((q) => q.key));
 check('三题都在 questions 里', SENSORY.every((k) => pk.has(k)));

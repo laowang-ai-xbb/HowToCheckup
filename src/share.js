@@ -28,6 +28,9 @@ const unb64url = (str) => {
 const KEEP = [
   'age', 'gender', 'pregnant', 'smoking', 'packYears', 'secondhand', 'alcohol',
   'occupationDust', 'familyHistory', 'pastHistory', 'hpStatus',
+  // P0/P1.0：年限决定 LDCT 结论，不带过去会让别人看到一份"换了个结论"的清单
+  'smokingQuitYears', 'secondhandYears', 'occupationYears', 'occupationAgents',
+  'symptomFlags', 'frailty', 'recentHospital',
   'fallHistory', 'gaitDifficulty', 'memoryConcern',
   // 体型（J10 方案 2）：不带过去，收到链接的人看到的清单和原主人不一样 ——
   // 清单本身不受影响，但结果页那张体型卡会缺，看着像坏了一半。

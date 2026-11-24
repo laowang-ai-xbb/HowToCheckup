@@ -6,7 +6,8 @@ import './styles.css';
 /* 结果页与依据页的排版件（老板 2026-11-22 定的那版「结论卡」）。
    这套版式先在设计稿里定稿，再搬进产品；结果页与依据页共用同一份样式文件，改一处要两边一起看。 */
 import './v13.css';
-import { emptyProfile, evaluate, upcoming, ruleLabel, vaccinesFor, vaccineMeta, mutexNotes } from './engine.js';
+import { emptyProfile, evaluate, evaluateDetailed, upcoming, ruleLabel, vaccinesFor, vaccineMeta, mutexNotes } from './engine.js';
+import { gateMessage, vaccinesDeferred } from '../scripts/lib/safety.mjs';
 import { questions, activeQuestions, SHAPE_OPTIONS } from './questions.js';
 import { bmiOf, bodyLevel, cutsFor, bodyOf, BODY_EVIDENCE } from './body.js';
 import { decodeProfile, buildShareUrl, copyText, encodeProfile } from './share.js';
@@ -1260,7 +1261,9 @@ let MUTEX = new Map();
 const renderResult = () => {
   state.view = 'result';
   const p = state.profile;
-  const raw = evaluate(p);
+  /* 安全后处理：C 档先抑制、LDCT 按 2025 版重判、三道筛查前提闸。
+   * upcoming() 用同一份命中集，避免页面上出现"将来会加"与"现在不做"自相矛盾。 */
+  const [raw, safety] = evaluateDetailed(p);
   /* 被上游认领完项目的规则不渲染（同一项不许出现两次）。
    * 判定本身没变：规则还是一条条命中过，只是它的项目已经在上游卡片里说过了。 */
   const b = {
@@ -1340,8 +1343,19 @@ const renderResult = () => {
       .filter((id) => baseIdSet.has(id)),
   );
 
-  const vacs = vaccinesFor(p);
+  // 筛查前提不满足时，疫苗同样不能"到年龄就打"地照发：接种门诊要先看当下身体状况
+  const vacs = vaccinesDeferred(safety) ? [] : vaccinesFor(p);
   const refs = referrals(p);
+  const gateText = gateMessage(safety);
+  const safetyHTML = `
+    ${gateText ? `<div class="safety-gate" role="status">${esc(gateText)}</div>` : ''}
+    ${safety.indeterminate.length ? `<div class="safety-indet" role="status">
+      <b>有几项还算不出来</b>
+      <p>${safety.indeterminate.map((x) => `${esc(x.q)}：${esc(x.fields.join('、'))}。${esc(x.effect)}`).join('；')}</p>
+    </div>` : ''}
+    ${safety.disputes.length ? `<div class="safety-dispute">
+      ${safety.disputes.map((x) => `<p>${esc(x.text)}</p>`).join('')}
+    </div>` : ''}`;
   /* 打印稿用屏幕上的同一份判定结果，不重新算引擎。
    * 顺序按定稿：A 表第一行是基础项目，之后是专项、洁牙；明细另起一页。 */
   state.printData = makePrintData(p, {
@@ -1404,6 +1418,7 @@ const renderResult = () => {
     </header>
 
     ${tocHTML(SECS)}
+    ${safetyHTML}
 
     <div class="docbody">
       <section id="must">

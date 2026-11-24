@@ -253,25 +253,49 @@
         "ageMax": 79,
         "any": [
           {
-            "packYears": {
-              "gte": 20
-            }
+            "all": [
+              { "packYears": { "gte": 20 } },
+              {
+                "any": [
+                  { "smoking": "yes" },
+                  { "all": [{ "smoking": "quit" }, { "smokingQuitYears": "lt5" }] }
+                ]
+              }
+            ]
+          },
+          { "secondhandYears": "ge20" },
+          {
+            "all": [
+              { "occupationYears": { "in": ["ge5", "high1"] } },
+              {
+                "any": [
+                  { "occupationAgents": "radon" },
+                  { "occupationAgents": "arsenic" },
+                  { "occupationAgents": "beryllium" },
+                  { "occupationAgents": "chromium" },
+                  { "occupationAgents": "asbestos" },
+                  { "occupationAgents": "chloromethyl" },
+                  { "occupationAgents": "silica" },
+                  { "occupationAgents": "coke" },
+                  { "occupationAgents": "soot" }
+                ]
+              }
+            ]
           },
           {
-            "secondhand": "yes"
-          },
-          {
-            "occupationDust": "yes"
-          },
-          {
-            "familyHistory": "lung"
-          },
-          {
-            "pastHistory": "chronicLung"
+            "all": [
+              { "familyHistory": "lung" },
+              {
+                "any": [
+                  { "packYears": { "gte": 15 } },
+                  { "secondhandYears": { "in": ["ge20", "ge15"] } }
+                ]
+              }
+            ]
           }
         ]
       },
-      "verdict": "符合高危条件者，每年做一次低剂量螺旋 CT",
+      "verdict": "符合 2025 版中国肺癌筛查指南的高危条件者，每年做一次低剂量螺旋 CT",
       "reason": "低剂量 CT 是唯一被证实能降低肺癌死亡率的筛查手段；胸片对早期肺癌漏诊率极高，不能替代。",
       "whatItFinds": "能发现肺部几毫米的结节和早期肺癌；不能判断结节良恶性，发现结节后需按医生要求随访。",
       "frequency": {
@@ -289,7 +313,7 @@
         {
           "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
           "year": "2025",
-          "point": "肺癌高风险人群：50–74 岁、无肺癌病史，且吸烟≥20 包年（含戒烟不足 15 年）、与吸烟者共同生活或同室工作≥20 年、慢阻肺、职业暴露≥1 年、一级亲属肺癌，符合任一条件",
+          "point": "【宽松口径，仅供分歧说明】肺癌高风险人群：50–74 岁、无肺癌病史，且吸烟≥20 包年（含戒烟不足 15 年）、与吸烟者共同生活或同室工作≥20 年、慢阻肺、职业暴露≥1 年、一级亲属肺癌，符合任一条件。本工具默认采用更严的 2025 版中国肺癌 LDCT 筛查指南；符合这份但不满足默认口径的人，结果页提示「有分歧、去问医生」。",
           "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
           "status": "verified",
           "grade": "指南（卫健委委托）",
@@ -329,7 +353,7 @@
           ]
         }
       ],
-      "notes": "中国《健康体检机构防癌体检指南（2025 年版）》写的是 50–74 岁；USPSTF 写的是 50–80 岁。两者上界不一致，本工具 A 档取到 79 岁——75–79 岁的高危吸烟者仍建议每年一次低剂量 CT，80 岁以上一律进「与医生商量」。",
+      "notes": "2026-11-24 定案：默认口径采用《中国肺癌低剂量 CT 筛查指南（2025 年版）》——50–80 岁；吸烟≥20 包年且现在吸或戒烟≤5 年，或被动吸烟≥20 年，或明确职业致癌物≥5 年（高强度≥1 年），或家族史合并本人吸烟≥15 包年/被动吸烟≥15 年。国家癌症中心《健康体检机构防癌体检指南（2025年版）》与 USPSTF 的戒烟≤15 年、上界 50–74 等更宽松口径，不再用来直接升档，统一在结果页「有分歧、去问医生」里说明。A 档写到 79 岁，80 岁及以上进 B 档按预期寿命个体化判断。",
       "manualCheck": {
         "ages": "指南原文是\"50-80 岁\"；A 档写到 79 岁，是为了给 80 岁以上的承接规则（lung-ldct-80plus）留边界，两条不重叠。"
       }
@@ -348,21 +372,45 @@
         "ageMin": 18,
         "none": [
           {
-            "packYears": {
-              "gte": 20
-            }
+            "all": [
+              { "packYears": { "gte": 20 } },
+              {
+                "any": [
+                  { "smoking": "yes" },
+                  { "all": [{ "smoking": "quit" }, { "smokingQuitYears": "lt5" }] }
+                ]
+              }
+            ]
+          },
+          { "secondhandYears": "ge20" },
+          {
+            "all": [
+              { "occupationYears": { "in": ["ge5", "high1"] } },
+              {
+                "any": [
+                  { "occupationAgents": "radon" },
+                  { "occupationAgents": "arsenic" },
+                  { "occupationAgents": "beryllium" },
+                  { "occupationAgents": "chromium" },
+                  { "occupationAgents": "asbestos" },
+                  { "occupationAgents": "chloromethyl" },
+                  { "occupationAgents": "silica" },
+                  { "occupationAgents": "coke" },
+                  { "occupationAgents": "soot" }
+                ]
+              }
+            ]
           },
           {
-            "secondhand": "yes"
-          },
-          {
-            "occupationDust": "yes"
-          },
-          {
-            "familyHistory": "lung"
-          },
-          {
-            "pastHistory": "chronicLung"
+            "all": [
+              { "familyHistory": "lung" },
+              {
+                "any": [
+                  { "packYears": { "gte": 15 } },
+                  { "secondhandYears": { "in": ["ge20", "ge15"] } }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -813,7 +861,8 @@
           "year": "2022",
           "point": "肝癌高危人群包括 HBV 和/或 HCV 感染、过度饮酒、非酒精性脂肪性肝炎、其他原因所致肝硬化、有肝癌家族史者，尤其是年龄>40 岁男性。建议高危人群至少每隔 6 个月行超声联合 AFP 检查（证据等级 2，推荐 A）。",
           "url": "https://www.nhc.gov.cn/cms-search/downFiles/e8b02c99ab2d4ebea07a4c636eace9c9.pdf",
-          "status": "verified",
+          "status": "stale",
+          "reviewNote": "2026-11-24 巡检标记：仍引 2022 年版肝癌指南。还没有核实到可逐字引用的更新版原文，先不猜；请在发布方目录里确认新版并补齐引文后再改回 verified。",
           "grade": "推荐 A",
           "checkedAt": "2026-11-18",
           "strength": "strong",
@@ -1713,6 +1762,7 @@
         "cancer-other"
       ],
       "when": {
+        "gender": "female",
         "familyHistory": "ovarian"
       },
       "verdict": "第一步不是查 CA125，是遗传咨询 + BRCA 检测；确认携带者后，从 30–35 岁起按高危方案查。",
@@ -1770,7 +1820,8 @@
           "year": "2021",
           "point": "原文（第四章评估）：\"糖尿病视网膜病变、糖尿病肾病和糖尿病神经病变是常见的糖尿病慢性并发症，建议 T2DM 患者每年筛查 1 次这些并发症\"；\"T2DM 患者在诊断时就应做眼底检查和神经病变的检查\"；\"血糖控制良好者每 6 个月测定 1 次 HbA1c，血糖控制不佳或近期调整了治疗方案者 3 个月测定 1 次\"。原文（第十五章糖尿病肾病）：\"T2DM 患者在诊断时即应进行肾脏病变的筛查，以后每年应至少筛查 1 次，包括尿常规、尿白蛋白/肌酐比值（UACR）和血肌酐（计算 eGFR）\"。原文（第十章药物治疗）：\"长期使用二甲双胍者可每年测定 1 次血清维生素 B12 水平，如缺乏应适当补充\"。原文（第十五章视网膜病变）：\"无 DR 者以后至少每 1~2 年复查 1 次，有 DR 者则应增加检查频率\"。载于《中华糖尿病杂志》2021;13(4):315-409，DOI 10.3760/cma.j.cn115791-20210221-00095。",
           "url": "https://qr.csupress.com.cn/uploadFiles/101/5141/pdf/%E4%B8%AD%E5%9B%BD2%E5%9E%8B%E7%B3%96%E5%B0%BF%E7%97%85%E9%98%B2%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882020%E5%B9%B4%E7%89%88%EF%BC%89.pdf",
-          "status": "verified",
+          "status": "stale",
+          "reviewNote": "2026-11-24 巡检标记：仍引《中国2型糖尿病防治指南（2020年版）》。未核实到可逐字引用的新版原文前不猜测更新内容；确认新版后补齐引文再改回 verified。",
           "grade": "指南",
           "checkedAt": "2026-11-18",
           "quotes": [
@@ -1954,21 +2005,45 @@
         "ageMin": 80,
         "any": [
           {
-            "packYears": {
-              "gte": 20
-            }
+            "all": [
+              { "packYears": { "gte": 20 } },
+              {
+                "any": [
+                  { "smoking": "yes" },
+                  { "all": [{ "smoking": "quit" }, { "smokingQuitYears": "lt5" }] }
+                ]
+              }
+            ]
+          },
+          { "secondhandYears": "ge20" },
+          {
+            "all": [
+              { "occupationYears": { "in": ["ge5", "high1"] } },
+              {
+                "any": [
+                  { "occupationAgents": "radon" },
+                  { "occupationAgents": "arsenic" },
+                  { "occupationAgents": "beryllium" },
+                  { "occupationAgents": "chromium" },
+                  { "occupationAgents": "asbestos" },
+                  { "occupationAgents": "chloromethyl" },
+                  { "occupationAgents": "silica" },
+                  { "occupationAgents": "coke" },
+                  { "occupationAgents": "soot" }
+                ]
+              }
+            ]
           },
           {
-            "secondhand": "yes"
-          },
-          {
-            "occupationDust": "yes"
-          },
-          {
-            "familyHistory": "lung"
-          },
-          {
-            "pastHistory": "chronicLung"
+            "all": [
+              { "familyHistory": "lung" },
+              {
+                "any": [
+                  { "packYears": { "gte": 15 } },
+                  { "secondhandYears": { "in": ["ge20", "ge15"] } }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -2344,7 +2419,8 @@
           "point": "中国糖尿病风险评分表包含「糖尿病家族史(父母、同胞、子女)」，用于筛出应进一步检查血糖的人。",
           "quote": "糖尿病家族史(父母、同胞、子女)",
           "url": "https://qr.csupress.com.cn/uploadFiles/101/5141/pdf/%E4%B8%AD%E5%9B%BD2%E5%9E%8B%E7%B3%96%E5%B0%BF%E7%97%85%E9%98%B2%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882020%E5%B9%B4%E7%89%88%EF%BC%89.pdf",
-          "status": "verified",
+          "status": "stale",
+          "reviewNote": "2026-11-24 巡检标记：仍引《中国2型糖尿病防治指南（2020年版）》。未核实到可逐字引用的新版原文前不猜测更新内容；确认新版后补齐引文再改回 verified。",
           "checkedAt": "2026-11-21"
         }
       ],
@@ -2393,7 +2469,8 @@
           "point": "心血管风险评估段落把冠心病家族史与早发心血管疾病家族史列为危险因素。",
           "quote": "肥胖、高血压、血脂紊乱、吸烟、冠心病家族史",
           "url": "https://qr.csupress.com.cn/uploadFiles/101/5141/pdf/%E4%B8%AD%E5%9B%BD2%E5%9E%8B%E7%B3%96%E5%B0%BF%E7%97%85%E9%98%B2%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882020%E5%B9%B4%E7%89%88%EF%BC%89.pdf",
-          "status": "verified",
+          "status": "stale",
+          "reviewNote": "2026-11-24 巡检标记：仍引《中国2型糖尿病防治指南（2020年版）》。未核实到可逐字引用的新版原文前不猜测更新内容；确认新版后补齐引文再改回 verified。",
           "checkedAt": "2026-11-21"
         }
       ],

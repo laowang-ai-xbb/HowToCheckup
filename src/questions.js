@@ -93,11 +93,36 @@ export const questions = [
     ],
   },
   {
+    key: 'smokingQuitYears',
+    kind: 'single',
+    title: '戒了多久了？',
+    hint: '2025 版肺癌筛查指南：戒烟 5 年以内还能继续筛查，超过 5 年建议停止。记不清就选最后一项，我们不会替你猜。',
+    showIf: (p) => p.smoking === 'quit',
+    options: [
+      { v: 'lt5', l: '5 年以内', sub: '含刚好 5 年' },
+      { v: 'ge5', l: '超过 5 年' },
+      { v: 'unknown', l: '记不清' },
+    ],
+  },
+  {
     key: 'secondhand',
     kind: 'single',
     title: '长期吸二手烟吗？',
     hint: '和家人同住、或同室办公，长期暴露在别人吸烟的环境里。',
     options: YN,
+  },
+  {
+    key: 'secondhandYears',
+    kind: 'single',
+    title: '大概吸了多少年二手烟？',
+    hint: '20 年以上是一个关键线；有肺癌家族史时 15 年就有意义。记不清就选最后一项。',
+    showIf: (p) => p.secondhand === 'yes',
+    options: [
+      { v: 'ge20', l: '20 年以上' },
+      { v: 'ge15', l: '15 到 20 年' },
+      { v: 'lt15', l: '不到 15 年' },
+      { v: 'unknown', l: '记不清' },
+    ],
   },
   {
     key: 'alcohol',
@@ -136,6 +161,40 @@ export const questions = [
       { v: 'welding', l: '焊接、金属加工' },
       { v: 'diesel', l: '柴油车、发动机尾气' },
       { v: 'other', l: '其他' },
+    ],
+  },
+  {
+    key: 'occupationAgents',
+    kind: 'multi',
+    title: '具体接触过下面这些吗？',
+    hint: '2025 版肺癌筛查指南点名的职业致癌物。普通粉尘、抽烟的房间里有人吸烟，不算这里的"明确致癌物"。可多选；记不清就选最后一项。',
+    optional: true,
+    showIf: (p) => p.occupationDust === 'yes',
+    noneLabel: '这些都没有',
+    options: [
+      { v: 'radon', l: '氡（矿井、地下室）' },
+      { v: 'arsenic', l: '砷' },
+      { v: 'beryllium', l: '铍' },
+      { v: 'chromium', l: '铬及其化合物' },
+      { v: 'asbestos', l: '石棉' },
+      { v: 'chloromethyl', l: '氯甲醚' },
+      { v: 'silica', l: '二氧化硅（石英砂）' },
+      { v: 'coke', l: '焦炉逸散物' },
+      { v: 'soot', l: '煤烟' },
+      { v: 'other', l: '其他（说不清就算了）' },
+    ],
+  },
+  {
+    key: 'occupationYears',
+    kind: 'single',
+    title: '这类接触有多久了？',
+    hint: '指南口径：明确致癌物累计 5 年以上；如果强度很高，1 年以上就算。',
+    showIf: (p) => p.occupationDust === 'yes',
+    options: [
+      { v: 'ge5', l: '5 年以上' },
+      { v: 'high1', l: '不到 5 年，但强度很高', sub: '比如天天接触、防护很差' },
+      { v: 'lt5', l: '不到 5 年，强度一般' },
+      { v: 'unknown', l: '记不清' },
     ],
   },
   {
@@ -308,6 +367,52 @@ export const questions = [
       { v: 'no', l: '没说过' },
       { v: 'yes', l: '说过' },
       { v: 'unknown', l: '不确定' },
+    ],
+  },
+
+  /* ---- 筛查前提三问 ----
+   * 指南的筛选对象都是"无症状、预期寿命够、能耐受后续检查治疗"的人。
+   * 以前问卷不问这些，等于把本来该去门诊的人按"健康人筛查"清单对待 ——
+   * 这不是少一项的问题，是整份清单用错了场景。只问生活中能答的事实，不下判断。 */
+  {
+    key: 'symptomFlags',
+    kind: 'multi',
+    title: '最近有没有下面这些不舒服？',
+    hint: '筛查是给没有症状的人做的。有这些情况要先去门诊看，不要等体检。可多选。',
+    showIf: (p) => Number(p.age) >= 50,
+    optional: true,
+    noneLabel: '这些都没有',
+    options: [
+      { v: 'cough2w', l: '咳嗽超过两周' },
+      { v: 'hemoptysis', l: '痰里带血' },
+      { v: 'chestPain', l: '胸痛、声音嘶哑' },
+      { v: 'breathless', l: '走几步就喘得厉害' },
+      { v: 'weightLoss', l: '没减肥却瘦了很多' },
+    ],
+  },
+  {
+    key: 'frailty',
+    kind: 'single',
+    title: '平时出门、上厕所这些，需要人帮忙吗？',
+    hint: '筛查的获益要好几年才看得见。身体底子弱的人，先让医生判断值不值，比多做几项检查重要。',
+    showIf: (p) => Number(p.age) >= 70,
+    options: [
+      { v: 'no', l: '不用帮忙' },
+      { v: 'yes', l: '需要人帮忙' },
+      { v: 'unknown', l: '不确定' },
+    ],
+  },
+  {
+    key: 'recentHospital',
+    kind: 'single',
+    title: '最近一年住过院吗？',
+    hint: '住院两次以上，说明身体状况最近变化比较大，筛查方案该由医生重新看一眼。',
+    showIf: (p) => Number(p.age) >= 70,
+    options: [
+      { v: 'none', l: '没有' },
+      { v: 'one', l: '住过一次' },
+      { v: 'ge2', l: '两次或以上' },
+      { v: 'unknown', l: '记不清' },
     ],
   },
 ];

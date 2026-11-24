@@ -20,12 +20,14 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fetchSource, sha, squash } from './lib/source-fetch.mjs';
 import { summarize } from './lib/diff-text.mjs';
+import { newTitles, extractTitles, snapshotOf } from './lib/catalog-watch.mjs';
 
 const INDEX = 'data/snapshots/_index.json';
 const argv = process.argv.slice(2);
 const onlyArg = (argv.find((a) => a.startsWith('--only=')) || '').split('=')[1] || '';
 const jsonArg = (argv.find((a) => a.startsWith('--json')) || '').split('=')[1] || '';
 const failOnChange = argv.includes('--fail-on-change');
+const initWatchBaseline = argv.includes('--init-watch-baseline');
 
 const rulesDoc = JSON.parse(readFileSync('data/rules.json', 'utf8'));
 const rules = rulesDoc.rules || rulesDoc;
@@ -84,6 +86,48 @@ for (const [url, info] of urls) {
   process.stdout.write('.');
 }
 
+/* ---- 第二层：发布方目录页监控 ----
+ * 老巡检只能看到"已引用的那篇变了"；这里补的是"发布方在别处发了一篇新的"。
+ * 第一次跑（或显式 --init-watch-baseline）只写基线不报警，否则每家网站的首页
+ * 都会冒出一堆"新标题"，几周后没人再看 —— 那等于没接。 */
+const WATCH_FILE = 'data/guideline-watch.json';
+const BASE_FILE = 'data/snapshots/_watch-baseline.json';
+const catalog = { sources: 0, newGuidelines: [], broken: [], baselineCreated: false };
+{
+  let watch = null;
+  try { watch = JSON.parse(readFileSync(WATCH_FILE, 'utf8')); } catch { /* 没有配置文件就只跑老巡检 */ }
+  if (watch?.sources?.length) {
+    let base = {};
+    try { base = JSON.parse(readFileSync(BASE_FILE, 'utf8')); } catch { /* 首次运行 */ }
+    const next = {};
+    for (const src of watch.sources) {
+      catalog.sources++;
+      try {
+        const { text } = await fetchSource(src.url);
+        const snap = snapshotOf(src.id, src.url, text, src.keywords);
+        next[src.id] = snap;
+        const hadBase = base[src.id] && Array.isArray(base[src.id].titles);
+        // 基线文件整体不存在才算"首次"：单个栏目第一次抓到就默默补上，
+        // 否则 WAF 常年抓不到的那两家的报错会让每周都误报"首次运行"。
+        if (!hadBase && !existsSync(BASE_FILE)) catalog.baselineCreated = true;
+        if (!initWatchBaseline && hadBase) {
+          for (const title of newTitles(snap.titles, base[src.id].titles) || []) {
+            catalog.newGuidelines.push({ source: src.org, id: src.id, title, url: src.url });
+          }
+        }
+      } catch (e) {
+        catalog.broken.push({ source: src.org, url: src.url, error: String(e.message || e).slice(0, 160) });
+      }
+      process.stdout.write('o');
+    }
+    if (initWatchBaseline || !existsSync(BASE_FILE) || catalog.baselineCreated
+      || Object.keys(base).length < watch.sources.length) {
+      mkdirSync(dirname(BASE_FILE), { recursive: true });
+      writeFileSync(BASE_FILE, JSON.stringify(next, null, 2) + '\n', 'utf8');
+    }
+  }
+}
+
 console.log('\n==== 指南更新巡检 ====');
 console.log(
   `来源 ${urls.size} 个：无变化 ${same.length}，关键数字变了 ${changed.length}，仅版式变化 ${cosmetic.length}，` +
@@ -121,6 +165,19 @@ if (cosmetic.length) {
   console.log(`\n（另有 ${cosmetic.length} 个来源只是版式/段落变了、关键数字没动：${cosmetic.map((c) => new URL(c.url).host).filter((v, i, a) => a.indexOf(v) === i).join('、')}）`);
 }
 
+if (catalog.sources) {
+  console.log(`\n【发布方目录页】监控 ${catalog.sources} 个栏目：`);
+  if (catalog.baselineCreated) console.log('· 首次运行 / 新增栏目：已记录标题基线，本次不报警。');
+  if (catalog.newGuidelines.length) {
+    console.log(`· 新出现 ${catalog.newGuidelines.length} 条线索（此前未覆盖，需人工确认是不是权威依据）：`);
+    for (const g of catalog.newGuidelines.slice(0, 30)) console.log(`  + ${g.source}：${g.title.slice(0, 100)}\n    ${g.url}`);
+  }
+  if (catalog.broken.length) {
+    console.log(`· ${catalog.broken.length} 个栏目没抓到（可能改版或网络问题，不代表依据失效）：`);
+    for (const b of catalog.broken) console.log(`  - ${b.source} ${b.url}：${b.error}`);
+  }
+}
+
 if (!changed.length && !broken.length && !quoteBroken.length) {
   const quoteTotal = [...urls.values()].reduce((n, v) => n + v.quotes.length, 0);
   console.log(`\n全部来源的关键数字都没变，${quoteTotal} 句引用全部仍能在原文里找到。`);
@@ -132,11 +189,13 @@ if (jsonArg) {
     totals: {
       sources: urls.size, same: same.length, changed: changed.length,
       cosmetic: cosmetic.length, broken: broken.length, quoteBroken: quoteBroken.length,
+      catalogSources: catalog.sources, newGuidelines: catalog.newGuidelines.length,
     },
     quoteBroken,
     changed,
     cosmetic,
     broken,
+    catalogWatch: catalog,
   };
   const out = jsonArg === 'true' ? 'reports/updates.json' : jsonArg;
   mkdirSync(dirname(out), { recursive: true });
@@ -146,4 +205,4 @@ if (jsonArg) {
 
 // 只有要动手的三种情况才亮红：引用失效、关键数字变了、来源抓不到。
 // 单纯版式改版不算 —— 否则每周都亮红，人就不看了。
-if (failOnChange && (quoteBroken.length || changed.length || broken.length)) process.exit(2);
+if (failOnChange && (quoteBroken.length || changed.length || broken.length || catalog.newGuidelines.length)) process.exit(2);
