@@ -1347,7 +1347,9 @@ try {
       };
     })()`);
     check('canonical 在且占位符已被真实域名替换',
-      /^https?:\/\/[^/]+\/$/.test(seo.canon || '') && !/__SITE_ORIGIN__/.test(seo.canon || ''), seo.canon);
+      // 注意不能锚定"域名+/就结束"：Pages 子路径部署（/HowToCheckup/）是合法 canonical，
+      // 本地占位域名（无路径）也合法。只要：http(s) 开头、以 / 结尾、占位符已被替换。
+      /^https?:\/.+\/$/.test(seo.canon || '') && !/__SITE_ORIGIN__/.test(seo.canon || ''), seo.canon);
     check('description 带上「免费 / 不收集隐私」搜索词',
       /免费/.test(seo.desc) && /不收集隐私/.test(seo.desc), seo.desc.slice(0, 46));
     check('JSON-LD 是合法 JSON 且含 WebApplication + FAQPage',
