@@ -1263,7 +1263,9 @@ try {
   // 原来这里写的是 check(名字, true)：永远是绿的，只证明"这一行执行到了"。
   // 必须真的断言落点，否则哪天跳转坏了，这条照样通过。
   const legacyPath = await evaluate('location.pathname + location.search');
-  check('旧版 /?p= 链接自动跳到 r.html', /^\/r\.html\?p=/.test(legacyPath), legacyPath);
+  // 部署在子路径（如 GitHub Pages 的 /HowToCheckup/）时，pathname 前面带目录，
+  // 所以不能锚定行首，只锚定落到 /r.html?p= 这个结尾。
+  check('旧版 /?p= 链接自动跳到 r.html', /\/r\.html\?p=/.test(legacyPath), legacyPath);
 
   // 链接被截断（微信里长链接常见）要给出说明，不能白屏。
   // 现在分两种：带参数但解不出来（被截断）、压根没参数（直接进了结果页）。
