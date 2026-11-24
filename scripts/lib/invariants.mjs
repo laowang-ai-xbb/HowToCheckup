@@ -817,6 +817,30 @@ export const INVARIANTS = [
       return null;
     },
   },
+  {
+    id: 'quiz-back-armed',
+    why: '在第一题点「上一题」不能没有反应——但也不能一点就把人踢回首页（老人可能只是手滑）。定稿是三段行为：第一次点出提示并高亮，再点一次才回首页，往前走一步自动解除武装。三段里缺任何一段，按钮要么变哑巴、要么误伤；回首页还必须把年龄性别带出来，不能让人重填。',
+    check(f) {
+      /* main.js 是 CRLF，多行锚点先归一化再比，否则 Windows 工作区必误报 */
+      const main = (f['src/main.js'] || '').replace(/\r\n/g, '\n');
+      const css = f['src/styles.css'] || '';
+      const btn = (main.match(/<button class="back\$\{[^}]*\}"[^>]*>/) || [''])[0];
+      if (!btn) return '找不到「上一题」按钮';
+      if (/disabled/.test(btn)) return '「上一题」按钮被 disabled——第一题点了没反应，正是 2026-11-24 要修的 bug';
+      if (!btn.includes('data-act="back"')) return '「上一题」按钮丢了 data-act="back"';
+      if (!main.includes("if (state.exitArmed) {\n      state.view = 'start';")) return 'back 分支没有"武装后再点回首页"那段（第二次点击只会重复出提示）';
+      if (!main.includes('state.exitArmed = true;')) return 'back 分支没有武装 exitArmed（第一次点不会出提示）';
+      if (!/state\.exitArmed = false; \/\/ 往前走一步/.test(main)) return 'next() 没有解除 exitArmed 武装（出过提示再往前走，行为会串）';
+      const hint = (main.match(/<p class="back-hint"[^>]*>(.*?)<\/p>/) || [''])[1];
+      if (!hint) return '找不到 back-hint 提示条';
+      if (!hint.includes('已经到第一题了，你想放弃长命百岁吗？')) return 'back-hint 提示文案被改动了';
+      if (!hint.includes('<b>再点一次</b>')) return 'back-hint 里丢了「再点一次」的强调';
+      if (!css.includes('.back-hint')) return 'styles.css 没有 .back-hint 样式（提示条会裸奔）';
+      if (!css.includes('.back.on')) return 'styles.css 没有 .back.on 高亮（武装状态看不出来）';
+      if (!/\$\{state\.profile\.age \|\| ''\}/.test(main)) return '首页年龄输入框没有带出已填的年龄（回首页就丢答案）';
+      return null;
+    },
+  },
 ];
 
 /** 跑一遍全部不变量，返回 [{id, ok, msg}] */

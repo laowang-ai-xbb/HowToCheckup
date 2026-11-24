@@ -318,7 +318,8 @@ const renderStart = () => {
       <div class="age-row">
         <input id="ageHome" class="age-input" type="text" inputmode="numeric" pattern="[0-9]*"
                maxlength="4" autocomplete="off" enterkeyhint="go"
-               placeholder="输入你的年龄，譬如：18" aria-label="年龄" />
+               placeholder="输入你的年龄，譬如：18" aria-label="年龄"
+               value="${state.profile.age || ''}" />
         <span class="age-unit">岁</span>
       </div>
 
@@ -593,9 +594,12 @@ const renderQuiz = () => {
     </div>
     <p class="pword">${esc(progressWord(pct, total, state.step))}</p>
     <div class="qmeta">
-      <button class="back" data-act="back" ${state.step === 0 ? 'disabled' : ''}>‹ 上一题</button>
+      <button class="back${state.step === 0 && state.exitArmed ? ' on' : ''}" data-act="back">‹ 上一题</button>
+      ${/* 2026-11-24 老板发现：第一题点「上一题」没反应（原来是 disabled，点了毫无反馈，
+           老人会以为坏了连点好几下）。改成他定的方案：第一次点出提示，再点一次才回首页。答案不丢 —— 回到首页年龄自动带出，重进问卷不用重填。 */ ''}
       <button class="ls" data-act="ls" aria-pressed="${state.bigText}">${state.bigText ? '标准字' : '大字'}</button>
     </div>
+    ${state.step === 0 && state.exitArmed ? '<p class="back-hint" role="status">已经到第一题了，你想放弃长命百岁吗？<b>再点一次</b>回到长命百岁体检项目指南首页。</p>' : ''}
     <h2 class="qtitle" id="qtitle" tabindex="-1">${esc(q.title)}</h2>
     ${q.hint ? `<p class="qhint">${esc(q.kind === 'body' && state.profile.bodyMode === 'shape' ? BODY_SHAPE_HINT : q.hint)}</p>` : ''}
     ${body}
@@ -741,6 +745,7 @@ const submitAge = (inputId = 'age') => {
 };
 
 const next = () => {
+  state.exitArmed = false; // 往前走一步，「再点一次回首页」的武装自动解除
   // 结果页回补不经过这里：它就地展开题卡，答完重算清单，不碰问卷 step。
   state.step += 1;
   state.maxStep = Math.max(state.maxStep, state.step);
@@ -1613,7 +1618,19 @@ app.addEventListener('click', async (ev) => {
   if (act === 'age-next') { submitAge(); return; }
   if (act === 'review-next') { next(); return; }
   if (act === 'back') {
-    if (state.step > 0) { state.step -= 1; render(); }
+    if (state.step > 0) { state.step -= 1; render(); return; }
+    /* 第一题再往回是首页。不直接跳：老人可能只是手滑，直接退出等于把问卷没收。
+       第一次点只给提示，再点一次才回（2026-11-24 老板定的交互与文案）。
+       profile 不清空：回首页年龄性别自动带出，重进问卷不用重填。 */
+    if (state.exitArmed) {
+      state.view = 'start';
+      state.exitArmed = false;
+      render();
+      window.scrollTo(0, 0);
+      return;
+    }
+    state.exitArmed = true;
+    render();
     return;
   }
   if (act === 'pick') {

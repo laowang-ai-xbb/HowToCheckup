@@ -332,6 +332,43 @@ try {
   await waitFor(`document.querySelectorAll('.opt').length > 0 && /吸烟/.test(document.querySelector('.qtitle').innerText)`, '吸烟题');
   await shot('02-quiz-smoke');
 
+  /* 老板 2026-11-24 报的 bug：问卷逆流到第一题（年龄页）点「上一题」没反应。
+   * 定稿交互：第一次点出提示（文案老板逐字定的），再点一次才回首页，年龄带出不重填。
+   * 这三段必须在真浏览器里各走一遍 —— 哪一段缺失都是老人卡住的现场。
+   * 注意：从首页进来 step 直接落在吸烟题，中间隔着性别题，所以要一路退到年龄页。 */
+  for (let i = 0; i < 6 && !(await evaluate(`!!document.querySelector('#age')`)); i++) {
+    await evaluate(`document.querySelector('[data-act=back]').click()`);
+    await sleep(80);
+  }
+  await waitFor(`!!document.querySelector('#age')`, '第一题（年龄页）');
+  const backBtn = await evaluate(`(() => { const b = document.querySelector('[data-act=back]'); return { disabled: b.disabled, cls: b.className }; })()`);
+  check('第一题的「上一题」不再是哑巴（没有 disabled）', backBtn.disabled === false, JSON.stringify(backBtn));
+  await evaluate(`document.querySelector('[data-act=back]').click()`);
+  const backHint = await evaluate(`(() => { const h = document.querySelector('.back-hint'); return h ? h.innerText.replace(/\s+/g, '') : ''; })()`);
+  check('第一次点出提示（老板定的文案逐字在）',
+    backHint.includes('已经到第一题了，你想放弃长命百岁吗？') && backHint.includes('再点一次'), backHint.slice(0, 40));
+  check('武装状态有高亮（老人看得出刚按过）', await evaluate(`!!document.querySelector('.back.on')`));
+  await evaluate(`document.querySelector('[data-act=back]').click()`);
+  await waitFor(`!!document.querySelector('#ageHome')`, '回到首页');
+  const backHome = await evaluate(`(() => ({ home: !!document.querySelector('#ageHome'), quiz: !!document.querySelector('.qtitle') }))()`);
+  check('再点一次真的回到首页（问卷没了，首页在）', backHome.home === true && backHome.quiz === false, JSON.stringify(backHome));
+  check('回首页年龄自动带出（不用重填）', (await evaluate(`document.querySelector('#ageHome').value`)) === '52');
+  // 重进问卷再逆流回第一题：武装必须已解除，不能带着上一轮的提示进来
+  await evaluate(`document.querySelector('[data-act=begin]').click()`);
+  await waitFor(`/吸烟/.test(document.querySelector('.qtitle').innerText)`, '吸烟题');
+  for (let i = 0; i < 6 && !(await evaluate(`!!document.querySelector('#age')`)); i++) {
+    await evaluate(`document.querySelector('[data-act=back]').click()`);
+    await sleep(80);
+  }
+  await waitFor(`!!document.querySelector('#age')`, '又回到年龄页');
+  const backClean = await evaluate(`(() => ({ hint: !!document.querySelector('.back-hint'), on: !!document.querySelector('.back.on') }))()`);
+  check('重进问卷再回看第一题：没有残留提示（武装已解除）', !backClean.hint && !backClean.on, JSON.stringify(backClean));
+  // 原路返回吸烟题（年龄页 → 性别 → 吸烟），让后续流程从原状态继续
+  await evaluate(`(() => { const b = document.querySelector('[data-act=age-next]'); if (b) b.click(); })()`);
+  await waitFor(`!!document.querySelector('.opt')`, '性别题');
+  await evaluate(`[...document.querySelectorAll('.opt')].find(b => b.innerText.includes('男')).click()`);
+  await waitFor(`/吸烟/.test(document.querySelector('.qtitle').innerText)`, '回到吸烟题');
+
   // 问卷里不该再出现性别题（已经在首屏答完）
   check('问卷里没有重复的性别题', !/^性别/.test(await evaluate(`document.querySelector('.qtitle').innerText`)));
 

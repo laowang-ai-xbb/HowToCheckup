@@ -53,3 +53,41 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # 自愈岗：万一 Pages 的 Source 还停在 "Deploy from a branch"，
+  # 每次 push 会同时跑一个旧的"pages build and deployment"（部署源代码根目录），
+  # 和这里的 artifact 部署互相覆盖 —— 谁后完成谁上线，线上就会间歇性白屏。
+  # 这个 job 部署完轮询线上页面：发现源代码特征（引用 /src/main.js）就重触发一次本工作流。
+  # 注意：手动触发（workflow_dispatch）的运行不走这个自愈，避免无限循环。
+  # 根修仍然是：仓库 Settings → Pages → Source 选 "GitHub Actions"。
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    permissions:
+      actions: write # 只有重触发工作流需要它
+    steps:
+      - name: 验证线上是构建产物，被覆盖就自愈重部署
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          URL="https://laowang-ai-xbb.github.io/HowToCheckup/"
+          BAD='/src/main.js'
+          for i in $(seq 1 20); do
+            sleep 15
+            # 带随机参数绕过 CDN 缓存，保证拿到的是刚发布的版本
+            HTML=$(curl -fsSL "$URL?verify=$GITHUB_RUN_ID-$RANDOM" || true)
+            if [ -z "$HTML" ]; then echo "第 $i 次：拉取失败，继续等"; continue; fi
+            if echo "$HTML" | grep -qF "$BAD"; then
+              echo "线上仍是源代码版（Pages 旧部署覆盖了 artifact），触发自愈重部署"
+              gh workflow run deploy-pages.yml --ref main
+              exit 0
+            fi
+            if echo "$HTML" | grep -qE 'assets/main-'; then
+              echo "线上是构建产物，验收通过（第 $i 次轮询）"
+              exit 0
+            fi
+            echo "第 $i 次：既没看到源代码特征也没看到构建产物，继续等"
+          done
+          echo "::warning::轮询 5 分钟仍未确认构建产物上线，请到 Actions 页面手动重跑本工作流"
+          exit 1

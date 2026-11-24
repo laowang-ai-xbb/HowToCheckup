@@ -362,6 +362,13 @@ const MUTATIONS = [
     to: '"repo": "tijian-zhinan"',
     desc: '指纹里记的仓库名和首页链接用的仓库名对不上',
   },
+  {
+    inv: 'quiz-back-armed',
+    file: 'src/main.js',
+    from: 'if (state.exitArmed) {',
+    to: 'if (state.exitArmed === "never") {',
+    desc: '「再点一次回首页」那段被拆了，第二下只会重复出提示',
+  },
 ];
 
 let pass = 0;

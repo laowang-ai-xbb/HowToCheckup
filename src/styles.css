@@ -197,6 +197,15 @@ h1 em { font-style: normal; color: var(--teal); }
 .qmeta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 26px; }
 .back { background: none; border: 0; padding: 8px 0; font: inherit; font-size: 15px; color: var(--ink-3); cursor: pointer; }
 .back:disabled { opacity: .3; }
+/* 第一题的「上一题」不再禁用（2026-11-24）：第一次点出提示，再点一次才回首页。
+   armed 时按钮变青色，让"这一下点到了"看得见 —— 没反馈的按钮老人会连点好几下。 */
+.back.on { color: var(--teal); font-weight: 600; }
+.back-hint {
+  margin: 0 0 22px; padding: 10px 14px;
+  background: var(--teal-soft); border-radius: 10px;
+  font-size: 14.5px; line-height: 1.6; color: var(--ink-2);
+}
+.back-hint b { color: var(--teal); }
 .qcount { font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 
 .qtitle { font-size: 26px; line-height: 1.4; margin: 0 0 10px; font-weight: 700; }
