@@ -211,7 +211,7 @@ try {
   })()`);
   check('首页三个来源都挂了外链', links.n === 3 && links.hrefs.every((h) => /^https?:\/\//.test(h)), links.hrefs.join(' '));
   check('首页有「站在谁的肩膀上」', /站在谁的肩膀上/.test(links.text), links.text.slice(0, 20));
-  check('致敬模块里点了模型名', /DeepSeek/.test(links.text) && /混元/.test(links.text));
+  check('致敬模块里点了模型名', /DeepSeek/.test(links.text) && /混元/.test(links.text) && /baichuan/.test(links.text));
   /* 老板 2026-11-20 改的名：杨圣 → 天才杨，小马哥 → 天才姚。
      名字这种事最容易在下一次改文案时被"顺手改回去"，所以钉住两头：
      新名字必须在，旧名字必须不在。 */
