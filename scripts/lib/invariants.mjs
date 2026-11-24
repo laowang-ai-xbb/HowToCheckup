@@ -918,6 +918,20 @@ export const INVARIANTS = [
       return null;
     },
   },
+  {
+    id: 'body-detail-harmony',
+    why: '老板 2026-11-24 走查体型卡：①折叠标题「这两个数怎么算的」指代悬空——腰围只有超标时才出现在卡上，页面常常只有一个数，改定稿「BMI 这个数是怎么算的 · 界值哪来的」（BMI 大写与卡内写法一致，保留「·」分隔）；②展开内容用全局 .detail 的 15.5px，比卡内正文（13.5px）还大一号，不和谐。修正：作用域限定 .bodyc .detail 对齐 13.5px（大字 16px），不动全局——.detail 还被打印稿用着。',
+    check(f) {
+      const main = (f['src/main.js'] || '').replace(/\r\n/g, '\n');
+      const css = (f['src/styles.css'] || '').replace(/\r\n/g, '\n');
+      if (!/<summary>BMI 这个数是怎么算的 · 界值哪来的<\/summary>/.test(main)) return '体型折叠标题不是定稿文案';
+      if (main.includes('这两个数怎么算的')) return '旧标题「这两个数怎么算的」又回来了';
+      if (!/\.bodyc \.detail \{ padding: 4px 0 0; font-size: 13\.5px; line-height: 1\.7; \}/.test(css)) return '.bodyc .detail 没有对齐 13.5px（展开文字又会比卡内正文大一号）';
+      if (!/html\[data-ls="big"\] \.bodyc \.detail \{ font-size: 16px; \}/.test(css)) return '大字模式下展开文字没有跟着调整';
+      if (!/\.bodyc \.detail p \{ margin: 0 0 8px; \}/.test(css)) return '展开段落间距没有收紧';
+      return null;
+    },
+  },
 ];
 
 /** 跑一遍全部不变量，返回 [{id, ok, msg}] */

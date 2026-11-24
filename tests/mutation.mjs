@@ -397,6 +397,13 @@ const MUTATIONS = [
     to: 'bottom > -1 : true;',
     desc: '溢出闸门被拆，放得下的题也会弹出引导（违背老板附加条件）',
   },
+  {
+    inv: 'body-detail-harmony',
+    file: 'src/styles.css',
+    from: '.bodyc .detail { padding: 4px 0 0; font-size: 13.5px; line-height: 1.7; }',
+    to: '.bodyc .detail { padding: 4px 0 0; font-size: 15.5px; line-height: 1.7; }',
+    desc: '展开文字又回到 15.5px，比卡内正文大一号（老板指出的不和谐）',
+  },
 ];
 
 let pass = 0;

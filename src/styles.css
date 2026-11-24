@@ -853,6 +853,12 @@ summary:active, .linkish:active, .skip:active, .back:active { opacity: .55; }
 .bsay.warn { color: var(--ink); }
 .bfine { font-size: 12.5px; color: var(--ink-3); line-height: 1.7; margin: 10px 0 12px; }
 .bodyc details { margin-bottom: 8px; }
+/* 展开的「怎么算的」解释文字：跟卡内正文（.btxt 13.5px）和全页模块正文（14px 档）对齐。
+   原来直接用全局 .detail 的 15.5px，比卡内正文还大一号 —— 老板 2026-11-24 指出不和谐。
+   作用域限定 .bodyc：全局 .detail 还被打印稿用着，别误伤。 */
+.bodyc .detail { padding: 4px 0 0; font-size: 13.5px; line-height: 1.7; }
+.bodyc .detail p { margin: 0 0 8px; }
+html[data-ls="big"] .bodyc .detail { font-size: 16px; }
 .bodyc summary { font-size: 13.5px; color: var(--teal); cursor: pointer; padding: 6px 0; }
 
 /* 按 BMI 档位给的「该做什么」：一行一件，标题重、解释轻。

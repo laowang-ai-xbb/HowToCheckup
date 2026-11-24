@@ -44,6 +44,8 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
+  /* 8GB 机器上和老板在用的前台软件抢资源时，防止无头页被系统节流雪上加霜（2026-11-24） */
+  '--disable-background-timer-throttling', '--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding',
   '--remote-debugging-port=' + PORT, '--user-data-dir=' + (process.env.TMP || '/tmp') + '/wb-cdp-profile',
   'about:blank',
 ], { stdio: 'ignore' });
@@ -68,7 +70,8 @@ const evaluate = async (expr) => {
   return r.result?.value;
 };
 
-const waitFor = async (expr, label, timeout = 8000) => {
+/* 8GB 小机器内存一挤，无头 Chrome 渲染结果页会超 8 秒 —— 2026-11-24 连续三次在不同点位超时后放宽到 20 秒；断言本身不动，只是等页余量 */
+const waitFor = async (expr, label, timeout = 20000) => {
   const t0 = Date.now();
   while (Date.now() - t0 < timeout) {
     if (await evaluate(expr)) return true;
@@ -556,18 +559,35 @@ try {
    * 原来这里守的是"写明不参与判定"那句，老板说没价值已删 —— 别再改回去。 */
   const bodyCard = await evaluate(`(() => {
     const el = document.querySelector('.bodyc');
+    if (!el) return { has: false };
+    const d = el.querySelector('details');
+    if (d) d.open = true;
+    const inner = el.querySelector('.bodyc .detail');
+    const cs = inner ? getComputedStyle(inner) : null;
+    const btxt = el.querySelector('.btxt');
     return {
-      has: !!el,
-      txt: el ? el.textContent : '',
-      adv: el ? el.querySelectorAll('.badv li').length : 0,
-      ev: el ? !!el.querySelector('.evbox') : false,
+      has: true,
+      txt: el.textContent,
+      adv: el.querySelectorAll('.badv li').length,
+      ev: !!el.querySelector('.evbox'),
       old: document.body.textContent.includes('体型不参与上面清单的判定'),
+      /* 卡内 evbox 也有自己的 <summary>（"依据…"）且排在前面，querySelector 拿第一个会抓错 —— 必须挑体型卡自己的标题 */
+      summary: Array.from(el.querySelectorAll('summary')).map((s) => s.textContent || '').find((t) => /BMI 这个数|这两个数/.test(t)) || '',
+      oldSummary: el.textContent.includes('这两个数怎么算的'),
+      detailFs: cs ? parseFloat(cs.fontSize) : 0,
+      btxtFs: btxt ? parseFloat(getComputedStyle(btxt).fontSize) : 0,
     };
   })()`);
   check('结果页出体型卡：BMI、档位、分档建议、依据齐全',
     bodyCard.has && /BMI 27\.7/.test(bodyCard.txt) && /偏高/.test(bodyCard.txt)
       && bodyCard.adv >= 2 && bodyCard.ev && !bodyCard.old,
     JSON.stringify({ adv: bodyCard.adv, ev: bodyCard.ev, old: bodyCard.old }));
+  /* 老板 2026-11-24：折叠标题指代要清楚（"这两个数"在腰围不超标时指代悬空），
+     且展开内容字号要跟卡内正文一致 —— 两处都钉死，防下次改版顺手改回去。 */
+  check('体型折叠标题是定稿文案（BMI 指代清楚）',
+    /BMI 这个数是怎么算的 · 界值哪来的/.test(bodyCard.summary || '') && !bodyCard.oldSummary, bodyCard.summary);
+  check('展开内容字号与卡内正文一致（13.5px，不再突兀地大一号）',
+    bodyCard.detailFs === 13.5 && bodyCard.btxtFs === 13.5, `detail ${bodyCard.detailFs}px / btxt ${bodyCard.btxtFs}px`);
   check('52 岁吸烟男性命中肺癌 CT', result.a.some((n) => /CT/.test(n)), result.a.join(' | '));
   check('结果页带免责声明', result.hasDisclaimer);
   /* 回到顶部两个入口（R9 第 4 条）：浮动那颗要带字、页尾还要有一颗。
