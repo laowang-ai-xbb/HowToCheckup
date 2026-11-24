@@ -1,0 +1,393 @@
+{
+  "https://www.cma.org.cn": {
+    "file": "data/snapshots/0cc01b5b99.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "1405a8ef327421690b469075f4f7a8b5e0684ea11bcaf9c27b911484bd45ec3d",
+    "chars": 4185,
+    "contentType": "text/html; charset=UTF-8",
+    "usedBy": [
+      "base-package",
+      "tumor-markers-panel",
+      "base-package-male",
+      "base-package-female",
+      "echo-routine",
+      "head-ct-routine"
+    ]
+  },
+  "https://www.chinancpcn.org.cn": {
+    "file": "data/snapshots/01036a429e.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "b22dfd243d0b862da1fbe1520875864f301f70bcc577676c8c1e9b88c16848cd",
+    "chars": 34,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "colorectal-screening",
+      "lung-ldct-high-risk",
+      "hp-test-once",
+      "colorectal-screening-75plus"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening": {
+    "file": "data/snapshots/4c27e65ebf.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "228b3fad5239f80b03f301eb6a18da21e895d16458b06a860eb7a5865f7e7b35",
+    "chars": 80595,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "colorectal-screening",
+      "colorectal-screening-75plus"
+    ]
+  },
+  "https://www.nhc.gov.cn": {
+    "file": null,
+    "fetchedAt": "2026-11-18",
+    "error": "HTTP 412",
+    "usedBy": [
+      "lung-ldct-high-risk",
+      "tumor-markers-panel"
+    ]
+  },
+  "https://pmc.ncbi.nlm.nih.gov/articles/PMC12972581/": {
+    "file": "data/snapshots/ab148f3a6c.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "011e8e2487c726685c8b8307e82dbb8bb0139ef70cf9928fb3c96f3dc471913b",
+    "chars": 24313,
+    "contentType": "application/xml",
+    "usedBy": [
+      "lung-ldct-high-risk",
+      "lung-ldct-not-high-risk",
+      "lung-ldct-80plus"
+    ]
+  },
+  "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx": {
+    "file": "data/snapshots/1da1c06131.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "b1e7362ce0dd50cc1e0c82685c0a76a2de8d0180d6ea1fcbacf7595e76b903ba",
+    "chars": 41226,
+    "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "usedBy": [
+      "colorectal-screening",
+      "lung-ldct-high-risk",
+      "stomach-gastroscopy-high-risk",
+      "stomach-gastroscopy-average-risk",
+      "breast-cancer-screening",
+      "breast-cancer-screening-high-risk",
+      "cervical-cancer-screening",
+      "liver-cancer-screening",
+      "hp-test-once",
+      "psa-50-69",
+      "colorectal-screening-75plus",
+      "stomach-gastroscopy-75plus",
+      "cervical-cancer-65plus",
+      "psa-family-45"
+    ]
+  },
+  "https://pmc.ncbi.nlm.nih.gov/articles/PMC8116006/": {
+    "file": "data/snapshots/aa9d746589.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "632b32dfd99466b01a8e76eb84d7637721dce97bbe1d6149031e2a9825f6607b",
+    "chars": 26850,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "breast-cancer-screening",
+      "breast-cancer-screening-high-risk"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/breast-cancer-screening": {
+    "file": "data/snapshots/9dca88a2f3.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "292053605034192e11ddd06e1da7fb021823c581f89d86871968bb5ba01f4553",
+    "chars": 97384,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "breast-cancer-screening",
+      "breast-cancer-75plus"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/brca-related-cancer-risk-assessment-genetic-counseling-and-genetic-testing": {
+    "file": "data/snapshots/9e262e4c78.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "486401b55bfeb2c18ff32bbe1ce7515465ee742ca2b5384f05489053b3423507",
+    "chars": 86756,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "breast-cancer-screening-high-risk"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/cervical-cancer-screening": {
+    "file": "data/snapshots/45a82b8f53.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "e840fa92004f54ee945e3a1547feb779cc0dfe2a9a8590b0eaa7e2a2f50638eb",
+    "chars": 78744,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "cervical-cancer-screening",
+      "cervical-cancer-65plus"
+    ]
+  },
+  "https://www.nhc.gov.cn/cms-search/downFiles/e8b02c99ab2d4ebea07a4c636eace9c9.pdf": {
+    "file": "data/snapshots/a82bcdd05c.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "581bd5ffe2ca99b855da95232d9ee33749e81c12b68540c2f35fc3c53d80cbfb",
+    "chars": 115358,
+    "contentType": "application/pdf",
+    "usedBy": [
+      "liver-cancer-screening"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/osteoporosis-screening": {
+    "file": "data/snapshots/2636d37e68.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "6034a267a1de3fe10b270c1ef4f7724b54e08fca8ea2f05d37a527793a10f683",
+    "chars": 76777,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "bone-density-65f"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/lung-cancer-screening": {
+    "file": "data/snapshots/36b8484b01.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "19970e61d734f7b6354ade261bc91c9acfb4d27089ea83c67ae6da3393535a95",
+    "chars": 65202,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "lung-ldct-high-risk",
+      "chest-xray-routine"
+    ]
+  },
+  "https://www.cma.org.cn/art/2023/6/28/art_4584_51517.html": {
+    "file": "data/snapshots/7e59fbf112.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "854f6a8104971a75859356669a0a28c02296975e752e5e9a1d4958763924bb2b",
+    "chars": 2687,
+    "contentType": "text/html; charset=UTF-8",
+    "usedBy": [
+      "thyroid-us-screening",
+      "thyroid-followup"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/thyroid-cancer-screening": {
+    "file": "data/snapshots/68d337d374.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "d7101234b40dd9ca1205382d5e0a57a1e90800f0636ea19632cee415abde6f0c",
+    "chars": 35508,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "thyroid-us-screening"
+    ]
+  },
+  "https://choosingwisely.org": {
+    "file": "data/snapshots/9274381938.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "2f306354ef81c70daf294da12d0506611872287e7e1582eda35d2ce6859fbf11",
+    "chars": 8998,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "pet-ct-screening"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/prostate-cancer-screening": {
+    "file": "data/snapshots/87b50b0027.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "7f6581b93ef443f5e37156bf74914008e757a651032294acffb5ecf580f5446d",
+    "chars": 81701,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "psa-70plus",
+      "psa-50-69",
+      "psa-family-45"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/carotid-artery-stenosis-screening": {
+    "file": "data/snapshots/dc56ca0f20.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "0b64881befe4c3ac667c543154fa61bde56ef60f2376c1ea68e7409344f9b2df",
+    "chars": 38740,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "carotid-us-screening"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/abdominal-aortic-aneurysm-screening": {
+    "file": "data/snapshots/d2b8109150.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "292f39655c717985eb4ed879f3d6fcd87d079d80f0d3a547fd9fa04b59acf687",
+    "chars": 52138,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "aaa-screening",
+      "aaa-screening-75plus"
+    ]
+  },
+  "https://grxjbzlkzzx.whsjytyy.com/upload/20241219/67641695ecd9b.pdf": {
+    "file": "data/snapshots/4bad1d3d4a.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "f07d4f6e02eeb59b533f8341a534768d983bdcb4ac5be88ace598098d54e94d4",
+    "chars": 80527,
+    "contentType": "application/pdf",
+    "usedBy": [
+      "hepatitis-bc-screening"
+    ]
+  },
+  "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/thyroid-dysfunction-screening": {
+    "file": "data/snapshots/cc4abe511d.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "48e4078970df7504daa6188bcfaffff481ded342449a76626c736f163a419eb6",
+    "chars": 63242,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "tsh-screening"
+    ]
+  },
+  "https://rs.yiigle.com/cmaid/1021395": {
+    "file": "data/snapshots/8a2dfbeef0.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "75df32b7cbba6bf6e65cdb0e30e781a40c2a69db58302b58845cc872274c5532",
+    "chars": 1559,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "pregnancy-guard"
+    ]
+  },
+  "http://www.nhc.gov.cn/cms-search/downFiles/0feefc11d98840898b136ac3d9a4ee20.pdf": {
+    "file": "data/snapshots/eea93c72d4.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "c01f0c284d180b3e4b54ea07f5b0e28f8c69b2c1eda03617409e49b48910a9da",
+    "chars": 16993,
+    "contentType": "application/pdf",
+    "usedBy": [
+      "ovarian-family-history",
+      "cancer-survivor-followup"
+    ]
+  },
+  "https://qr.csupress.com.cn/uploadFiles/101/5141/pdf/%E4%B8%AD%E5%9B%BD2%E5%9E%8B%E7%B3%96%E5%B0%BF%E7%97%85%E9%98%B2%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882020%E5%B9%B4%E7%89%88%EF%BC%89.pdf": {
+    "file": "data/snapshots/9764a3d1c7.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "ac0655eeb96f523ebf2e6b952dcbb13e1246224b823b565b435d78597f3e0a11",
+    "chars": 295048,
+    "contentType": "application/pdf",
+    "usedBy": [
+      "diabetes-followup"
+    ]
+  },
+  "https://www.yantai.gov.cn/cms_files/jcms1/web1/site/attach/0/026946c3e45b43b8a20788d4d63d3e2d.pdf": {
+    "file": "data/snapshots/e912b5c537.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "55cc1a8a4cb614d0c425904344b61a277aef515fd204ec02b0059b4d9d7e44ba",
+    "chars": 333011,
+    "contentType": "application/pdf",
+    "usedBy": [
+      "hypertension-followup"
+    ]
+  },
+  "https://csc.cma.org.cn/art/2020/12/25/art_619_36880.html": {
+    "file": "data/snapshots/58f28010fb.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "c2fb0753afbe41b002c769d7b9754fe2db17ab06d695034e2cf1ce0f9b62d3f7",
+    "chars": 39686,
+    "contentType": "text/html; charset=UTF-8",
+    "usedBy": [
+      "cvd-followup"
+    ]
+  },
+  "https://www.nhc.gov.cn/yzygj/c100068/202204/0c1f7d3aca0545abbeb02030ce255930.shtml": {
+    "file": null,
+    "fetchedAt": "2026-11-18",
+    "error": "Chrome 渲染后正文过短（0 字），可能是验证页",
+    "usedBy": [
+      "cancer-survivor-followup"
+    ]
+  },
+  "http://szsyyxh.org/ziye/main2/files/%E9%99%84%E4%BB%B63%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%A0%87%E5%87%86.pdf": {
+    "file": "data/snapshots/d6fa68b808.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "b0969ef8d23c3e2152d94f72e8d123698ea437b8b5fc27da0cf62ffee66e8691",
+    "chars": 14873,
+    "contentType": "application/pdf",
+    "usedBy": [
+      "base-package",
+      "chest-xray-routine",
+      "tumor-markers-panel",
+      "base-package-male",
+      "base-package-female",
+      "echo-routine",
+      "head-ct-routine"
+    ]
+  },
+  "https://pmc.ncbi.nlm.nih.gov/articles/PMC5313457/": {
+    "file": "data/snapshots/b0d85f26ce.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "f1d2e142ea6ae05599173fd3025049533f5e1f45b93a3db5377cf830f607f9f5",
+    "chars": 34355,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "pet-ct-screening"
+    ]
+  },
+  "https://www.zjtz.gov.cn/art/2024/9/13/art_1229797451_59096737.html": {
+    "file": "data/snapshots/33380c2619.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "60fe7f8fc1532190c9dde0775704ee64497ef6e4e88ff05f4da9edb513347606",
+    "chars": 1170,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "colorectal-screening",
+      "tumor-markers-panel"
+    ]
+  },
+  "https://www.gzfezx.com/news/show/4810.html": {
+    "file": "data/snapshots/ad24fb281d.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "c7742e47d1d92c25beef3bb7a36b17cba11a51a3862b0bdd1aaf17c601c9af7f",
+    "chars": 3185,
+    "contentType": "text/html; charset=utf-8",
+    "usedBy": [
+      "pregnancy-guard"
+    ]
+  },
+  "https://cmab.yiigle.com/uploads/guide_html/5811.html": {
+    "file": "data/snapshots/6438e4690f.txt",
+    "fetchedAt": "2026-11-18",
+    "sha256": "cd5cedf94c11d18c7aaa8e83792e27af623cb49eb6e25da90f81e9c1f1d67824",
+    "chars": 18280,
+    "contentType": "text/html",
+    "usedBy": [
+      "base-package",
+      "chest-xray-routine",
+      "base-package-male",
+      "base-package-female",
+      "echo-routine",
+      "head-ct-routine",
+      "tsh-screening"
+    ]
+  },
+  "https://www.nhc.gov.cn/wjw/jkshfs/200909/058b3e9ade454a3f9f8bfe807ae78aaa.shtml": {
+    "file": null,
+    "fetchedAt": "2026-11-21",
+    "error": "Chrome 渲染后正文过短（0 字），可能是验证页",
+    "usedBy": [
+      "oral-scaling"
+    ]
+  },
+  "https://www.nhc.gov.cn/cmsresources/mohjbyfkzj/cmsrsdocument/doc6117.doc": {
+    "file": "data/snapshots/bfd9894764.txt",
+    "fetchedAt": "2026-11-21",
+    "sha256": "76410f5c0bcf7ff77786eaf06c18be308c60b1957b3ec987b9c75f74aad2717d",
+    "chars": 18317,
+    "contentType": "application/msword",
+    "usedBy": [
+      "oral-scaling"
+    ]
+  },
+  "https://www.ahhn.gov.cn/group2/M00/46/52/CtG0ZGW7nqyAY-Z6ACaIWsFywFg261.pdf": {
+    "file": "data/snapshots/3f90d4bcc4.txt",
+    "fetchedAt": "2026-11-22",
+    "sha256": "e9ba0b43bac13a1ad653bbcaa397bef5af892d32406d689633f1906713e47c7d",
+    "chars": 40731,
+    "contentType": "application/pdf",
+    "usedBy": [
+      "where:国家疾控局、国家卫生健康"
+    ]
+  }
+}

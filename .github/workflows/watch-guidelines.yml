@@ -1,0 +1,125 @@
+name: 指南更新巡检
+
+# 产品的前提是"依据可溯源"。但指南会改，链接会烂 —— 没人盯着，这个前提就会悄悄失效。
+# 这个任务每周把 62 条依据的来源全部重抓一遍，核两件事：
+#   1. 我们引的那句话还在不在（引用失效 = 结论可能已经错了，最优先）
+#   2. 原文有没有实质变化（带数字的新句子尤其要看：年龄、间隔一变，结论就要跟着改）
+# 有问题就开 issue，没问题就安静待着。
+#
+# 成本：公开仓库的 Actions 免费。一周一次，几分钟。
+
+on:
+  schedule:
+    # 每周一 09:00（北京时间）。GitHub 用 UTC，所以是周一 01:00。
+    - cron: '0 1 * * 1'
+  workflow_dispatch: # 也可以在 Actions 页面手动点一下
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: guideline-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      # 顺序有讲究：先验自己，再验外部。
+      # 反过来的话，rules.json 自己的错误会被"外部有变化"的告警盖住，越查越乱。
+      - name: 校验规则与引用
+        run: npm run validate
+
+      # 巡检的判定逻辑要是错了，"一切正常"这四个字就是假的。
+      # 这一步不联网，跑几十毫秒，专门盯判太松（噪声）和判太严（漏报）。
+      - name: 巡检判定自测
+        run: npm run test:diff
+
+      # 有些站点对脚本只回空壳页/403（卫健委 412、PMC 弹验证码），
+      # 用真浏览器渲染才拿得到正文。巡检既然要盯这些站点，就得给 Chrome。
+      - id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      # 部分指南是 PDF / 伪装成 PDF 的 docx，解析要 pypdf（加密 PDF 还要 cryptography）
+      - name: 装 PDF 解析依赖
+        run: pip install --quiet pypdf cryptography
+
+      - name: 巡检
+        id: check
+        shell: bash
+        env:
+          CHROME: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          set -o pipefail
+          mkdir -p reports
+          node scripts/check-updates.mjs --json=reports/updates.json --fail-on-change 2>&1 | tee reports/updates.txt
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0   # 不在这里失败，留给后面按需开 issue
+
+      - name: 写进任务摘要
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo '## 指南更新巡检'
+            echo ''
+            echo '```'
+            sed -n '1,120p' reports/updates.txt 2>/dev/null || echo '（没有输出）'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: guideline-updates
+          path: |
+            reports/updates.json
+            reports/updates.txt
+          retention-days: 90
+
+      # 只在"真的有事"时打扰人。已经有同类 issue 就追加评论，避免每周堆一个新的。
+      - name: 有变化就开 issue
+        if: steps.check.outputs.exit_code == '2'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          title='指南更新巡检：有来源发生变化，需要复核'
+          existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')
+
+          {
+            echo "巡检时间：$(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo ''
+            echo '```'
+            sed -n '1,120p' reports/updates.txt
+            echo '```'
+            echo ''
+            echo '---'
+            echo '处理步骤：'
+            echo '1. 先看「引用失效」那一段 —— 我们引的原句找不到了，说明指南正文改写过，结论可能已经错了；'
+            echo '2. 再看「有变化」里带数字的新句子 —— 年龄、间隔、频次一变，verdict 要跟着改；'
+            echo '3. 确认是真实更新后，`node scripts/snapshot-sources.mjs --force` 重抓快照，再跑 `npm run validate` 看引用是否还命中；'
+            echo '4. 纯网页改版（加了推荐位、时间戳）不用动数据，在快照里重洗一遍即可。'
+          } > /tmp/issue-body.md
+
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file /tmp/issue-body.md
+          else
+            gh issue create --title "$title" --body-file /tmp/issue-body.md
+          fi

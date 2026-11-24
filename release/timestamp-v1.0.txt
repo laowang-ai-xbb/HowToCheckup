@@ -1,0 +1,13 @@
+长命百岁体检项目指南  v1.0
+
+tag object: dbe7b27e712191433ed3c7bfcc9885a6b253c002
+commit:     df64926442bbc7118f2e2d3d50e53b280b5c76ec
+tree:       7a462a28e50696ea84351df7d70376766b238bc1
+files:      201
+license:    MIT
+author:     老王AI瞎bb (https://github.com/laowang-ai-xbb)
+recorded_at: 2026-11-24T01:13:31.988+08:00
+
+这份记录已提交给两个 OpenTimestamps 日历（比特币区块链）。
+用途：与时间无关地证明「上面这个 commit 在那之前就已经存在」—— 
+将来若有人声称先写了同样的代码，这份记录就是先后顺序的依据。

@@ -1,0 +1,899 @@
+Clinical practice guidelines for diagnosis and treatment of invasive breast cancer: Chinese Society of Breast Surgery (CSBrS) practice guidelines 2021 - PMC
+
+ Skip to main content
+
+ An official website of the United States government
+
+ Here's how you know 
+
+ Here's how you know 
+
+ Official websites use .gov 
+
+ A
+ .gov website belongs to an official
+ government organization in the United States.
+
+ Secure .gov websites use HTTPS 
+
+ A lock (
+
+ Lock 
+ 
+ Locked padlock icon
+
+ ) or https:// means you've safely
+ connected to the .gov website. Share sensitive
+ information only on official, secure websites.
+
+ Search
+
+ Log in 
+
+ Dashboard
+
+ Publications
+
+ Account settings
+
+ Log out
+
+ Search…
+
+ Search NCBI
+
+ Primary site navigation
+
+ Search
+
+ Logged in as:
+
+ Dashboard
+
+ Publications
+
+ Account settings
+
+ Log in
+
+ Search PMC Full-Text Archive 
+
+ Search in PMC 
+
+ Journal List
+
+ User Guide
+
+ PERMALINK
+
+ Copy 
+
+ As a library, NLM provides access to scientific literature. Inclusion in an NLM database does not imply endorsement of, or agreement with,
+ the contents by NLM or the National Institutes of Health.
+
+ Learn more:
+ PMC Disclaimer 
+ |
+ 
+ PMC Copyright Notice
+
+ Chin Med J (Engl) 
+. 2021 Apr 28;134(9):1009–1013. doi: 10.1097/CM9.0000000000001498 
+
+ Search in PMC 
+
+ Search in PubMed 
+
+ View in NLM Catalog 
+
+ Add to search 
+
+ Clinical practice guidelines for diagnosis and treatment of invasive breast cancer: Chinese Society of Breast Surgery (CSBrS) practice guidelines 2021
+ 
+ Miao Liu 
+ Miao Liu 
+
+ 1 Department of Breast Center, Peking University People's Hospital, Beijing 100044, China.
+
+ Find articles by Miao Liu 
+
+ 1 , Chao-Bin Wang 
+ Chao-Bin Wang 
+
+ 1 Department of Breast Center, Peking University People's Hospital, Beijing 100044, China.
+
+ Find articles by Chao-Bin Wang 
+
+ 1 , Fei Xie 
+ Fei Xie 
+
+ 1 Department of Breast Center, Peking University People's Hospital, Beijing 100044, China.
+
+ Find articles by Fei Xie 
+
+ 1 , Yuan Peng 
+ Yuan Peng 
+
+ 1 Department of Breast Center, Peking University People's Hospital, Beijing 100044, China.
+
+ Find articles by Yuan Peng 
+
+ 1 , Shu Wang 
+ Shu Wang 
+
+ 1 Department of Breast Center, Peking University People's Hospital, Beijing 100044, China.
+
+ Find articles by Shu Wang 
+
+ 1 , Chinese Society of Breast Surgery 
+
+ Editor: Yuan-Yuan Ji 1 
+
+ Author information 
+
+ Article notes 
+
+ Copyright and License information 
+
+ 1 Department of Breast Center, Peking University People's Hospital, Beijing 100044, China.
+
+ ✉ Correspondence to: Dr. Shu Wang, Department of Breast Center, Peking University People's Hospital, Beijing 100044, China E-mail: shuwang@pkuph.edu.cn 
+
+ Received 2021 Feb 16; Issue date 2021 May 5.
+
+ Copyright © 2021 The Chinese Medical Association, produced by Wolters Kluwer, Inc. under the CC-BY-NC-ND license.
+
+ This is an open access article distributed under the terms of the Creative Commons Attribution-Non Commercial-No Derivatives License 4.0 (CCBY-NC-ND), where it is permissible to download and share the work provided it is properly cited. The work cannot be changed in any way or used commercially without permission from the journal. http://creativecommons.org/licenses/by-nc-nd/4.0 
+
+ PMC Copyright notice 
+
+ PMCID: PMC8116006 PMID: 33942798 
+
+ The survival of patients with breast cancer has been greatly improved by comprehensive treatment including surgery, radiotherapy, and systemic treatment, among which surgical treatment remains the mainstay. Breast surgeons must not only master surgical skills but also develop the ability to treat disease comprehensively. To improve the ability of breast surgeons in China to diagnose breast cancer early, perform reasonable surgical treatment, and provide comprehensive treatment orientation, the Chinese Society of Breast Surgery (CSBrS) has reported the key issues in the diagnosis and treatment of invasive breast cancer through opinion collection and expert discussion. The group evaluated the relevant evidence using the grading of recommendations assessment, development, and evaluation system and developed the clinical practice guideline for diagnosis and treatment in patients with invasive breast cancer: CSBrS practice guidelines 2021 with the aim of providing guidance for the clinical practice of breast surgeons in China.
+
+ Level of Evidence and Recommendation Strength
+
+ Level of evidence standard [1] 
+
+ Recommendation strength standard [1] 
+
+ Recommendation strength review committee
+
+ There were 71 voting committee members for these guidelines: 58 from breast surgery departments (81.7%), five from medical oncology departments (7.0%), three from medical imaging departments (4.2%), two from a pathology department (2.8%), one from a radiotherapy department (1.4%), and two epidemiologists (2.8%).
+
+ Target Audience
+
+ Clinicians specializing in breast diseases in China.
+
+ Recommendations
+
+ Recommendation 1: Breast cancer screening. 
+
+ Breast cancer screening 
+ Level of evidence 
+ Recommendation strength 
+
+ 1.1 
+ Women with average risk 
+
+  1.1.1 
+ Begin at 40 years [ 2 ] 
+ 
+ I 
+ A 
+
+  1.1.2 
+ Annual screening mammography [ 3 – 5 ] 
+ 
+ I 
+ A 
+
+  1.1.3 
+ Annual ultrasound [ 6 – 9 ] 
+ 
+ I 
+ A 
+
+ 1.2 
+ Women with increased risk 
+
+  1.2.1 
+ Begin before 40 years [ 2 ] 
+ 
+ I 
+ A 
+
+  1.2.2 
+ Annual screening mammography [ 3 – 5 ] 
+ 
+ I 
+ A 
+
+  1.2.3 
+ Annual ultrasound [ 6 – 9 ] 
+ 
+ I 
+ A 
+
+  1.2.4 
+ Annual breast MRI [ 2 , 10 , 11 ] 
+ 
+ I 
+ A 
+
+ Open in a new tab 
+
+ MRI: Magnetic resonance imaging.
+
+ Recommendation 2: Breast cancer diagnosis. 
+
+ Breast cancer diagnosis 
+ Level of evidence 
+ Recommendation strength 
+
+ 2.1 
+ Imaging diagnosis 
+
+  2.1.1 
+ Diagnostic mammography [ 12 ] 
+ 
+ I 
+ A 
+
+  2.1.2 
+ Ultrasound [ 12 ] 
+ 
+ I 
+ A 
+
+  2.1.3 
+ Breast MRI [ 13 – 16 ] 
+ 
+ I 
+ A 
+
+ 2.2 
+ Pathology diagnosis 
+
+  2.2.1 
+ Image-guided lesion biopsy 
+
+ a. Core needle biopsy [ 12 , 17 ] 
+ 
+ I 
+ A 
+
+ b. Vacuum-assisted breast biopsy [ 12 , 17 ] 
+ 
+ I 
+ A 
+
+ c. Wire-guided biopsy [ 17 ] 
+ 
+ I 
+ A 
+
+  2.2.2 
+ Image-guided lymph node biopsy 
+
+ a. Fine needle biopsy [ 12 , 17 ] 
+ 
+ I 
+ A 
+
+ b. Core needle biopsy [ 12 , 17 ] 
+ 
+ I 
+ A 
+
+ Open in a new tab 
+
+ MRI: Magnetic resonance imaging.
+
+ Recommendation 3: Breast cancer surgery treatment. 
+
+ Breast cancer surgery treatment 
+ Level of evidence 
+ Recommendation strength 
+
+ 3.1 
+ Breast surgery 
+
+  3.1.1 
+ Lumpectomy [ 18 , 19 ] 
+ 
+ I 
+ A 
+
+  3.1.2 
+ Total mastectomy [ 12 ] 
+ 
+ I 
+ A 
+
+  3.1.3 
+ Modified radical mastectomy [ 20 ] 
+ 
+ I 
+ A 
+
+  3.1.4 
+ Skin-sparing mastectomy [ 21 ] 
+ 
+ II 
+ A 
+
+  3.1.5 
+ Nipple-sparing mastectomy [ 22 ] 
+ 
+ II 
+ A 
+
+ 3.2 
+ Surgical axillary staging 
+
+  3.2.1 
+ Sentinel lymph node biopsy [ 23 ] 
+ 
+ I 
+ A 
+
+  3.2.2 
+ Axillary lymph node dissection [ 12 ] 
+ 
+ I 
+ A 
+
+ 3.3 
+ Oncoplastic and reconstructive surgery 
+
+  3.3.1 
+ Oncoplastic techniques for breast conservation [ 12 , 17 ] 
+ 
+ II 
+ A 
+
+  3.3.2 
+ Breast reconstruction following mastectomy 
+
+   3.3.2.1 
+ Timing of reconstruction 
+
+ a. Immediate reconstruction [ 12 , 17 ] 
+ 
+ II 
+ A 
+
+ b. Delayed reconstruction [ 12 , 17 ] 
+ 
+ II 
+ A 
+
+ c. Delayed-immediate reconstruction [ 12 , 17 ] 
+ 
+ II 
+ A 
+
+   3.3.2.2 
+ Type of reconstruction 
+
+ a. Implant reconstruction [ 12 , 17 ] 
+ 
+ II 
+ A 
+
+ b. Autologous tissue reconstruction [ 12 , 17 ] 
+ 
+ II 
+ A 
+
+ c. Autologous tissue combined with implant reconstruction [ 12 , 17 ] 
+ 
+ II 
+ A 
+
+ Open in a new tab 
+
+ Recommendation 4: Breast cancer radiation therapy. 
+
+ Breast cancer radiation therapy 
+ Level of evidence 
+ Recommendation strength 
+
+ 4.1 
+ Whole breast radiation therapy after lumpectomy [ 24 ] 
+ 
+ I 
+ A 
+
+ 4.2 
+ Radiation to chest wall and regional lymph nodes after mastectomy and ≥N2 [ 25 ] 
+ 
+ I 
+ A 
+
+ 4.3 
+ Radiation to chest wall and regional lymph nodes after mastectomy and N1 [ 26 ] 
+ 
+ I 
+ A 
+
+ 4.4 
+ Radiation to chest wall after mastectomy and ≥T3 [ 27 ] 
+ 
+ II 
+ A 
+
+ Open in a new tab 
+
+ Recommendation 5: Breast cancer systemic therapy. 
+
+ Breast cancer systemic therapy 
+ Level of evidence 
+ Recommendation strength 
+
+ 5.1 
+ Adjuvant systemic therapy 
+
+  5.1.1 
+ Adjuvant endocrine therapy for HR-positive patients [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+  5.1.2 
+ Adjuvant HER2-targeted therapy for HER2-positive patients [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+  5.1.3 
+ Adjuvant chemotherapy for high-risk recurrence patients [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+ 5.2 
+ Neoadjuvant systemic therapy 
+
+  5.2.1 
+ Indications for neoadjuvant therapy 
+
+ a. Inoperable breast cancer (T4 or ≥N2) [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+ b. Large primary tumor patient who desires breast conservation [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+ c. Evaluation of drug sensitivity in vivo [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+  5.2.2 
+ Strategy for neoadjuvant therapy 
+
+ a. Clarify clinical stage, pathological diagnosis, histological grade and molecular characteristics before treatment [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+ b. Demarcate the tumor bed before treatment [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+ c. Tumor response should be routinely assessed during treatment [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+ d. Pathological evaluation for primary tumor and lymph node after treatment [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+ Open in a new tab 
+
+ HR: Hormone receptor; HER2: Human epidermal growth factor receptor 2.
+
+ Recommendation 6: Breast cancer follow-up. 
+
+ Breast cancer follow-up 
+ Level of evidence 
+ Recommendation strength 
+
+ 6.1 
+ Interval for follow-up 
+
+  6.1.1 
+ 1–4 times per year within 5 years of surgery [ 12 ] 
+ 
+ II 
+ A 
+
+  6.1.2 
+ Annually after 5 years of surgery [ 12 ] 
+ 
+ II 
+ A 
+
+ 6.2 
+ Content of follow-up 
+
+  6.2.1 
+ Loco-regional recurrence 
+
+ a. Ultrasound [ 12 ] 
+ 
+ II 
+ A 
+
+ b. Mammography [ 12 , 29 ] 
+ 
+ I 
+ A 
+
+  6.2.2 
+ Distant metastasis 
+
+ a. Screening of distant metastases is not recommended for asymptomatic patients [ 30 , 31 ] 
+ 
+ I 
+ A 
+
+ b. Tumor markers 
+ III 
+ C 
+
+ c. CT of chest 
+ III 
+ C 
+
+ d. CT/ ultrasound/MRI of abdomen 
+ III 
+ C 
+
+ e. Bone scan 
+ III 
+ C 
+
+ f. FDG PET/CT 
+ III 
+ C 
+
+  6.2.3 
+ Complication of surgery 
+
+ Lymphedema [ 12 ] 
+ 
+ II 
+ A 
+
+  6.2.4 
+ Complication of medication 
+
+ a. Endometrial evaluation during treatment of tamoxifen [ 12 ] 
+ 
+ II 
+ A 
+
+ b. Assessment of bone mineral density during treatment of aromatase inhibitor [ 12 ] 
+ 
+ II 
+ A 
+
+  6.2.5 
+ Guidance of a healthy lifestyle [ 12 ] 
+ 
+ II 
+ A 
+
+ Open in a new tab 
+
+ CT: Computed tomography; FDG PET: 18 F-deoxyglucose positron emission tomography; MRI: Magnetic resonance imaging.
+
+ Recommendation 7: Recurrent/metastatic breast cancer treatment. 
+
+ Recurrent/metastatic breast cancer treatment 
+ Level of evidence 
+ Recommendation strength 
+
+ 7.1 
+ Biopsy and Determination of tumor ER/PR and HER2 status on metastatic site [ 12 , 28 ] 
+ 
+ II 
+ A 
+
+ 7.2 
+ Surgical resection ± radiation therapy if possible for local/regional recurrence [ 12 , 17 ] 
+ 
+ II 
+ A 
+
+ 7.3 
+ Systemic therapy according ER/PR and HER2 status on metastatic site [ 12 , 28 ] 
+ 
+ I 
+ A 
+
+ Open in a new tab 
+
+ ER/PR: Estrogen receptor/progesterone receptor; HER2: human epidermal growth factor receptor 2.
+
+ Discussion
+
+ Mammography remains the most important screening technique because it is the only technique to demonstrate a mortality reduction. [ 2 – 4 ] The experts discussed the efficiency of breast ultrasound screening and reached a consensus [Supplementary File 1]. Although current evidence does not support the use of breast MRI to screen women at average risk of breast cancer, the benefits of screening MRI for early detection of breast cancer in women at high risk have been demonstrated in multiple studies. [ 9 ] The panel does not recommend contrast-enhanced breast MRI for screening in women at general risk, but consent MRI screening for women with high-risk. [ 2 , 10 ] 
+
+ The experts discussed the use of contrast-enhanced breast MRI in diagnosis of breast cancer and reached a consensus [Supplementary File 2]. The experts discussed the surgical treatment for breast, the axillary staging, and the reconstruction of breast, and reached a consensus [Supplementary File 3]. The experts discussed the neoadjuvant therapy and reached a consensus [Supplementary File 4].
+
+ The results of a meta-analysis by the Early Breast Cancer Trialists’ Collaborative Group (EBCTCG) showed that whole-breast irradiation can reduce both the risk of recurrence and the risk of breast cancer death. [ 24 ] Results from the Danish Breast Cancer Cooperative Group82 b and c study and the EBCTCG meta-analysis showed that for patients who underwent mastectomy and had positive lymph nodes, radiotherapy not only reduced the risk of regional recurrence but also achieved a survival benefit, including for patients with one to three positive lymph nodes. [ 25 , 26 ] Therefore, the panel recommends post-operative radiotherapy for patients with positive lymph nodes.
+
+ A meta-analysis showed that regular mammography is helpful for early detection of local recurrence and reduction of breast cancer mortality. [ 29 ] For patients with local/regional recurrence, the panel recommended that R0 surgical resection should be performed if possible and that radiotherapy should be decided according to the previous radiotherapy. If the tumor is not technically resectable, the clinician should consider systemic therapy to achieve best response, then resect the tumor if possible. [ 11 , 16 ] 
+
+ List of Compiling Committee Members (In Alphabetical Order by Surname)
+
+ Zhong-Wei Cao, De-Dian Chen, Yuan-Jia Cheng, Xue-Ning Duan, Zhi-Min Fan, Pei-Fen Fu, Bao-Liangguo, Jian Huang, Jun Jiang, Hong-Chuan Jiang, Feng Jin, Hua Kang, Rui Ling, Jin-Ping Liu, Ke Liu, Li-Yuan Liu, Miao Liu, Qian Liu, Yin-Hua Liu, Yun-Jiang Liu, Zhen-Zhen Liu, Da-Hua Mao, Jiang-Hua Ou, Yuan Peng, Xiang Qu, Guo-Sheng Ren, Ai-Lin Song, Er-Wei Song, Li-Li Tang, Xing-Song Tian, Chao-Bin Wang, Chuan Wang, Fei Wang, Jiang-Dong Wang, Shu Wang, Shui Wang, Xiang Wang, Jiong Wu, Fei Xie, Ling Xin, Zhi-Gang Yu, Jiang-Guo Zhang, Jin Zhang, Jing-Hua Zhang, Wei Zhu, Ang Zheng, Qiang Zou.
+
+ Conflicts of interest
+
+ The expert committee for these guidelines declares no conflict of interest. These guidelines are a reference for breast disease specialists in clinical practice. However, the guidelines are not to be used as the basis for medical evaluation, and do not play an arbitrating role in the handling of any medical disputes. The guidelines are not a reference for patients or non-breast specialists. The Chinese Society of Breast Surgery assumes no responsibility for results involving the inappropriate application of these guidelines, and reserves the right to interpret and revise the guidelines.
+
+ Supplementary Material
+
+ Supplemental Digital Content 
+
+ cm9-134-1009-s001.docx (17KB, docx) 
+
+ Supplementary Material
+
+ Supplemental Digital Content 
+
+ cm9-134-1009-s002.docx (17.3KB, docx) 
+
+ Supplementary Material
+
+ Supplemental Digital Content 
+
+ cm9-134-1009-s003.docx (18.9KB, docx) 
+
+ Supplementary Material
+
+ Supplemental Digital Content 
+
+ cm9-134-1009-s004.docx (18.7KB, docx) 
+
+ Footnotes
+
+ How to cite this article: Liu M, Wang CB, Xie F, Peng Y, Wang S; Chinese Society of Breast Surgery. Clinical practice guidelines for diagnosis and treatment of invasive breast cancer: Chinese Society of Breast Surgery (CSBrS) practice guidelines 2021. Chin Med J 2021;134:1009–1013. doi: 10.1097/CM9.0000000000001498
+
+ Miao Liu and Chao-Bin Wang contributed equally to this study.
+
+ Supplemental digital content is available for this article.
+
+ References
+
+ 1. Ye JM, Guo BL, Liu Q, Ma F, Liu HJ, Wu Q, et al. Clinical practice guidelines for sentinel lymph node biopsy in patients with early-stage breast cancer: Chinese Society of Breast Surgery (CSBrS) practice guidelines 2021. Chin Med J 
+2021; 134:886–894. doi: 10.1097/CM9.0000000000001410. [ DOI ] [ PMC free article ] [ PubMed ] [ Google Scholar ]
+
+ 2. National Comprehensive Cancer Network. NCCN Clinical Practice Guidelines in Oncology Breast Cancer Screening and Diagnosis version1, 2019: Breast. NCCN Clinical Practice Guidelines in Oncology. Available from: https://www.nccn.org . Last accessed October 8, 2020. [ Google Scholar ]
+
+ 3. Myers ER, Moorman P, Gierisch JM, Havrilesky LJ, Grimm LJ, Ghate S, et al. Benefits and harms of breast cancer screening: a systematic review. JAMA 
+2015; 314:1615–1634. doi: 10.1001/jama.2015.13183. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 4. Sam Shapiro. Periodic screening for breast cancer: the HIP randomized controlled trial. Monogr Natl Cancer Inst 
+1997; 22:27–30. doi: 10.1093/jncimono/1997.22.27. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 5. Tabár L, Vitak B, Chen HH, Duffy SW, Yen MF, Chiang CF, et al. The Swedish two-county trial twenty years later. Updated mortality results and new insights from long-term follow-up. Radio1 Clin North Am 
+2000; 38:625–651. doi: 10.1016/s0033-8389(05)70191-3. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 6. Sood R, Rositch AF, Shakoor D, Ambinder E, Pool KL, Pollack E, et al. Ultrasound for breast cancer detection globally: a systematic review and meta-analysis. J Glob Oncol 
+2019; 5:1–17. doi: 10.1200/JGO.19.00127. [ DOI ] [ PMC free article ] [ PubMed ] [ Google Scholar ]
+
+ 7. Ohuchi N, Suzuki A, Sobue T, Kawai M, Yamamoto S, Zheng YF, et al. Sensitivity and specificity of mammography and adjunctive ultrasonography to screen for breast cancer in the Japan strategic anti-cancer randomized trial (J-START): a randomised controlled trial. Lancet 
+2016; 387:341–348. doi: 10.1016/S0140-6736(15)00774-6. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 8. Shen S, Zhou Y, Xu Y, Zhang B, Duan X, Huang R, et al. A multi-centre randomised trial comparing ultrasound vs mammography for screening breast cancer in high-risk Chinese women. Br J Cancer 
+2015; 112:998–1004. doi: 10.1038/bjc.2015.33. [ DOI ] [ PMC free article ] [ PubMed ] [ Google Scholar ]
+
+ 9. Xu J, Wang Q, Ma HM, Xia JH. Primary efficacy of physical examination combined with ultragraphy and complemented with mammography for breast cancer screening. Chin J Cancer Prev Treat 
+2013; 20:1295–1299. doi: 10.3969/j.issn.1673-5269.2013.17.002. [ Google Scholar ]
+
+ 10. Lord SJ, Lei W, Craft P, Cawson JN, Morris I, Walleser S, et al. A systematic review of the effectiveness of magnetic resonance imaging (MRI) as an addition to mammography and ultrasound in screening young women at high risk of breast cancer. Eur J Cancer 
+2007; 43:1905–1917. doi: 10.1016/j.ejca.2007.06.007. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 11. Saslow D, Boetes C, Burke W, Harms S, Leach MO, Lehman CD, et al. American cancer society guidelines for breast screening with MRI as an adjunct to mammography. CA Cancer J Clin 
+2007; 57:75–89. doi: 10.3322/canjclin.57.2.75. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 12. National Comprehensive Cancer Network. NCCN Clinical Practice Guidelines in Oncology version6, 2020: Breast. NCCN Clinical Practice Guidelines in Oncology. Available from: https://www.nccn.org . Accessed November 8, 2020. [ Google Scholar ]
+
+ 13. Houssami N, Ciatto S, Macaskill P, Lord SJ, Warren RM, Dixon JM, et al. Accuracy and surgical impact of magnetic resonance imaging in breast cancer staging: systematic review and meta-analysis in detection of multifocal and multicentric cancer. J Clin Oncol 
+2007; 26:3248–3258. doi: 10.1200/JCO.2007.15.2108. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 14. de Bresser J, de Vos B, van der Ent F, Hulsewé K. Breast MRI in clinically and mammographically occult breast cancer presenting with an axillary metastasis: a systematic review. Eur J Surg Oncol 
+2010; 36:114–119. doi: 10.1016/j.ejso.2009.09.007. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 15. Debald M, Abramian A, Nemes L, Döbler M, Kaiser C, Keyver-Paik MD, et al. Who may benefit from preoperative breast MRI? A single-center analysis of 1102 consecutive patients with primary breast cancer. Breast Cancer Res Treat 
+2015; 153:531–537. doi: 10.1007/s10549-015-3556-3. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 16. Marinovich ML, Macaskill P, Irwig L, Sardanelli F, Mamounas E, von Minckwitz G, et al. Agreement between MRI and pathologic breast tumor size after neoadjuvant chemotherapy, and comparison with alternative tests: individual patient data meta-analysis. BMC Cancer 
+2015; 15:662.doi: 10.1186/s12885-015-1664-4. [ DOI ] [ PMC free article ] [ PubMed ] [ Google Scholar ]
+
+ 17. The Society of Breast Cancer of China Anti-Cancer Association. Guidelines and specifications of China Anti-Cancer Association for diagnosis and treatment of breast cancer (2019). China Oncology 
+2019; 29:609–680. doi: 10.19401/j.cnki.1007-3639.2019.08.009. [ Google Scholar ]
+
+ 18. Fisher B, Anderson S, Bryant J, Margolese RG, Deutsch M, Fisher ER, et al. Twenty-year follow-up of a randomized trial comparing total mastectomy, lumpectomy, and lumpectomy plus irradiation for the treatment of invasive breast cancer. N Engl J Med 
+2002; 347:1233–1241. doi: 10.1056/NEJMoa022152. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 19. Veronesi U, Cascinelli N, Mariani L, Greco M, Saccozzi R, Luini A, et al. Twenty-year follow-up of a randomized study comparing breast-conserving surgery with radical mastectomy for early breast cancer. N Engl J Med 
+2002; 347:1227–1232. doi: 10.1056/NEJMoa020989. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 20. Fisher B, Jeong JH, Anderson S, Bryant J, Fisher ER, Wolmark N. Twenty-five-year follow-up of a randomized trial comparing radical mastectomy, total mastectomy, and total mastectomy followed by irradiation. N Engl J Med 
+2002; 347:567–575. doi: 10.1056/NEJMoa020128. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 21. Lanitis S, Tekkis PP, Sgourakis G, Dimopoulos N, Al Mufti R, Hadjiminas DJ. Comparison of skin-sparing mastectomy versus non–skin-sparing mastectomy for breast cancer: a meta-analysis of observational studies. Ann Surg 
+2010; 251:632–639. doi: 10.1097/SLA.0b013e3181d35bf8. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 22. De La Cruz L, Moody AM, Tappy EE, Blankenship SA, Hecht EM. Overall survival, disease-free survival, local recurrence, and nipple–areolar recurrence in the setting of nipple-sparing mastectomy: a meta-analysis and systematic review. Ann Surg Oncol 
+2015; 22:3241–3249. doi: 10.1245/s10434-015-4739-1. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 23. Krag DN, Anderson SJ, Julian TB, Brown AM, Harlow SP, Costantino JP, et al. Sentinel-lymph-node resection compared with conventional axillary-lymph-node dissection in clinically node-negative patients with breast cancer: overall survival findings from the NSABP B-32 randomised phase 3 trial. Lancet Oncol 
+2010; 11:927–933. doi: 10.1016/S1470-2045(10)70207-2. [ DOI ] [ PMC free article ] [ PubMed ] [ Google Scholar ]
+
+ 24. Darby S, McGale P, Correa C, Taylor C, Arriagada R, et al. Early Breast Cancer Trialists’ Collaborative Group. Effect of radiotherapy after breast-conserving surgery on 10-year recurrence and 15-year breast cancer death: meta-analysis of individual patient data for 10,801 women in 17 randomised trials. Lancet 
+2011; 378:1707–1716. doi: 10.1016/S0140-6736(11)61629-2. [ DOI ] [ PMC free article ] [ PubMed ] [ Google Scholar ]
+
+ 25. Overgaard M, Jensen MB, Overgaard J, Hansen PS, Rose C, Andersson M, et al. Postoperative radiotherapy in high-risk postmenopausal breast-cancer patients given adjuvant tamoxifen: Danish Breast Cancer Cooperative Group DBCG 82c randomised trial. Lancet 
+1999; 353:1641–1648. doi: 10.1016/S0140-6736(98)09201-0. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 26. McGale P, Taylor C, Correa C, Cutter D, Duane F, Ewertz M, et al. EBCTCG (Early Breast Cancer Trialists’ Collaborative Group). Effect of radiotherapy after mastectomy and axillary surgery on 10-year recurrence and 20-year breast cancer mortality: meta-analysis of individual patient data for 8135 women in 22 randomised trials. Lancet 
+2014; 383:2127–2135. doi: 10.1016/S0140-6736(14)60488-8. [ DOI ] [ PMC free article ] [ PubMed ] [ Google Scholar ]
+
+ 27. Nielsen HM, Overgaard M, Grau C, Jensen AR, Overgaard J. Danish Breast Cancer Cooperative Group. Study of failure pattern among high-risk breast cancer patients with or without postmastectomy radiotherapy in addition to adjuvant systemic therapy: long-term results from the Danish Breast Cancer Cooperative Group DBCG 82 b and c randomized studies. J Clin Oncol 
+2006; 24:2268–2275. doi: 10.1200/JCO.2005.02.8738. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 28. Guidelines Committee of Chinese society of Clinical Oncology. Guidelines of Chinese Society of Clinical Oncology (CSCO) Breast Cancer. People's Medical Publishing House, 2020. [ Google Scholar ]
+
+ 29. Lu WL, Jansen L, Post WJ, Bonnema J, Van de Velde JC, De Bock GH. Impact on survival of early detection of isolated breast recurrences after the primary treatment for breast cancer: a meta-analysis. Breast Cancer Res Treat 
+2009; 114:403–412. doi: 10.1007/s10549-008-0023-4. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 30. The GIVIO Investigators. Impact of follow-up testing on survival and health-related quality of life in breast cancer patients. A multicenter randomized controlled trial. JAMA 
+1994; 271:1587–1592. doi: 10.1001/jama.1994.03510440047031. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 31. Rosselli Del Turco M, Palli D, Cariddi A, Ciatto S, Pacini P, Distante V. Intensive diagnostic follow-up after treatment of primary breast cancer. A randomized trial. National Research Council Project on Breast Cancer follow-up. JAMA 
+1994; 271:1593–1597. doi: 10.1001/jama.271.20.1593. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ Associated Data
+
+ This section collects any data citations, data availability statements, or supplementary materials included in this article. 
+
+ Supplementary Materials
+
+ Supplemental Digital Content 
+
+ cm9-134-1009-s001.docx (17KB, docx) 
+
+ Supplemental Digital Content 
+
+ cm9-134-1009-s002.docx (17.3KB, docx) 
+
+ Supplemental Digital Content 
+
+ cm9-134-1009-s003.docx (18.9KB, docx) 
+
+ Supplemental Digital Content 
+
+ cm9-134-1009-s004.docx (18.7KB, docx) 
+
+ Articles from Chinese Medical Journal are provided here courtesy of Wolters Kluwer Health 
+
+ ACTIONS
+
+ View on publisher site 
+
+ PDF (196.4 KB) 
+
+ Cite 
+
+ Collections 
+
+ Permalink 
+
+ PERMALINK
+
+ Copy 
+
+ RESOURCES
+
+ Similar articles
+
+ Cited by other articles
+
+ Links to NCBI Databases
+
+ Cite
+
+ Copy 
+
+ Download .nbib 
+ .nbib 
+
+ Format: 
+
+ AMA
+
+ APA
+
+ MLA
+
+ NLM
+
+ Add to Collections
+
+ Create a new collection 
+
+ Add to an existing collection 
+
+ Name your collection
+ * 
+
+ Choose a collection
+
+ Unable to load your collection due to an error
+
+ Please try again 
+
+ Add
+
+ Cancel
+
+ Follow NCBI
+
+ NCBI on X (formerly known as Twitter) 
+
+ NCBI on Facebook 
+
+ NCBI on LinkedIn 
+
+ NCBI on GitHub 
+
+ NCBI RSS feed 
+
+ Connect with NLM
+
+ NLM on X (formerly known as Twitter) 
+
+ NLM on Facebook 
+
+ NLM on YouTube 
+
+ National Library of Medicine
+ 
+ 8600 Rockville Pike
+ Bethesda, MD 20894 
+
+ Web Policies
+
+ FOIA
+
+ HHS Vulnerability Disclosure
+
+ Help
+
+ Accessibility
+
+ Careers
+
+ NLM
+
+ NIH
+
+ HHS
+
+ USA.gov
+
+ Back to Top

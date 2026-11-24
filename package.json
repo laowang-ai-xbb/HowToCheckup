@@ -1,0 +1,35 @@
+{
+  "name": "tijian-zhinan",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/gen-og.mjs && vite build && node scripts/gen-site-files.mjs",
+    "gen:og": "node scripts/gen-og.mjs",
+    "gen:site": "node scripts/gen-site-files.mjs",
+    "preview": "vite preview",
+    "validate": "node scripts/validate.mjs",
+    "stats": "node tests/count-combos.mjs",
+    "check:ui": "node tests/browser-check.mjs",
+    "check:invariants": "node scripts/check-invariants.mjs",
+    "snapshot": "node scripts/snapshot-sources.mjs",
+    "apply:evidence": "node scripts/apply-evidence.mjs",
+    "check:updates": "node scripts/check-updates.mjs",
+    "check:lean": "node scripts/check-lean.mjs",
+    "accept:lean": "node scripts/check-lean.mjs --accept",
+    "test:diff": "node tests/check-updates-unit.mjs",
+    "test:env": "node tests/env-unit.mjs",
+    "test:lean": "node tests/lean-unit.mjs",
+    "test:mutation": "node tests/mutation.mjs",
+    "test": "npm run validate && npm run test:diff && npm run test:env && npm run test:lean && npm run test:questions && npm run test:body && npm run check:invariants && npm run check:lean && npm run check:research && npm run check:dupes && npm run test:mutation && npm run check:fingerprint && npm run check:ui",
+    "test:questions": "node tests/questions-unit.mjs",
+    "check:research": "node scripts/check-research.mjs",
+    "check:dupes": "node scripts/check-dupes.mjs",
+    "test:body": "node tests/body-unit.mjs",
+    "check:fingerprint": "node scripts/check-fingerprint.mjs"
+  },
+  "devDependencies": {
+    "vite": "^5.4.11"
+  }
+}

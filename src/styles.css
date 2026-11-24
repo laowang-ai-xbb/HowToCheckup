@@ -1,0 +1,1040 @@
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2026 老王AI瞎bb */
+/* See LICENSE at the repository root. */
+
+:root {
+  /* 只做浅色版。声明 color-scheme: light 是为了让浏览器/微信的"强制深色"跳过本站，
+     否则它会把米白底和深色文字一起反相，米白卡片变深灰、灰字变浅灰，对比度反而掉下去。 */
+  color-scheme: light;
+  --ink: #1b1a17;
+  --ink-2: #5c5850;
+  --ink-3: #6f6a5f;
+  --paper: #f7f4ee;
+  --card: #fffefb;
+  --line: #e4dfd4;
+  --teal: #0f766e;
+  --teal-soft: #e6f2f0;
+  --amber: #a04a06;
+  --amber-soft: #fdf3e4;
+  --gray: #6f6a5f;
+  --gray-soft: #f1f0ed;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: 18px;
+  line-height: 1.72;
+  -webkit-text-size-adjust: 100%;
+}
+
+.screen {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 28px 20px 64px;
+  padding-bottom: calc(64px + env(safe-area-inset-bottom));
+}
+
+/* ---------- 首屏 ---------- */
+/* 整个品牌块是可点的彩蛋（点三下有话说）。不用 button：它会跑进 Tab 顺序，
+   而且首屏的 Tab 焦点应该直奔「开始」那个按钮。 */
+.brand {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  margin-bottom: 30px; cursor: pointer; user-select: none; width: fit-content;
+}
+.brand:active .brand-mark { opacity: .5; }
+/* 品牌词在上、品类词在下：读的人先看到"长命百岁"，但搜索和口播用的是"体检项目指南" */
+.brand-mark {
+  font-size: 12px; letter-spacing: .34em; color: var(--ink-3); font-weight: 600;
+  transition: opacity .12s ease;
+}
+/* 彩蛋文案变长时（「仙人你有点贪心哦」9 个字）要收字距，否则会顶出屏幕 */
+.brand-mark.wide { letter-spacing: .08em; font-size: 12px; }
+.brand-name { font-weight: 700; font-size: 19px; letter-spacing: .02em; color: var(--teal); }
+.brand-slogan { font-size: 14px; color: var(--ink-3); margin-top: 2px; }
+
+/* ---------- 首页右上角的分享（老板 2026-11-23 选方案 1） ----------
+ * 一枚小胶囊，和品牌块同一行、靠右。三条约束写在样式里：
+ *   · 精致小巧：高度不到 30px，比「查看项目清单」小一大截，不抢主按钮；
+ *   · 文案写出来：不靠图标猜（老人不认纸飞机），字就是「发你关心的人」；
+ *   · 不许换行：320px 屏上品牌块会挤，胶囊自己缩字号，不折成两行。
+ * `.homehead` 只做一件事：把品牌块原来的 30px 下边距挪到自己身上，
+ * 否则品牌块和这一行的基线对不上，胶囊会吊在半空。 */
+.homehead { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 30px; }
+.homehead .brand { margin-bottom: 0; }
+.hshare {
+  display: inline-flex; align-items: center; gap: 4px; flex: none;
+  margin-top: 1px; padding: 6px 10px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink-2);
+  font-family: inherit; font-size: 12.5px; font-weight: 600; line-height: 1.25;
+  white-space: nowrap; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(27, 26, 23, .05);
+  transition: transform .06s ease, border-color .15s ease;
+}
+.hshare svg { width: 12px; height: 12px; flex: none; color: var(--teal); }
+.hshare:active { transform: scale(.97); }
+.hshare.on { border-color: var(--teal); color: var(--teal); background: var(--teal-soft); }
+@media (max-width: 359px) {
+  .hshare { font-size: 11.5px; padding: 6px 8px; }
+  .hshare svg { display: none; }
+}
+
+h1 {
+  font-size: 30px;
+  line-height: 1.32;
+  margin: 0 0 18px;
+  letter-spacing: -.01em;
+  font-weight: 700;
+}
+h1 em { font-style: normal; color: var(--teal); }
+
+.lede { font-size: 17.5px; color: var(--ink-2); margin: 0 0 22px; }
+
+.points { list-style: none; padding: 0; margin: 0 0 30px; }
+.points li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 10px;
+  color: var(--ink-2);
+  font-size: 16px;
+}
+.points li::before {
+  content: "";
+  position: absolute;
+  left: 6px; top: .68em;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  opacity: .55;
+}
+.points b { color: var(--ink); }
+
+.foot { font-size: 14px; color: var(--ink-3); line-height: 1.7; margin-top: 26px; }
+.foot b { color: var(--ink-2); }
+/* 机构名挂链接：给下划线，不然在灰字里看不出来能点 */
+.foot-link {
+  color: var(--ink-3); text-decoration: underline;
+  text-underline-offset: 2px; text-decoration-thickness: 1px;
+}
+/* 悬停色只在有真鼠标的机器上给：触摸屏上手指抬起后样式会粘住 */
+@media (hover: hover) {
+  .foot-link:hover { color: var(--teal); }
+}
+/* 首页也放致敬模块：结果页那套缩小一档，别把首页压成一屏灰字 */
+.credits-home { margin-top: 16px; padding-top: 14px; }
+.credits-home p { font-size: 12.5px; }
+
+/* ---------- 页脚签名条（首页） ----------
+   头像 + 名字去小红书，GitHub 图标去仓库。两块不是一类东西，所以中间立一根
+   13px 细竖线；图标比名字灰一档、小一档，读起来是"作者，以及他的代码"，
+   而不是并排两个按钮。上面「致敬」已经有一条虚线，这里不再加第二条，
+   否则首页页脚会被切成三截碎条。 */
+.sign { display: flex; align-items: center; gap: 8px; margin-top: 18px; }
+.sign-me {
+  display: inline-flex; align-items: center; gap: 9px;
+  min-height: 40px; text-decoration: none; border-radius: 999px;
+}
+.sign-pic {
+  width: 26px; height: 26px; border-radius: 50%; display: block; flex: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .07);
+}
+.sign-name { font-size: 13px; font-weight: 600; color: var(--ink-2); letter-spacing: .01em; }
+.sign-sep { width: 1px; height: 13px; background: var(--line); flex: none; }
+.sign-gh {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; flex: none;
+  color: var(--ink-3); border-radius: 50%; text-decoration: none;
+}
+/* 悬停色只在有真鼠标的机器上给：触摸屏上手指抬起后样式会粘住 */
+@media (hover: hover) {
+  .sign-me:hover .sign-name { color: var(--teal); }
+  .sign-gh:hover { color: var(--ink-2); }
+}
+
+/* ---------- 按钮 ---------- */
+.btn {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-size: 17px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 14px 18px;
+  transition: transform .06s ease, background .15s ease;
+}
+.btn:active { transform: scale(.985); }
+.btn.primary { background: var(--teal); color: #fff; }
+.btn.big { min-height: 58px; font-size: 18px; }
+.btn.ghost { background: transparent; color: var(--ink-2); border-color: var(--line); }
+.btn.wide { margin: 14px 0 12px; }
+/* 多选题的"都没有 / 不确定"并排：这两个是平级的出口，不该一个主一个次 */
+.btn.ghost.on { border-color: var(--teal); color: var(--teal); background: var(--teal-soft); }
+.none-row { display: flex; gap: 10px; margin: 14px 0 12px; }
+.none-row .btn { margin: 0; flex: 1 1 0; min-width: 0; font-size: 15.5px; padding: 14px 10px; }
+
+.linkish {
+  background: none; border: 0; padding: 10px 2px; margin: -10px 0;
+  color: var(--teal); font: inherit; font-size: 14px;
+  text-decoration: underline; cursor: pointer;
+}
+
+/* ---------- 进度 ---------- */
+.progress { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
+.progress .bar { height: 100%; background: var(--teal); border-radius: 2px; transition: width .25s ease; }
+
+/* 进度条下面那句话。它是安慰不是说教，所以用次级灰，不抢题面 */
+.pword { font-size: 14px; color: var(--ink-3); margin: 0 0 16px; letter-spacing: .02em; }
+
+.qmeta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 26px; }
+.back { background: none; border: 0; padding: 8px 0; font: inherit; font-size: 15px; color: var(--ink-3); cursor: pointer; }
+.back:disabled { opacity: .3; }
+.qcount { font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+.qtitle { font-size: 26px; line-height: 1.4; margin: 0 0 10px; font-weight: 700; }
+.qhint { font-size: 16px; color: var(--ink-2); margin: 0 0 26px; }
+.qdisclaim { font-size: 14px; color: var(--ink-3); margin: 34px 0 0; }
+
+/* ---------- 年龄 ---------- */
+.age-row { display: flex; align-items: baseline; gap: 10px; margin: 18px 0 6px; }
+.age-input {
+  flex: 1;
+  border: 0;
+  border-bottom: 2px solid var(--line);
+  background: transparent;
+  font-family: inherit;
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--ink);
+  padding: 6px 4px 10px;
+  text-align: center;
+  letter-spacing: .04em;
+  outline: none;
+  min-width: 0;
+}
+.age-input:focus { border-bottom-color: var(--teal); }
+.age-unit { font-size: 24px; color: var(--ink-2); }
+.err { color: #b91c1c; font-size: 15px; min-height: 24px; margin: 4px 0 20px; }
+
+/* 提示而非拦截：120 岁以上只提醒"确认不是手滑"，不挡路。
+   用琥珀不用红 —— 红是"你错了"，这里的意思只是"再看一眼"。 */
+.age-note {
+  font-size: 14px; line-height: 1.7;
+  color: #8a4b12; background: var(--amber-soft);
+  border-radius: 10px; padding: 12px 14px; margin: 4px 0 20px;
+}
+.age-note:empty { display: none; }
+
+/* ---------- 选项 ---------- */
+.opts { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+.opts.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 18px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: 18px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .12s ease, background .12s ease;
+}
+.opt.on { border-color: var(--teal); background: var(--teal-soft); }
+.opt-l { font-weight: 600; }
+.opt-sub { display: block; font-size: 14px; color: var(--ink-3); font-weight: 400; margin-top: 2px; }
+.opt.on .opt-sub { color: #4a6d69; }
+
+.tick {
+  flex: 0 0 auto;
+  width: 20px; height: 20px;
+  border: 1.5px solid #c9c3b6;
+  border-radius: 6px;
+  position: relative;
+  background: #fff;
+}
+.opt.on .tick { background: var(--teal); border-color: var(--teal); }
+.opt.on .tick::after {
+  content: "";
+  position: absolute;
+  left: 6px; top: 2px;
+  width: 5px; height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(42deg);
+}
+
+.skip {
+  display: block;
+  margin: 22px auto 0;
+  background: none; border: 0;
+  color: var(--ink-3);
+  font: inherit; font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- 结果 ---------- */
+.result { padding-top: 24px; }
+.rwho { font-size: 14px; color: var(--ink-3); letter-spacing: .04em; }
+.result h1 { font-size: 27px; margin: 6px 0 10px; }
+.rsum { font-size: 16px; color: var(--ink-2); margin: 0 0 8px; }
+.ca { color: var(--teal); }
+.cb { color: var(--amber); }
+.cc { color: var(--gray); }
+.shared-tip {
+  font-size: 14px;
+  background: var(--teal-soft);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 14px 0 0;
+  color: #37524f;
+}
+
+.group { margin-top: 34px; }
+.ghead { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+.ghead h2 { font-size: 19px; margin: 0; font-weight: 700; }
+.gcount { margin-left: auto; font-size: 13px; color: var(--ink-3); }
+.dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.group.a .dot { background: var(--teal); }
+.group.b .dot { background: var(--amber); }
+.group.c .dot { background: var(--gray); }
+.gintro { font-size: 15.5px; color: var(--ink-2); margin: 4px 0 16px; }
+.gsub {
+  font-size: 14px;
+  color: var(--ink-3);
+  letter-spacing: .06em;
+  margin: 18px 0 10px;
+  padding-left: 1px;
+}
+
+.item {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 16px 12px;
+  margin-bottom: 10px;
+}
+.item.a { border-left: 3px solid var(--teal); }
+.item.b { border-left: 3px solid var(--amber); }
+.item.c { border-left: 3px solid #c8c4bb; }
+
+/* 标题与频率竖排：频率文案里常有分层说明（胃镜那条一百多字），
+   横排胶囊会撑破 390px 屏（实测 right=809）。竖排 + 可换行是唯一稳的解法。 */
+.item-top { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
+.item h3 { font-size: 17px; margin: 0; font-weight: 700; line-height: 1.45; }
+.freq {
+  font-size: 14px;
+  color: var(--ink-2);
+  background: var(--gray-soft);
+  border-radius: 8px;
+  padding: 4px 9px;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.item.a .freq { background: var(--teal-soft); color: #2f5f5a; }
+/* 频次不是指南条文时，视觉上弱一档，别让它看着像权威结论
+   （选择器要压过 .item.a .freq，否则 A 档的绿色底会把虚线盖掉） */
+.item .freq.freq-soft {
+  background: transparent;
+  border: 1px dashed var(--line);
+  color: var(--ink-3);
+}
+.freq-basis {
+  font-size: 13px;
+  color: var(--ink-3);
+  background: #f7f6f2;
+  border-left: 2px solid var(--line);
+  padding: 8px 10px;
+  border-radius: 0 8px 8px 0;
+  margin: 10px 0 0;
+  line-height: 1.7;
+}
+.ids { font-size: 13px; color: var(--ink-3); margin: 7px 0 0; line-height: 1.55; }
+
+/* 「二选一，不用都做」——不是警告，是省钱省事的一句提醒。
+ * 用琥珀色而不是红色：它不是风险提示，是选择提示。 */
+.mutex {
+  font-size: 13.5px;
+  color: var(--amber);
+  background: var(--amber-soft);
+  border: 1px solid #efd9bb;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 8px 0 0;
+  line-height: 1.6;
+}
+
+.verdict-line { font-size: 15.5px; color: var(--ink-2); margin: 8px 0 0; }
+
+/* B 档的倾向：先把"偏哪边"说清楚，再让人去读依据。
+   它比「和医生商量」诚实 —— 后者只是把判断推回给了用户。
+   注意别用 flex 排这一行：长文本的 flex-basis 是 max-content，
+   会先把徽章顶到单独一行（实测就是这么坏的），用普通内联流最稳。 */
+.lean {
+  font-size: 14.5px; line-height: 1.7;
+  margin: 10px 0 0; padding: 9px 11px;
+  border-radius: 9px; background: #f7f6f2;
+  color: var(--ink-2);
+}
+.lean b {
+  display: inline-block; vertical-align: 1px;
+  font-size: 12px; font-weight: 700;
+  padding: 1px 7px; border-radius: 5px;
+  margin-right: 6px; white-space: nowrap;
+}
+.lean.l-for b { color: #0b5d56; background: var(--teal-soft); }
+.lean.l-against b { color: #7a2f2f; background: #f7e6e6; }
+.lean.l-either b { color: #4a4a4a; background: #ececec; }
+
+details { margin-top: 10px; }
+summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 13.5px;
+  color: var(--teal);
+  cursor: pointer;
+  padding: 10px 0;
+  list-style: none;
+  user-select: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after { content: " ＋"; font-size: 12px; }
+details[open] summary::after { content: " －"; }
+
+.detail { padding: 6px 0 2px; font-size: 15.5px; color: var(--ink-2); line-height: 1.72; }
+.detail p { margin: 0 0 10px; }
+.detail b { color: var(--ink); }
+.finds { background: #f7f6f2; border-radius: 10px; padding: 10px 12px; }
+.notes { font-size: 13.5px; color: var(--ink-3); border-left: 2px solid var(--line); padding-left: 10px; }
+.flags { font-size: 13.5px; color: #8a4b12; background: var(--amber-soft); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
+
+.ev { list-style: none; padding: 12px 0 0; margin: 0; border-top: 1px dashed var(--line); }
+.ev li { margin-bottom: 12px; font-size: 14.5px; }
+.ev-org { font-weight: 600; color: var(--ink); font-size: 13px; }
+/* ---------- 标签：全站只有一套 ----------
+ * 原来「待核实」徽章和「强推荐」强度标签各写一套：字号都是 11px，但圆角、内边距、
+ * 色值三处不同，并排出现时像两个产品拼的（老板 2026-11-20 指出）。
+ * 现在两种标签共用下面的尺寸和语义色，只有语义不一样。
+ * 别在这里加"差不多"的新数值 —— 要加就加语义。
+ */
+.badge, .ev-strength {
+  display: inline-block;
+  font-size: 11.5px; line-height: 1.6;
+  border-radius: 5px; padding: 1px 7px;
+  margin-left: 6px; vertical-align: 1px;
+  white-space: nowrap;
+}
+.badge { color: #8a4b12; background: var(--amber-soft); }
+.tag-strong { color: #0b5d56; background: var(--teal-soft); }
+.tag-cond { color: #8a4b12; background: var(--amber-soft); }
+.tag-against { color: #7a2f2f; background: #f7e6e6; }
+.tag-insufficient { color: #4a4a4a; background: #ececec; }
+.ev-point { margin: 4px 0 3px; color: var(--ink-2); }
+.ev-link { color: var(--teal); font-size: 13px; text-decoration: none; }
+
+
+/* 证据强度：一眼看出这条依据是"让做"还是"别做"，不用去查 Grade A/B 是什么 */
+.ev-strength.s-strong { color: #0b5d56; background: var(--teal-soft); }
+.ev-strength.s-cond { color: #8a4b12; background: var(--amber-soft); }
+.ev-strength.s-against { color: #7a2f2f; background: #f7e6e6; }
+.ev-strength.s-insufficient { color: #4a4a4a; background: #ececec; }
+
+/* 原文摘录：跟正文区分开，让"这是抄来的原话"一眼可辨 */
+.ev-quote {
+  margin: 6px 0 4px; padding: 8px 10px;
+  background: #f7f6f2; border-left: 2px solid var(--line); border-radius: 0 8px 8px 0;
+  font-size: 13.5px; line-height: 1.6; color: var(--ink-2); word-break: break-word;
+}
+.ev-date { font-size: 11.5px; color: var(--ink-3); margin-left: 8px; }
+
+/* 依据只到机构首页：宁可自己说出来，也不让用户以为这条能点开就看到原文 */
+.ev-weak {
+  display: inline-block; margin-top: 4px;
+  font-size: 11.5px; color: #8a4b12; background: var(--amber-soft);
+  border-radius: 4px; padding: 1px 6px;
+}
+
+/* ---------- 清单的缺口（有题答"不确定"时出现） ----------
+   用琥珀不用红：这不是错误，是"还差两条信息"。
+   它挨着结果摘要，位置比"再过几年"更靠前 —— 这是读清单前该知道的前提。 */
+.gaps {
+  margin-top: 20px;
+  background: var(--amber-soft);
+  border-radius: var(--radius);
+  padding: 16px 16px 12px;
+}
+.gaps h2 { font-size: 16px; margin: 0 0 8px; color: #7a4210; }
+.gaps p { font-size: 15px; color: #8a4b12; margin: 0 0 8px; line-height: 1.65; }
+.gaps b { color: #6d3a0c; }
+.gaps ul { margin: 4px 0 10px; padding-left: 18px; }
+.gaps li { font-size: 15px; color: #7a4210; margin-bottom: 5px; }
+.gaps .tip { font-size: 13px; color: #96602c; margin: 8px 0 0; }
+
+/* ---------- 临界提示 ---------- */
+.soon {
+  margin-top: 34px;
+  background: var(--teal-soft);
+  border-radius: var(--radius);
+  padding: 18px 18px 14px;
+}
+.soon h2 { font-size: 17px; margin: 0 0 10px; color: #164e49; }
+.soon ul { margin: 0; padding-left: 18px; }
+.soon li { font-size: 16px; color: #2f5f5a; margin-bottom: 6px; }
+.soon .tip { font-size: 13px; color: #4a6d69; margin: 10px 0 0; }
+
+/* ---------- 底部 ---------- */
+.actions { margin-top: 36px; display: flex; flex-direction: column; gap: 10px; }
+.disclaim { margin-top: 34px; padding-top: 20px; border-top: 1px solid var(--line); }
+.disclaim p { font-size: 14.5px; color: var(--ink-3); line-height: 1.75; margin: 0 0 10px; }
+.disclaim b { color: var(--ink-2); }
+
+/* 致敬：放在免责之后。先说完"我不是医生"，再说"我站在谁的肩膀上"，
+   顺序反了会像在给免责声明找背书。 */
+.credits { margin-top: 22px; padding-top: 16px; border-top: 1px dashed var(--line); }
+.credits p { font-size: 13px; color: var(--ink-3); line-height: 1.75; margin: 0 0 8px; }
+.credits .ctitle {
+  font-size: 12px; letter-spacing: .16em; font-weight: 700;
+  color: var(--ink-2); margin-bottom: 10px;
+}
+
+/* ---------- toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  transform: translate(-50%, 14px);
+  background: #1b1a17;
+  color: #fff;
+  font-size: 14.5px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity .2s ease, transform .2s ease;
+  pointer-events: none;
+  z-index: 99;
+  max-width: 86vw;
+  text-align: center;
+}
+.toast.show { opacity: .96; transform: translate(-50%, 0); }
+
+@media (max-width: 360px) {
+  .opts.two-col { grid-template-columns: 1fr; }
+  .qtitle { font-size: 22px; }
+  h1 { font-size: 26px; }
+}
+
+/* ---------- 真机自检页 ---------- */
+.envlist { list-style: none; margin: 0 0 8px; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.envlist li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 12px; font-size: 13.5px; border-bottom: 1px solid var(--line); }
+.envlist li:last-child { border-bottom: 0; }
+.envlist b { color: var(--ink-2); font-weight: 500; flex: 0 0 auto; }
+.envlist span { color: var(--ink); text-align: right; overflow-wrap: anywhere; }
+
+.checks { list-style: none; margin: 0 0 18px; padding: 0; }
+.chk { display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.chk:last-child { border-bottom: 0; }
+.chk-i {
+  flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 13px; font-weight: 700; color: #fff; margin-top: 2px;
+}
+.chk.pass .chk-i { background: var(--teal); }
+.chk.warn .chk-i { background: var(--amber); }
+.chk.fail .chk-i { background: #b91c1c; }
+.chk b { font-size: 15px; font-weight: 600; }
+.chk-l { font-size: 12px; color: var(--ink-3); margin-left: 8px; }
+.chk p { margin: 3px 0 0; font-size: 13px; color: var(--ink-2); overflow-wrap: anywhere; }
+
+.selftest-stage { margin: 6px 0 22px; }
+
+/* ---------- 焦点与触摸反馈 ----------
+   手机点一下要有反应（全局关掉了 tap-highlight，按钮之外的地方原本毫无反馈）。 */
+summary:active, .linkish:active, .skip:active, .back:active { opacity: .55; }
+
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+.age-input:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--teal-soft); }
+.qtitle:focus, .result h1:focus { outline: none; }
+
+/* ---------- 首页卡片 ----------
+   首屏本身就是第一题：填年龄 → 直接进第二题，没有"开始"这一步。
+   少一次点击，就少一次流失。 */
+.home .fcard {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px 16px 6px;
+  margin: 4px 0 0;
+}
+.flabel { font-size: 14px; color: var(--ink-3); margin: 0 0 8px; letter-spacing: .02em; }
+.home .age-row { margin: 0 0 4px; align-items: center; }
+.home .age-input {
+  font-size: 40px;
+  text-align: center;
+  letter-spacing: 0;
+  padding: 4px 0 8px;
+}
+/* 底纹文案：不预填数字。预填等于替用户做主，而且有人会直接点下一步 */
+.home .age-input::placeholder {
+  font-size: 17px;
+  font-weight: 400;
+  color: #a8a294;
+  letter-spacing: 0;
+}
+.home .age-unit { font-size: 18px; }
+.home .err { margin: 2px 0 10px; }
+.home .age-note { margin: 2px 0 10px; }
+
+/* 轮播：只换这一句，高度锁死，卡片就不会跟着上下跳 */
+.home .lede { min-height: 88px; margin-bottom: 8px; transition: opacity .26s ease; }
+.home .lede.fade { opacity: 0; }
+.dots { display: flex; gap: 6px; margin: 0 0 18px; }
+.dots i { width: 5px; height: 5px; border-radius: 50%; background: #d6cfc0; transition: background .2s; }
+.dots i.on { background: var(--teal); }
+
+.btn-wrap { position: relative; padding-bottom: 20px; margin-top: 14px; }
+
+/* 手指引导：整只手一个填充色（米白），青色只做 2px 描边。
+   手压在青色按钮上，青底青衣会糊成一团；米白在青底上对比最高，
+   到了米白卡片上再靠青描边把轮廓勾出来 —— 一个配色管两种底。 */
+.finger {
+  position: absolute; right: 10px; bottom: -9px;
+  width: 46px; height: 46px; pointer-events: none;
+  filter: drop-shadow(0 1px 1.5px rgba(27, 26, 23, .14));
+  animation: tap 2.4s ease-in-out infinite;
+}
+.finger .halo { fill: var(--teal); stroke: var(--teal); stroke-width: 4.4; stroke-linejoin: round; stroke-linecap: round; }
+.finger .halo-finger { fill: none; stroke: var(--teal); stroke-width: 10.4; stroke-linecap: round; }
+.finger .ln { fill: #fffefb; stroke: #fffefb; stroke-width: 0; stroke-linejoin: round; stroke-linecap: round; }
+.finger .ln-finger { fill: none; stroke: #fffefb; stroke-width: 6; stroke-linecap: round; }
+@keyframes tap {
+  0%, 100% { transform: translate(0, 0) rotate(-6deg); opacity: .92; }
+  42% { transform: translate(-6px, -6px) rotate(-15deg); opacity: 1; }
+  58% { transform: translate(-2px, -2px) rotate(-11deg); opacity: .94; }
+}
+
+.cap { font-size: 14.5px; color: var(--ink-3); margin: 10px 0 0; line-height: 1.7; }
+.cap b { color: var(--ink-2); }
+
+/* ---------- 大字开关 ----------
+   字号只存在内存里。落盘（localStorage / cookie）就和"我们不保存"打架了。
+   刷新会回到标准字号 —— 这是有意的取舍，写在这里免得以后有人"顺手优化"掉。 */
+.ls {
+  margin-left: 10px;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 13px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink-3);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.ls[aria-pressed="true"] { border-color: var(--teal); color: var(--teal); background: var(--teal-soft); }
+.qmeta { gap: 10px; }
+.qmeta .qcount { margin-left: auto; }
+.rhead { position: relative; }
+.ls-result { position: absolute; right: 0; top: 0; margin: 0; }
+
+/* ---------- 转诊卡 ----------
+   老年综合评估里，产品真正该负责的那一段：把功能下降问出来，把"该去哪"说清楚。
+   不做量表、不打分 —— 用户在手机上自测出来的分数不可信。 */
+.refs {
+  margin-top: 22px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 16px 14px;
+}
+.refs h2 { font-size: 18px; margin: 0 0 14px; font-weight: 700; }
+.ref { border-left: 3px solid var(--amber); padding: 0 0 0 13px; margin-bottom: 16px; }
+.ref:last-of-type { margin-bottom: 10px; }
+.ref h3 { font-size: 17.5px; margin: 0 0 5px; font-weight: 700; }
+.ref-why { font-size: 15px; color: var(--ink-2); margin: 0 0 7px; line-height: 1.62; }
+.ref-go { font-size: 15.5px; margin: 0; line-height: 1.6; }
+.ref-go b { color: var(--amber); font-weight: 700; }
+.ref-go span { display: block; font-size: 14.5px; color: var(--ink-3); margin-top: 3px; }
+.refs .tip { font-size: 14px; color: var(--ink-3); margin: 0; line-height: 1.65; }
+
+/* ---------- 疫苗 ----------
+   不写价格、不写品牌、不写库存：各城市差太多，写死必错且每周要改。
+   每支三行：名字 + 剂次 / 谁该打 / 打了有什么用。依据收进折叠。 */
+.vacs { margin-top: 34px; }
+.vacs h2 { font-size: 19px; margin: 0 0 12px; font-weight: 700; }
+.vac {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px 8px;
+  margin-bottom: 10px;
+}
+.vac-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.vac h3 { font-size: 17.5px; margin: 0; font-weight: 700; }
+.vac-dose {
+  font-size: 13.5px; color: #2f5f5a; background: var(--teal-soft);
+  border-radius: 7px; padding: 3px 9px; white-space: nowrap; flex: 0 0 auto;
+}
+.vac-who { font-size: 14.5px; color: var(--ink-3); margin: 7px 0 0; line-height: 1.55; }
+.vac-gain { font-size: 15.5px; color: var(--ink); margin: 9px 0 0; line-height: 1.6; }
+.vac-gain b {
+  display: inline-block; vertical-align: 1px;
+  font-size: 12.5px; font-weight: 700; color: #0b5d56; background: var(--teal-soft);
+  border-radius: 5px; padding: 1px 7px; margin-right: 7px;
+}
+.vac-warn {
+  font-size: 14px; color: #8a4b12; background: var(--amber-soft);
+  border-radius: 8px; padding: 8px 11px; margin: 9px 0 0; line-height: 1.6;
+}
+.src-line { font-size: 13.5px; color: var(--ink-3); margin: 0 0 6px; }
+.vacs .tip {
+  font-size: 14px; color: #8a4b12; background: var(--amber-soft);
+  border-radius: 10px; padding: 11px 13px; line-height: 1.65; margin: 12px 0 0;
+}
+
+/* ---------- 分享图那一层 ---------- */
+.sheet {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px; opacity: 0; transition: opacity .2s ease;
+}
+.sheet.show { opacity: 1; }
+.sheet-mask { position: absolute; inset: 0; background: rgba(27, 26, 23, .55); }
+.sheet-body {
+  position: relative; width: 100%; max-width: 400px; max-height: 86vh;
+  overflow: auto; -webkit-overflow-scrolling: touch;
+  background: var(--paper); border-radius: 18px; padding: 14px 14px 12px;
+  box-shadow: 0 18px 50px rgba(27, 26, 23, .28);
+}
+.sheet-hint { font-size: 15px; font-weight: 700; color: var(--ink-2); text-align: center; margin: 0 0 10px; }
+/* 长按要能出系统菜单：绝不能设 -webkit-touch-callout: none */
+.sheet-img { display: block; width: 100%; border-radius: 10px; border: 1px solid var(--line); -webkit-touch-callout: default; }
+.sheet-note { font-size: 13.5px; color: var(--ink-3); margin: 10px 0 12px; line-height: 1.65; }
+
+/* ---------- 首页的性别 ----------
+   两个大按钮，不做下拉：下拉要精准点击，老人点不准。
+   也不预选 —— 默认成任何一个都是替用户表态。 */
+.flabel-2 { margin-top: 14px; }
+.seg { display: flex; gap: 10px; margin: 0 0 4px; }
+.seg-b {
+  flex: 1 1 0;
+  min-height: 54px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: transparent;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: border-color .12s ease, background .12s ease, color .12s ease;
+}
+.seg-b.on { border-color: var(--teal); background: var(--teal-soft); color: #0b5d56; }
+
+/* ---------- 术语说明 ---------- */
+.gloss {
+  margin-top: 18px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 4px 16px 6px;
+}
+.gloss summary { font-size: 15px; color: var(--ink-2); }
+.gloss dl { margin: 2px 0 8px; }
+.gloss dl > div { padding: 9px 0; border-top: 1px dashed var(--line); }
+.gloss dt { font-size: 15.5px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.gloss dd { margin: 0; font-size: 15px; color: var(--ink-2); line-height: 1.65; }
+
+/* ---------- 体型那题（J10 方案 2：填身高体重，我替你算） ----------
+ * 两个输入框并排、实时出数。数字用等宽感的粗体，因为他要记住这个数去跟医生说。
+ * 65 岁以上多一个腰围框，三列会挤，所以 .calc-3 允许换行。
+ */
+.calc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+/* 三格时腰围单独占一行：它和身高体重不是同一件事（要另找皮尺），
+   挤在同一行会把三个数字都压到看不清 —— 老人尤其。 */
+.calc-3 .field:last-child { grid-column: 1 / -1; }
+/* 降级态里那个孤零零的腰围框：占满一行，不要跟空气对半分。
+ * 它下面是四个「买衣服」选项，两处必须对齐（老板 2026-11-23 指出的边距不一致）：
+ *   ① 左右内边距用 18px，和 .opt 的 padding 一致 —— 否则「腰围」比选项文字往左缩 6px；
+ *   ② 底下留 10px，和 .opts 的 gap 一致 —— 原来是 0，输入框直接贴着第一个选项，
+ *      看着像和它是一组（其实一点关系都没有）。
+ * 上下不对称是刻意的：上面 18px 隔开题面提示，下面 10px 接选项。 */
+.field-single { margin: 18px 0 10px; padding: 12px 18px; }
+.field {
+  display: flex; align-items: baseline; gap: 6px; min-width: 0;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px 12px;
+}
+.field span { font-size: 13px; color: var(--ink-3); flex: none; }
+.field input {
+  flex: 1; min-width: 0; width: 100%; border: 0; background: none; outline: none;
+  font: inherit; font-size: 21px; font-weight: 700; color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+/* 底纹文案是提示，不是要填的数：跟各页的小字统一成 13px / 常规字重 / ink-3。
+   数字框本身是 21px 粗体，直接继承会把这句长提示撑得比题目还大。
+   点进输入框（拿到焦点）底纹就消失，别跟正在输入的数字叠在一起。 */
+.field input::placeholder { font-size: 13px; font-weight: 400; color: var(--ink-3); opacity: 1; }
+.field input:focus::placeholder { color: transparent; }
+.field i { font-style: normal; font-size: 12.5px; color: var(--ink-3); flex: none; }
+
+.bmiout {
+  margin-top: 16px; background: var(--card); border: 1px solid var(--line);
+  border-radius: 12px; padding: 14px 15px 12px;
+}
+.bminum { display: flex; align-items: baseline; gap: 6px; }
+.bminum b { font-size: 32px; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.bminum small { font-size: 12px; color: var(--ink-3); }
+.bscale {
+  position: relative; display: flex; height: 10px; border-radius: 999px;
+  overflow: hidden; margin: 12px 0 4px; background: #e6e1d6;
+}
+.bscale .s { display: block; height: 100%; }
+.bscale .low { background: #9fc7d8; }
+.bscale .ok { background: #7fb69a; }
+.bscale .high { background: #d9a35a; }
+.bscale .obese { background: #b35b45; }
+.bscale .ptr {
+  position: absolute; top: -4px; width: 3px; height: 18px; border-radius: 2px;
+  background: var(--ink); left: 0; transition: left .18s ease;
+}
+/* 刻度数字按真实比例摆：18.5 在条子左边偏右，26.9 在中偏右，不是"两端" */
+.sticks { position: relative; height: 16px; margin-top: 5px; }
+.sticks span {
+  position: absolute; transform: translateX(-50%);
+  font-size: 11px; color: var(--ink-3); white-space: nowrap;
+}
+.bmtxt { font-size: 14.5px; line-height: 1.7; margin: 10px 0 0; color: var(--ink-2); }
+.bmtxt.bad { color: var(--amber); }
+.calc-tip { font-size: 12.5px; color: var(--ink-3); line-height: 1.7; margin: 10px 0 0; }
+
+/* 结果页的体型卡：这块只给提示，不改清单，所以视觉上也比 A/B/C 的卡轻一档 */
+.bodyc {
+  margin-top: 26px; padding: 14px 16px 4px;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  border-left: 4px solid #c9a227;
+}
+.bodyc h2 { font-size: 15px; margin: 0 0 8px; color: var(--ink-2); font-weight: 600; }
+.bline { display: flex; align-items: baseline; gap: 8px; margin: 0; flex-wrap: wrap; }
+.bline b { font-size: 21px; font-variant-numeric: tabular-nums; }
+.blv { font-size: 12.5px; padding: 2px 8px; border-radius: 6px; background: var(--gray-soft); color: var(--ink-2); }
+.blv.lv-ok { background: var(--teal-soft); color: #0b5d56; }
+.blv.lv-low { background: #e8f1f6; color: #2c5d75; }
+.blv.lv-high, .blv.lv-obese { background: var(--amber-soft); color: var(--amber); }
+.brange { font-size: 12.5px; color: var(--ink-3); margin: 5px 0 0; line-height: 1.65; }
+.bsay { font-size: 14.5px; line-height: 1.75; color: var(--ink-2); margin: 9px 0 0; }
+.bsay.warn { color: var(--ink); }
+.bfine { font-size: 12.5px; color: var(--ink-3); line-height: 1.7; margin: 10px 0 12px; }
+.bodyc details { margin-bottom: 8px; }
+.bodyc summary { font-size: 13.5px; color: var(--teal); cursor: pointer; padding: 6px 0; }
+
+/* 按 BMI 档位给的「该做什么」：一行一件，标题重、解释轻。
+ * 老板 R8 第 1 条：不要一句总结，要按数值分档给能照着做的事。 */
+.badv { list-style: none; padding: 0; margin: 12px 0 0; }
+.badv li { background: var(--paper); border: 1px solid var(--line); border-left: 3px solid #c9a227; border-radius: 10px; padding: 9px 12px; margin-bottom: 8px; }
+.badv b { display: block; font-size: 15px; line-height: 1.45; }
+.badv span { display: block; font-size: 12.5px; color: var(--ink-3); line-height: 1.65; margin-top: 3px; }
+
+/* 体型的依据框：壳子跟项目卡一致（谁 / 文件 / 强度 / 原文），但更轻 —— 它只有一条 */
+.bdev { margin: 12px 0 0 !important; border-top: 1px dashed var(--line); padding-top: 9px; }
+.bdev > summary { display: flex; align-items: baseline; gap: 8px; list-style: none; }
+.bdev > summary::-webkit-details-marker { display: none; }
+.bdev > summary::after { content: '展开 ›'; font-size: 11.5px; color: var(--teal); margin-left: auto; }
+.bdev[open] > summary::after { content: '收起 ⌃'; }
+.bdev-n { font-size: 12.5px; color: var(--teal); font-weight: 600; }
+.bdev-x { font-size: 11.5px; color: var(--ink-3); }
+.bdev-b { padding: 8px 0 4px; }
+.bdev-b p { margin: 0 0 5px; font-size: 12.5px; line-height: 1.65; color: var(--ink-2); }
+.bdev-h { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.bdev-t { font-size: 14px !important; color: var(--ink) !important; }
+.bdev-n2 { color: var(--ink-3) !important; }
+.bdev-c { font-size: 11.5px !important; color: var(--ink-3) !important; }
+.bdev a { font-size: 12.5px; color: var(--teal); text-decoration: none; }
+.st { font-size: 11px; padding: 1px 6px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+.st-guide { color: #3c4a6b; background: #eceff7; }
+
+/* ---------- 病友彩蛋（EGG · 方案 3「进来那一瞬」） ----------
+ * 老板 2026-11-21 定稿。整屏那层用米白纸色、引文用衬线体、祝福比引文大一号；
+ * 收起来之后留一条窄带，不是再放一张卡 —— 同一句话在一屏里出现两次就不像彩蛋了。
+ * 这一块**没有**任何免责小字，是老板两次确认过的（「一个字不留」），别加回去。
+ */
+.eggband {
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin: 14px 0 0; padding: 11px 14px;
+  font: inherit; font-size: 14.5px; text-align: left; color: var(--ink);
+  background: #fbf7ee; border: 1px solid #eadfc8; border-left: 4px solid #c9a227;
+  border-radius: 12px; cursor: pointer;
+}
+.eggband-go { flex: none; font-size: 13px; color: #8a6a12; }
+
+.veil {
+  position: fixed; inset: 0; z-index: 200;
+  background: #fbf7ee;
+  display: flex; align-items: center; justify-content: center;
+  padding: 30px 26px calc(30px + env(safe-area-inset-bottom, 0px));
+  opacity: 0; transition: opacity .34s ease;
+}
+.veil.show { opacity: 1; }
+/* 「减少动态效果」直接出现，不做淡入 */
+.veil.calm { transition: none; }
+.veil-in { max-width: 460px; }
+.veil-q {
+  font-family: "Songti SC", "STSong", "SimSun", Georgia, "Times New Roman", serif;
+  font-size: 23px; line-height: 1.95; letter-spacing: .01em;
+  color: var(--ink); margin: 0 0 16px;
+}
+.veil-who { font-size: 13.5px; color: var(--ink-2); margin: 0; }
+.veil-where { font-size: 12.5px; color: var(--ink-3); margin: 3px 0 26px; }
+.veil-wish { font-size: 21px; font-weight: 700; color: var(--teal); margin: 0 0 12px; }
+/* R12：这句祝福是「我」说的，不是上面那位 CEO 说的 —— 光秃秃一行祝福会被读成
+   阿莫代伊在祝病友早日康复。所以加一行落款，右对齐（中文书信的落款位置），
+   字号和颜色都压低一档，让人先看见祝福、再看见是谁写的。 */
+.veil-sign {
+  font-size: 14px; color: var(--ink-2); letter-spacing: .03em;
+  text-align: right; margin: 0 0 30px;
+}
+.veil-btn {
+  font: inherit; font-size: 15px; padding: 12px 20px;
+  border-radius: 999px; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink-2); cursor: pointer;
+}
+html[data-ls="big"] .veil-q { font-size: 26px; }
+html[data-ls="big"] .veil-wish { font-size: 24px; }
+html[data-ls="big"] .veil-sign { font-size: 16px; }
+html[data-ls="big"] .eggband { font-size: 16px; }
+.print-tip {
+  font-size: 13.5px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  margin: 4px 2px 0;
+  text-align: center;
+}
+
+/* ---------- 回到顶部 ----------
+   滑过两屏才出现。48px 是因为手指按不准，44 是别人的下限，不是我们的。 */
+.totop {
+  position: fixed;
+  right: 16px;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  height: 48px;
+  min-width: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid #1b1a17;
+  background: #1b1a17;
+  color: #fffefb;
+  font: inherit;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(27, 26, 23, .22);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 60;
+}
+/* 只写箭头是个"图标"，老人不一定认；加上字，48px 的高度也够手指按 */
+.totop-t { font-size: 13px; font-weight: 600; letter-spacing: .01em; }
+.totop.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+/* 页尾那颗：不是浮动，就是普通一行链接文字 */
+.toend { margin: 14px 0 0; }
+.linkbtn { padding: 6px 0; border: 0; background: none; font: inherit; font-size: 13.5px; color: var(--teal); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+/* ---------- 大字模式 ----------
+   只放大"要读的内容"，不放大装饰。老人要的是看清字，不是看大图标。 */
+html[data-ls="big"] .lede { font-size: 20px; }
+html[data-ls="big"] .qtitle { font-size: 30px; }
+html[data-ls="big"] .qhint { font-size: 18.5px; }
+html[data-ls="big"] .opt { font-size: 20px; min-height: 64px; }
+html[data-ls="big"] .opt-sub { font-size: 16px; }
+html[data-ls="big"] .item h3 { font-size: 20px; }
+html[data-ls="big"] .verdict-line { font-size: 18px; }
+html[data-ls="big"] .detail { font-size: 18px; }
+html[data-ls="big"] .freq { font-size: 16px; }
+html[data-ls="big"] .ref h3 { font-size: 20px; }
+html[data-ls="big"] .ref-why,
+html[data-ls="big"] .ref-go { font-size: 17.5px; }
+html[data-ls="big"] .vac h3 { font-size: 20px; }
+html[data-ls="big"] .vac-gain { font-size: 18px; }
+html[data-ls="big"] .vac-who { font-size: 17px; }
+html[data-ls="big"] .rsum { font-size: 18px; }
+
+/* ---------- 打印 ----------
+   PC 才是打印的主场景：老人拿着纸进诊室。默认情况下详情是收起的，
+   打出来一条依据都没有 —— 所以这里强制展开，并把按钮隐藏。 */
+@media print {
+  .actions, .toast, .shared-tip, .skip, .back, .progress, .pword, .qmeta,
+  .ls, .sheet, .finger, .dots, .totop, .veil, .eggband { display: none !important; }
+  details { display: block; }
+  details > summary { display: none; }
+  .detail { padding-top: 0; }
+  .item, .freq, .soon, .freq-basis, .ev-quote { background: none !important; border: 1px solid #bbb !important; }
+  .item { break-inside: avoid; page-break-inside: avoid; }
+  .screen { max-width: none; padding: 0; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 10px; color: #555; word-break: break-all; }
+  .disclaim { border-top: 1px solid #999; }
+}
+
+/* ---------- 只有真能悬停的设备才给 hover ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .btn.primary:hover { background: #0c635c; }
+  .btn.ghost:hover { background: #fff; }
+  .opt:hover { border-color: #cfc8ba; }
+  .ev-link:hover { text-decoration: underline; }
+}
+
+/* ---------- 性别按钮的呼吸引导（老板 2026-11-20 选的方案 1） ----------
+ * 没选之前两个按钮轮流轻轻"呼一口气"，只动描边和一圈很淡的光晕，不动尺寸也不动文字。
+ * 选完立刻停 —— 动效的目的是让人知道"这里要选"，不是装饰。
+ * 「减少动态效果」开了就完全不呼吸：前庭敏感的人会被循环动画搞到头晕。
+ * 注意：这里不能用裸 :hover，触摸屏上会粘住（不变量 no-hover-on-touch 守着）。
+ */
+.seg-pulse .seg-b { animation: seg-breath 1.9s ease-in-out infinite; }
+.seg-pulse .seg-b:nth-child(2) { animation-delay: .95s; }
+@keyframes seg-breath {
+  0%, 100% { border-color: var(--line); box-shadow: 0 0 0 0 rgba(15, 118, 110, 0); }
+  50% { border-color: #86c9c1; box-shadow: 0 0 0 4px rgba(15, 118, 110, .10); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seg-pulse .seg-b { animation: none; }
+}
+
+/* ---------- 段落末尾的行动按钮（方案 3） ---------- */
+.seg-cta { width: 100%; margin: 20px 0 0; }
+.seg-tip { font-size: 13px; color: var(--ink-3); margin: 8px 0 0; }
+.rev-next { margin-top: 22px; }
+.gap-tag {
+  font-size: 11px; padding: 1px 6px; border-radius: 4px;
+  background: var(--gray-soft); color: var(--ink-3);
+  margin-left: 6px; white-space: nowrap;
+}
+.gap-go {
+  display: inline-block; margin-left: 8px; font: inherit; font-size: 13.5px;
+  color: var(--teal); background: none; border: 0; padding: 0;
+  text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}

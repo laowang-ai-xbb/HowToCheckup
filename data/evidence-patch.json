@@ -1,0 +1,452 @@
+{
+  "_comment": [
+    "证据补丁：给 rules.json 的 evidence 补上原文摘录（quotes）、推荐强度（strength）、修正链接。",
+    "键是 ruleId，值是 { 证据序号: 要合并的字段 }。",
+    "quotes 里的每一句必须是来源快照 data/snapshots/*.txt 里的连续原文，",
+    "scripts/apply-evidence.mjs 会逐句核对，找不到就报错 —— 所以这里不能写记忆里的句子。",
+    "strength: strong（明确推荐做）/ conditional（个体化、看情况）/ against（明确不推荐）/ insufficient（证据不足）"
+  ],
+  "base-package": {
+    "0": {
+      "quotes": [
+        "采用“1+X”的体检项目设计体系框架,“1”为基本体检项目,“X”为专项体检项目。",
+        "生化检查包括肝功能、肾功能、血脂、血糖、尿酸、甲状腺功能",
+        "(3)辅助检查:主要包括心电图检查、放射检查和超声检查3个部分。"
+      ]
+    }
+  },
+  "base-package-male": {
+    "0": {
+      "quotes": [
+        "外科:皮肤、头颈、脊柱、四肢、关节、浅表淋巴结、甲状腺、肛诊、外生殖器(男性)、乳腺(女性)"
+      ]
+    }
+  },
+  "base-package-female": {
+    "0": {
+      "quotes": [
+        "腹部超声:肝、胆、胰、脾、肾女性:子宫、附件",
+        "妇科:外阴、内诊"
+      ]
+    }
+  },
+  "colorectal-screening": {
+    "0": {
+      "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+      "year": "2025",
+      "grade": "指南（卫健委委托）",
+      "urlFrom": [
+        "stomach-gastroscopy-high-risk",
+        0
+      ],
+      "point": "结直肠癌防癌体检以结肠镜为一线方法；散发性结直肠癌按年龄、性别、一级亲属家族史、吸烟、BMI 评分，累计≥4 分认定为高风险人群（其中“50 岁以上从未做肠镜”单独计 3 分）",
+      "strength": "strong",
+      "quotes": [
+        "结直肠癌防癌体检推荐结肠镜检查作为一线检查方法",
+        "以上各项累计评分≥4分者，认定为高风险人群。"
+      ]
+    },
+    "1": {
+      "point": "45–49 岁筛查（B 级）；50–75 岁筛查（A 级）；76–85 岁个体化决定（C 级）；85 岁以上不推荐开始筛查（D 级）",
+      "quotes": [
+        "The USPSTF recommends screening for colorectal cancer in adults aged 45 to 49 years.",
+        "The USPSTF recommends screening for colorectal cancer in all adults aged 50 to 75 years."
+      ]
+    },
+    "2": {
+      "quotes": [
+        "推荐筛查起止年龄在40~74岁。",
+        "常规筛查的频率为每5~10年进行1次结肠镜检查,无病变检出者,结肠镜复查间隔可为10年;每年进行1次大便潜血检查。"
+      ]
+    }
+  },
+  "lung-ldct-high-risk": {
+    "0": {
+      "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+      "year": "2025",
+      "grade": "指南（卫健委委托）",
+      "urlFrom": [
+        "stomach-gastroscopy-high-risk",
+        0
+      ],
+      "point": "肺癌高风险人群：50–74 岁、无肺癌病史，且吸烟≥20 包年（含戒烟不足 15 年）、与吸烟者共同生活或同室工作≥20 年、慢阻肺、职业暴露≥1 年、一级亲属肺癌，符合任一条件",
+      "strength": "strong",
+      "quotes": [
+        "肺癌高风险人群为50-74岁，无肺癌病史，且符合以下任意一项者：",
+        "吸烟包年数≥20包年，包括曾经吸烟≥20包年，但戒烟不足15年。",
+        "无肺内非钙化结节检出(阴性),建议进入下年度体检;"
+      ]
+    },
+    "1": {
+      "org": "USPSTF",
+      "year": "2021",
+      "grade": "USPSTF-B",
+      "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/lung-cancer-screening",
+      "point": "50–80 岁、吸烟≥20 包年且目前吸烟或戒烟不足 15 年者，每年 1 次低剂量螺旋 CT（B 级）",
+      "strength": "strong",
+      "quotes": [
+        "the USPSTF recommends annual screening for lung cancer with LDCT in adults aged 50 to 80 years who have at least a 20 pack-year smoking history"
+      ]
+    },
+    "append": [
+      {
+        "org": "中国肺癌低剂量CT筛查指南（2025年版）",
+        "year": "2025",
+        "point": "中国自己的肺癌筛查指南：50–80 岁且符合高危条件者参加筛查，多数指南推荐年度性筛查。这是\"每年 1 次、上界到 80 岁\"的直接出处（国家癌症中心那份防癌体检指南只到 74 岁）。两处原文都写\"年度/下年度\"，没有写成\"每年 1 次\"的数字。",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12972581/",
+        "status": "verified",
+        "grade": "指南（国家级筛查专指南）",
+        "checkedAt": "2026-11-18",
+        "strength": "strong",
+        "quotes": [
+          "多数肺癌筛查指南推荐对高危人群采用LDCT进行年度性筛查",
+          "建议同时符合以下两项条件者参加肺癌筛查:(1)原则上年龄介于50-80岁。"
+        ]
+      }
+    ]
+  },
+  "stomach-gastroscopy-high-risk": {
+    "0": {
+      "strength": "strong",
+      "quotes": [
+        "胃癌高风险人群：年龄≥45岁，且符合以下任意一项：",
+        "上消化道癌防癌体检推荐首选内镜学检查，检查无异常者原则上每5年进行1次内镜检查"
+      ]
+    }
+  },
+  "cervical-cancer-screening": {
+    "0": {
+      "strength": "strong",
+      "quotes": [
+        "宫颈癌防癌体检推荐高危型人乳头瘤病毒核酸检测和/或细胞学检查作为初筛首选方法",
+        "（1）25-64周岁女性，每3-5年进行宫颈癌筛查体检。"
+      ]
+    },
+    "1": {
+      "quotes": [
+        "The USPSTF concludes with high certainty that the benefits of screening every 3 years with cytology alone, every 5 years with hrHPV testing alone, or in combination in women aged 30 to 65 years outweigh the harms."
+      ]
+    }
+  },
+  "liver-cancer-screening": {
+    "0": {
+      "strength": "strong",
+      "quotes": [
+        "高危人群至少每隔6 个月进行 1 次检查。"
+      ]
+    }
+  },
+  "hp-test-once": {
+    "0": {
+      "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+      "year": "2025",
+      "grade": "指南（卫健委委托）",
+      "urlFrom": [
+        "stomach-gastroscopy-high-risk",
+        0
+      ],
+      "point": "胃癌高风险人群判定条件之一：尿素呼气试验、血清 Hp 抗体、粪便 Hp 抗原任一阳性。Hp 检测是判定胃癌高风险、进而决定是否做胃镜的依据",
+      "strength": "strong",
+      "quotes": [
+        "尿素呼气试验(urea breath test, UBT)、血清幽门螺杆菌（Hp）抗体、粪便Hp抗原检测任一阳性；"
+      ]
+    }
+  },
+  "bone-density-65f": {
+    "0": {
+      "quotes": [
+        "The USPSTF recommends screening for osteoporosis to prevent osteoporotic fractures in women 65 years or older.",
+        "Cohort studies evaluating screening intervals suggest that repeating BMD testing at an interval of 4 to 8 years does not result in additional accuracy in predicting fractures."
+      ]
+    }
+  },
+  "aaa-screening": {
+    "0": {
+      "quotes": [
+        "The USPSTF recommends 1-time screening for abdominal aortic aneurysm (AAA) with ultrasonography in men aged 65 to 75 years who have ever smoked."
+      ]
+    }
+  },
+  "breast-cancer-screening-high-risk": {
+    "0": {
+      "quotes": [
+        "The USPSTF recommends that primary care clinicians assess women with a personal or family history of breast, ovarian, tubal, or peritoneal cancer or who have an ancestry associated with breast cancer susceptibility 1 and 2 (BRCA1/2) gene mutations with an appropriate brief familial risk assessment tool."
+      ]
+    },
+    "1": {
+      "quotes": [
+        "1)有遗传家族史,即具备以下任意一项者:",
+        "a)一级亲属有乳腺癌或卵巢癌史;",
+        "高风险人群宜从40岁起筛,筛查措施为: \n每年应进行一次乳腺超声联合乳腺X线摄影检查;"
+      ]
+    }
+  },
+  "breast-cancer-screening": {
+    "0": {
+      "quotes": [
+        "The USPSTF recommends biennial screening mammography for women aged 40 to 74 years."
+      ]
+    },
+    "1": {
+      "quotes": [
+        "每1-2年应进行一次乳腺超声检查;",
+        "如不具备乳腺超声检查条件,宜使用乳腺X线摄影检查。"
+      ]
+    }
+  },
+  "thyroid-us-screening": {
+    "0": {
+      "quotes": [
+        "在中国成人中通过超声检查发现直径0.5cm以上甲状腺结节的患病率达到20.43%,其中8%-16%为恶性肿瘤"
+      ]
+    },
+    "1": {
+      "quotes": [
+        "The USPSTF recommends against screening for thyroid cancer in asymptomatic adults."
+      ]
+    }
+  },
+  "carotid-us-screening": {
+    "0": {
+      "quotes": [
+        "The USPSTF recommends against screening for asymptomatic carotid artery stenosis in the general adult population."
+      ]
+    }
+  },
+  "psa-70plus": {
+    "0": {
+      "quotes": [
+        "The USPSTF recommends against PSA-based screening for prostate cancer in men 70 years and older."
+      ]
+    }
+  },
+  "tsh-screening": {
+    "0": {
+      "quotes": [
+        "The USPSTF concludes that the current evidence is insufficient to assess the balance of benefits and harms of screening for thyroid dysfunction in nonpregnant, asymptomatic adults."
+      ]
+    }
+  },
+  "hepatitis-bc-screening": {
+    "0": {
+      "grade": "B1（推荐强度 1，强推荐）",
+      "strength": "strong",
+      "quotes": [
+        "推荐意见8:在不涉及入托、入学和入职的健康体格检查或就医时,应进行HBsAg筛查。对一般人群均应进行HBsAg筛查,特别是人类免疫缺陷病毒"
+      ]
+    }
+  },
+  "pet-ct-screening": {
+    "0": {
+      "quotes": [
+        "Do not use PET/CT for cancer screening in healthy individuals."
+      ]
+    }
+  },
+  "tumor-markers-panel": {
+    "0": {
+      "quotes": [
+        "不推荐使用胸部X线检查、MRI检查、PET-CT检查、生物标志物检测等进行肺癌筛查。"
+      ]
+    },
+    "1": {
+      "quotes": [
+        "实验室检查常规检查:血常规、尿常规、粪便常规 + 潜血",
+        "生化检查:肝功能、肾功能、血脂、空腹血糖、尿酸"
+      ],
+      "absence": true,
+      "strength": null
+    }
+  },
+  "stomach-gastroscopy-average-risk": {
+    "0": {
+      "quotes": [
+        "避免一般风险人群的过度检查",
+        "一般风险人群采用健康促进模式"
+      ]
+    }
+  },
+  "chest-xray-routine": {
+    "0": {
+      "quotes": [
+        "胸部正位片或正侧位片:肺部、心脏、胸廓、纵隔"
+      ]
+    },
+    "1": {
+      "quotes": [
+        "they have not been found to be beneficial include sputum cytology, chest radiography, and measurement of biomarker levels"
+      ]
+    },
+    "append": [
+      {
+        "org": "中国医院协会《中国医院质量安全管理 第2-30部分：患者服务 健康体检》",
+        "year": "2020",
+        "point": "附录 A\"健康体检基本项目目录\"把 X 线胸片列进了辅助检查（与心电图、腹部超声并列）。这是\"胸片算必选\"这一方的依据，也是本条标为争议项的原因：2014 年的国内目录还把它列为必选，而 USPSTF 已判定无症状人群做胸片筛查无获益。",
+        "url": "http://szsyyxh.org/ziye/main2/files/%E9%99%84%E4%BB%B63%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%A0%87%E5%87%86.pdf",
+        "status": "verified",
+        "grade": "团体标准（附录 A 健康体检基本项目目录）",
+        "checkedAt": "2026-11-18",
+        "strength": "conditional",
+        "quotes": [
+          "X线检查胸片:肺部、心脏、胸廓、纵膈、膈肌"
+        ]
+      }
+    ]
+  },
+  "psa-50-69": {
+    "0": {
+      "quotes": [
+        "前列腺癌高风险人群为预期寿命10年以上且符合下列条件之一的男性:",
+        "年龄≥50岁。",
+        "针对前列腺癌高风险人群,建议定期(每两年1次)监测血清PSA水平。"
+      ]
+    },
+    "1": {
+      "quotes": [
+        "For men aged 55 to 69 years, the decision to undergo periodic prostate-specific antigen (PSA)-based screening for prostate cancer should be an individual one."
+      ]
+    }
+  },
+  "psa-family-45": {
+    "0": {
+      "quotes": [
+        "年龄≥45岁且一级亲属有前列腺癌家族史。",
+        "针对前列腺癌高风险人群,建议定期(每两年1次)监测血清PSA水平。"
+      ]
+    },
+    "1": {
+      "quotes": [
+        "The USPSTF recommends against PSA-based screening for prostate cancer in men 70 years and older"
+      ]
+    }
+  },
+  "ovarian-family-history": {
+    "0": {
+      "quotes": [
+        "推荐从30~35岁起开始定期行盆腔检查、血CA125和经阴道超声的联合筛查"
+      ]
+    }
+  },
+  "diabetes-followup": {
+    "0": {
+      "quotes": [
+        "T2DM患者在诊断时就应做眼底检查和神经病变的检查",
+        "建议二甲双胍治疗的糖尿病患者每年测定1次血清维生素B12。"
+      ]
+    }
+  },
+  "hypertension-followup": {
+    "0": {
+      "quotes": [
+        "血压升高可引起动脉血管系统和其供应的器官在结构和功能上的改变,导致靶器官损害"
+      ]
+    }
+  },
+  "cvd-followup": {
+    "0": {
+      "quotes": [
+        "本《指南》的目标人群为尚未发生心血管病临床事件的18岁及以上人群。"
+      ]
+    }
+  },
+  "cancer-survivor-followup": {
+    "0": {
+      "quotes": [
+        "超声用于治疗后定期随访,廉价、无辐射是其最大的优势"
+      ]
+    }
+  },
+  "thyroid-followup": {
+    "0": {
+      "quotes": [
+        "多数良性甲状腺结节仅需定期随访,无症状且增长不快的良性结节无须特殊治疗。"
+      ]
+    }
+  },
+  "lung-ldct-80plus": {
+    "0": {
+      "quotes": [
+        "原则上年龄介于50-80岁。",
+        "对于筛查终止年龄,应重视个体化风险评估"
+      ]
+    }
+  },
+  "colorectal-screening-75plus": {
+    "0": {
+      "quotes": [
+        "The USPSTF recommends that clinicians selectively offer screening for colorectal cancer in adults aged 76 to 85 years."
+      ]
+    },
+    "1": {
+      "quotes": [
+        "其他肠道良性病变:因结直肠癌风险增加并不明显,可视同一般人群处理。结肠镜复查间隔可为5-10年。"
+      ]
+    }
+  },
+  "breast-cancer-75plus": {
+    "0": {
+      "quotes": [
+        "The USPSTF concludes that the current evidence is insufficient to assess the balance of benefits and harms of screening mammography in women 75 years or older."
+      ]
+    }
+  },
+  "cervical-cancer-65plus": {
+    "0": {
+      "quotes": [
+        "The USPSTF recommends against screening for cervical cancer in women older than 65 years who have had adequate prior screening"
+      ]
+    },
+    "1": {
+      "quotes": [
+        "（1）25-64周岁女性，每3-5年进行宫颈癌筛查体检。"
+      ]
+    }
+  },
+  "pregnancy-guard": {
+    "1": {
+      "quotes": [
+        "必要的检查项目\n 血常规;\n 尿常规;\n 血型(ABO和Rh血型);\n 肝功能;\n 肾功能;\n 空腹血糖水平;",
+        "必要时可进行以下备查项目:子宫颈细胞学检查(1年内未查者);TORCH筛查;"
+      ]
+    }
+  },
+  "echo-routine": {
+    "0": {
+      "quotes": [
+        "(3)辅助检查:主要包括心电图检查、放射检查和超声检查3个部分。",
+        "十二导联心电图",
+        "胸部正位片或正侧位片:肺部、心脏、胸廓、纵隔",
+        "腹部超声:肝、胆、胰、脾、肾女性:子宫、附件"
+      ]
+    },
+    "1": {
+      "quotes": [
+        "辅助检查心电图检查:心率及心电图结论\nX线检查胸片:肺部、心脏、胸廓、纵膈、膈肌\n超声检查:肝、胆、胰、脾、肾"
+      ]
+    }
+  },
+  "aaa-screening-75plus": {
+    "0": {
+      "quotes": [
+        "The USPSTF recommends 1-time screening for abdominal aortic aneurysm (AAA) with ultrasonography in men aged 65 to 75 years who have ever smoked"
+      ]
+    }
+  },
+  "stomach-gastroscopy-75plus": {
+    "0": {
+      "quotes": [
+        "胃癌高风险人群:年龄≥45岁,且符合以下任意一项:"
+      ]
+    }
+  },
+  "head-ct-routine": {
+    "0": {
+      "quotes": [
+        "(3)辅助检查:主要包括心电图检查、放射检查和超声检查3个部分。",
+        "十二导联心电图",
+        "胸部正位片或正侧位片:肺部、心脏、胸廓、纵隔",
+        "腹部超声:肝、胆、胰、脾、肾女性:子宫、附件"
+      ]
+    }
+  }
+}

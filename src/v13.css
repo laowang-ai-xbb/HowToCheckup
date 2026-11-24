@@ -1,0 +1,635 @@
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2026 老王AI瞎bb */
+/* See LICENSE at the repository root. */
+
+/* 结果页（结论卡）与依据页的样式 —— 与 demo/v13-a、v13-evidence 同一套。
+ * 这些规则原本写在 scripts/gen-demo-v13.mjs 里；产品既然采用同一版设计，
+ * 就把样式搬到这里，让两边长得一样。改了要两边一起看（check:ui 会盯关键结构）。
+ *
+ * 两条页面根节点都带 .v13（结果页 `<main class="screen result v13">`、
+ * 依据页 `<main class="page v13">`）。这不是洁癖：产品 styles.css 里有一条全局的
+ * `details[open] summary::after { content: " －" }`，它是 (0,1,3) 权重；
+ * 我们的折叠框自己带「展开 › / 收起 ⌃」，写成 .evbox > summary::after 只有 (0,1,2)，
+ * 比不过它 —— 折叠块一展开，里面所有依据框的指示器全变成减号。
+ * 加一层 .v13 把权重抬到 (0,2,2)，从此不靠"谁写在后面"赌输赢。 */
+  body { background: var(--paper); }
+  .page { max-width: 620px; margin: 0 auto; padding: 22px 20px 70px; }
+  /* 产品的结果页外面还套着一层 .screen（首页和问卷页也在用它，宽度 560、留白 28/20）。
+     这里只把结果页这一个容器拉宽到 demo 的 620 —— 不为了对齐 demo 去改首页。 */
+  .screen.result { max-width: 620px; padding: 22px 20px 70px; padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+
+  /* ---- 页头 ---- */
+  .rhead { padding-top: 6px; }
+  .rwho { font-size: 13px; color: var(--ink-3); }
+  .rhead h1 { font-size: 27px; line-height: 1.28; margin: 7px 0 6px; letter-spacing: -.01em; }
+  .sub { font-size: 14px; color: var(--ink-2); margin: 0 0 4px; line-height: 1.7; }
+  /* 依据页页头的两个出口：回清单是主路，分享是顺手；都不用翻到页尾 */
+  .ev-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .ev-actions .btn { margin-top: 0; }
+
+  /* ---- 结论卡（A） ---- */
+  /* 页首只剩一句"序号是什么意思"。
+   * 原来还有"18 项 / 必做 7 · 看你的情况 6 · 不用做 5"——跟目录格里的数字重复，老板让删了。 */
+  .sum-hint { font-size: 12.5px; color: var(--ink-3); margin: 10px 0 0; line-height: 1.6; }
+  /* 50+ 女性的孕产兜底：只在清单页首放一行，不做成问题、不吓人。 */
+  .preg-note { font-size: 12.5px; color: var(--ink-2); margin: 9px 0 0; line-height: 1.6; }
+  .verdict { margin-top: 18px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 16px 12px; }
+  .tops { list-style: none; margin: 0; padding: 0; }
+  .tops li { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+  .tops li:last-child { border-bottom: 0; }
+  .ti { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .tops b { font-size: 17px; display: block; line-height: 1.45; }
+  .tops p { font-size: 13.5px; color: var(--ink-2); margin: 3px 0 4px; line-height: 1.6; }
+  .tf { font-size: 12.5px; color: var(--teal); }
+  .vrest { font-size: 13px; color: var(--ink-3); margin: 8px 0 0; line-height: 1.7; }
+
+  /* ---- 目录 ----
+   * 老板第 4 条：不要左右滑。老人不会"这一排还能往右拖"这回事 ——
+   * 滑出去的入口，对他们等于不存在。所以手机上排成 3 列网格，六个入口全露出来。 */
+  .toc { display: grid; grid-template-columns: repeat(var(--tcols, 3), 1fr); gap: 6px; padding: 14px 0 4px; }
+  .toc a { display: flex; align-items: baseline; justify-content: center; gap: 3px; font-size: 13px; padding: 10px 6px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink-2); text-decoration: none; text-align: center; line-height: 1.3; }
+  .toc a i { font-style: normal; color: var(--ink-3); font-size: 11.5px; }
+  .toc a.on { color: var(--teal); font-weight: 600; border-color: var(--teal); background: var(--teal-soft); }
+
+  /* ---- 段落标题 ---- */
+  .sh { font-size: 19px; margin: 26px 0 4px; display: flex; flex-direction: column; gap: 2px; }
+  .sh span { font-size: 12.5px; font-weight: 400; color: var(--ink-3); line-height: 1.6; }
+
+  /* ---- 一行式清单项 ---- */
+  .rows { display: grid; gap: 9px; margin-top: 12px; }
+  .atom { background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--teal); border-radius: 12px; padding: 11px 13px; }
+  .rows.dim .atom { border-left-color: #c9c3b6; }
+  .an { font-size: 16px; font-weight: 600; line-height: 1.4; display: flex; gap: 8px; align-items: baseline; }
+  /* 重点项：字更大、左侧色条更粗、带序号。它还是清单里的一行，不另起一张卡 */
+  .atom.key { border-left-width: 4px; padding: 13px 14px; background: #fffdf8; }
+  .atom.key .an { font-size: 18px; }
+  .kn { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; transform: translateY(1px); }
+  .atom.key .aw { font-size: 14px; color: var(--ink); }
+  .aw { font-size: 13.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.6; }
+  .am { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 7px; }
+  .af { font-size: 12.5px; color: var(--teal); }
+  .apick { font-size: 12px; color: var(--amber); }
+  .evlink { font-size: 12.5px; color: var(--ink-3); text-decoration: none; border-bottom: 1px solid var(--line); }
+
+  /* ---- 缺口 ---- */
+  .gaps { margin-top: 18px; background: #fdf8ec; border: 1px solid #e8d7b6; border-radius: 14px; padding: 14px 15px 12px; }
+  .gaps h2 { font-size: 16px; margin: 0 0 6px; }
+  .gaps p { font-size: 13.5px; color: var(--ink-2); margin: 0 0 8px; line-height: 1.65; }
+  .gaps ul { list-style: none; padding: 0; margin: 0; }
+  .gaps li { font-size: 13.5px; color: var(--ink-2); padding: 7px 0; border-top: 1px dashed #eadfc8; line-height: 1.6; }
+  .gq { font-weight: 600; color: var(--ink); }
+  .gtag { font-size: 11px; padding: 1px 6px; border-radius: 4px; background: #f1efe9; color: var(--ink-3); margin: 0 6px; white-space: nowrap; }
+  .geff { display: block; margin: 3px 0 2px; }
+  .gbtn { font: inherit; font-size: 13px; color: var(--teal); background: none; border: 0; padding: 2px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+
+  /* 页首补题模块（A 用）：summary 就是原来那条窄带，点开在原地展开，
+     不跳锚点 —— 老人点「去补」，期待的是眼前这块打开。 */
+  .gaptop { margin-top: 14px; padding: 0; }
+  .gaptop > summary { display: flex; align-items: flex-start; gap: 9px; padding: 11px 13px; cursor: pointer; list-style: none; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+  /* 圆点跟着第一行，不要跟着整块垂直居中 —— 那段文字有三行长，
+     居中的话圆点会落在第二行行首，看着像"句子里冒出一个句点"。 */
+  .gaptop > summary .gbdot { margin-top: 6px; }
+  .gaptop > summary::-webkit-details-marker { display: none; }
+  .gaptop > summary::marker { content: ''; }
+  /* 产品 styles.css 有一条全局 `details[open] summary::after` 加「＋ / －」，凡是自己已经带了指示器的
+     （这里右边有"去补 ›"，折叠块右边有"点开看"）就不要它，否则一行里两个提示。
+     注意权重：全局那条是 (0,1,3)（details + [open] + summary + ::after），
+     只写 `.gaptop > summary::after` 是 (0,1,2)，比不过它 —— 所以这里用双类名 (0,2,2)。 */
+  .gaps.gaptop > summary::after, .nofold .fold > summary::after { content: ''; }
+  .gaptop .gbgo { margin-left: auto; flex: none; color: var(--teal); font-size: 12.5px; }
+  .gaptop .gbgo::before { content: '去补 ›'; }
+  .gaptop[open] .gbgo::before { content: '收起 ⌃'; }
+  .gaptop[open] > summary { border-bottom: 1px dashed #eadfc8; padding-bottom: 10px; }
+  .gapbody { padding: 4px 15px 12px; }
+  .gaptop[open] > summary { padding-left: 15px; padding-right: 15px; }
+  .gbtn.on { font-weight: 700; }
+
+  /* 结果页内抽屉：和问卷同一套选择逻辑，但不要复制整道问卷页的进度条。 */
+  .gapedit { margin-top: 10px; padding: 13px; border: 1px solid #dbe8e4; border-radius: 12px; background: #fffdf8; }
+  .gapedit .gehead { display: flex; align-items: flex-start; gap: 10px; }
+  .gapedit h3 { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--ink); }
+  .gapedit .geclose { margin-left: auto; flex: none; border: 0; background: none; font: inherit; font-size: 12.5px; color: var(--ink-3); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+  .gapedit .gehint { margin: 5px 0 10px; font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
+  .gapedit .geopts { display: grid; gap: 7px; }
+  .gapedit .geopts-multi, .gapedit .geopts-shape { grid-template-columns: 1fr 1fr; }
+  .gapedit .geopt { display: flex; align-items: center; gap: 7px; min-height: 42px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); font: inherit; font-size: 13.5px; text-align: left; cursor: pointer; }
+  .gapedit .geopt span:not(.getick) { flex: 1; }
+  .gapedit .geopt small { display: block; margin-top: 2px; font-size: 11.5px; color: var(--ink-3); line-height: 1.4; }
+  .gapedit .geopt.on { border-color: var(--teal); background: #eef8f5; }
+  .gapedit .getick { flex: none; width: 15px; height: 15px; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+  .gapedit .geopt.on .getick { position: relative; border-color: var(--teal); background: var(--teal); }
+  .gapedit .geopt.on .getick::after { content: ''; position: absolute; left: 4px; top: 1px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .gapedit .gefields { display: flex; flex-wrap: wrap; gap: 8px; }
+  .gapedit .gefield { display: flex; align-items: center; gap: 6px; flex: 1 1 130px; min-width: 0; padding: 7px 9px; border: 1px solid var(--line); border-radius: 10px; background: #fff; font-size: 12.5px; color: var(--ink-2); }
+  .gapedit .gefield input { min-width: 0; flex: 1; border: 0; outline: 0; font: inherit; font-size: 14px; color: var(--ink); background: transparent; }
+  .gapedit .gefield input::placeholder { color: var(--ink-3); font-size: 13px; font-weight: 400; opacity: 1; }
+  .gapedit .gefield input:focus::placeholder { color: transparent; }
+  .gapedit .gefield i { flex: none; font-style: normal; color: var(--ink-3); }
+  .gapedit .gebmi { margin: 9px 0; font-size: 12.5px; color: var(--ink-2); }
+  .gapedit .gebmi b { margin: 0 5px; color: var(--teal); font-size: 15px; }
+  .gapedit .gebmi span.bad { color: #b45309; }
+  .gapedit .genone { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+  .gapedit .genone .btn { margin: 0; }
+
+  /* 缺口提示条（B / C 用）：一行，不打断主线 */
+  .gapbar { display: flex; align-items: center; gap: 9px; margin-top: 16px; padding: 11px 13px; border-radius: 12px; background: #fdf8ec; border: 1px solid #e8d7b6; text-decoration: none; color: var(--ink-2); font-size: 13px; line-height: 1.5; }
+  .gbdot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+  .gbgo { flex: none; color: var(--teal); font-size: 12.5px; }
+
+  /* ---- 时间表（B） ---- */
+  .tl { margin-top: 18px; }
+  .tsec { margin-top: 22px; }
+  .thead { display: flex; align-items: center; gap: 8px; }
+  .tdot { width: 10px; height: 10px; border-radius: 50%; background: var(--teal); flex: none; }
+  .tsec:nth-child(2) .tdot { background: var(--teal); }
+  .tsec:nth-child(3) .tdot { background: #4f9c8d; }
+  .tsec:nth-child(4) .tdot { background: #9aab7d; }
+  .tsec:nth-child(5) .tdot { background: #b9b3a5; }
+  .thead h2 { font-size: 18px; margin: 0; flex: 1; }
+  .tn { font-size: 12px; color: var(--ink-3); }
+  .ts { font-size: 12.5px; color: var(--ink-3); margin: 4px 0 0; line-height: 1.6; }
+  .ticks { list-style: none; padding: 0; margin: 10px 0 0; }
+  .tick { border-bottom: 1px solid var(--line); }
+  .tick { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 11px; padding: 11px 2px; align-items: start; }
+  .tkl { display: block; cursor: pointer; }
+  .ck { appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 1px 0 0; border: 1.5px solid #c9c3b6; border-radius: 6px; background: var(--card); cursor: pointer; position: relative; }
+  .ck:checked { background: var(--teal); border-color: var(--teal); }
+  .ck:checked::after { content: ''; position: absolute; left: 6px; top: 2px; width: 6px; height: 11px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .ck:checked ~ .tk .tkl b { text-decoration: line-through; color: var(--ink-3); }
+  .tk { min-width: 0; }
+  .tk b { font-size: 15.5px; display: block; line-height: 1.45; }
+  .tk i { font-style: normal; font-size: 12.5px; color: var(--teal); display: block; margin-top: 2px; }
+  .tk em { font-style: normal; font-size: 12.8px; color: var(--ink-3); display: block; margin-top: 2px; line-height: 1.55; }
+
+
+  .card2, .donot { margin-top: 26px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 15px 10px; }
+  .card2 h2, .donot h2 { font-size: 17px; margin: 0 0 4px; }
+  .donot ul { list-style: none; padding: 0; margin: 8px 0 0; }
+  .donot li { padding: 9px 0; border-top: 1px dashed var(--line); font-size: 14px; display: flex; flex-direction: column; gap: 3px; }
+  .donot li span { font-size: 12.5px; color: var(--ink-3); }
+
+  /* ---- 一问一答（C） ---- */
+  .qa-layout { margin-top: 16px; }
+  .qn { display: none; }
+  .qa { padding: 16px 0 4px; border-top: 1px solid var(--line); }
+  .qa:first-child { border-top: 0; }
+  .qa h2 { font-size: 19px; margin: 0 0 8px; line-height: 1.45; display: flex; gap: 9px; align-items: baseline; }
+  .qnum { flex: none; font-size: 13px; color: var(--teal); font-weight: 700; }
+  .qa-a { font-size: 16px; line-height: 1.85; color: var(--ink); }
+  .qa-a p { margin: 0 0 10px; }
+  .qa-a b { font-weight: 700; }
+  .qa-top { margin: 0 0 10px; padding-left: 20px; }
+  .qa-top li { margin: 7px 0; line-height: 1.7; }
+  .qaf { display: block; font-size: 12.5px; color: var(--teal); }
+  .qalist { list-style: none; padding: 0; margin: 0 0 10px; }
+  .qalist li { padding: 8px 0; border-bottom: 1px dashed var(--line); display: flex; flex-direction: column; gap: 2px; }
+  .qalist b { font-size: 15.5px; }
+  .qalist span { font-size: 12.5px; color: var(--ink-3); }
+  .qaref { border-left: 3px solid #a1341f; padding-left: 10px; font-size: 15px; }
+
+  /* ---- 基础项 / 疫苗 / 老年综合评估 / 体型 ---- */
+  .base, .vacs, .refs, .soon { margin-top: 30px; }
+  .base h2, .vacs h2, .refs h2, .soon h2 { font-size: 18px; margin: 0 0 4px; }
+  /* 带了 .sh 的标题必须按 .sh 走：三段（必做 / 标准项 / 疫苗 / 综合评估）层级要一样，
+     否则同级的四段各长一个样，读的人会以为是不同层级。 */
+  .base h2.sh, .vacs h2.sh, .refs h2.sh, .soon h2.sh { font-size: 19px; margin: 26px 0 4px; display: flex; }
+  /* 「再过几年」只有几行，不该跟大段模块一样先空一大截。
+     styles.css 里旧版给它留了 34px 外边距 + 18px 内边距，两层叠起来标题离上边框 46px；
+     这里跟其他段落一样改成无底色无内边距，只留一线间隔。 */
+  .soon { margin-top: 18px; padding: 0; background: none; border-radius: 0; }
+  .soon h2.sh { margin: 10px 0 4px; }
+  .gl { font-size: 12.5px; color: var(--ink-3); margin: 0 0 10px; line-height: 1.6; }
+  .bgrp { margin-top: 12px; }
+  .bgrp h3 { font-size: 13px; margin: 0 0 6px; color: var(--ink-2); font-weight: 600; display: flex; justify-content: space-between; }
+  .bgrp h3 span { color: var(--ink-3); font-weight: 400; font-size: 11.5px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips.all { margin-top: 4px; }
+  .chip { font-size: 13px; padding: 6px 10px; border-radius: 8px; background: var(--card); border: 1px solid var(--line); }
+  .chip.dup { color: var(--ink-3); border-style: dashed; }
+  .chip.dup::before { content: '·'; margin-right: 3px; }
+
+  /* 四支疫苗统一三行：名称+剂次 / 谁该打 / 少得什么。以前是 flex 自动排，
+     名字长短不同就一人一个样，摆在一起像没对齐的表格。 */
+  .vrow { padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .vl1 { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .vrow b { font-size: 15.5px; }
+  .vdose { font-size: 12.5px; color: var(--teal); flex: none; }
+  .vl2 { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; line-height: 1.55; }
+  .vl3 { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.55; }
+  .vwho { font-size: 12.5px; color: var(--ink-3); }
+  .vac { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 11px 13px; margin-bottom: 8px; }
+  .vtop { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .vtop h3 { font-size: 15px; margin: 0; }
+  .vgain { font-size: 13.5px; color: var(--ink-2); margin: 6px 0 0; line-height: 1.65; }
+
+  .ref { border: 1px solid var(--line); border-left: 3px solid #a1341f; background: var(--card); border-radius: 12px; padding: 11px 13px; margin-bottom: 8px; }
+  .ref h3 { font-size: 15.5px; margin: 0 0 4px; }
+  .rw { font-size: 13.5px; color: var(--ink-2); margin: 0 0 5px; }
+  .rgo { font-size: 12.5px; color: var(--ink-3); margin: 0; }
+  .rgo b { color: var(--ink); }
+
+  .bodyc { margin-top: 26px; }
+  .bodyc h2 { font-size: 15px; margin: 0 0 6px; color: var(--ink-2); }
+  .bodyc h2.sh { font-size: 19px; margin: 0 0 4px; display: flex; color: var(--ink); }
+  /* 按 BMI 分档给出的"该做的事"：一条一行，动作加粗、解释随后 */
+  .badv { list-style: none; padding: 0; margin: 12px 0 0; }
+  .badv li { background: var(--card); border: 1px solid var(--line); border-left: 3px solid #c9a227; border-radius: 10px; padding: 10px 13px; margin-bottom: 8px; }
+  .badv b { display: block; font-size: 15px; line-height: 1.45; }
+  .badv span { display: block; font-size: 12.5px; color: var(--ink-3); line-height: 1.6; margin-top: 2px; }
+  .bline { display: flex; align-items: baseline; gap: 8px; margin: 0; flex-wrap: wrap; }
+  .bline b { font-size: 22px; }
+  .blv { font-size: 11.5px; padding: 2px 7px; border-radius: 5px; background: var(--gray-soft); color: var(--ink-2); }
+  .blv.lv-high, .blv.lv-obese { background: var(--amber-soft); color: var(--amber); }
+  .blv.lv-ok { background: var(--teal-soft); color: #0b5d56; }
+  .blv.lv-low { background: #e8f1f6; color: #2c5d75; }
+  .btxt { font-size: 13.5px; color: var(--ink-2); line-height: 1.7; margin: 8px 0 0; }
+  /* 掉秤那条是红旗，不是普通说明 */
+  .btxt.warn { color: var(--amber); }
+  .bfine { font-size: 11.5px; color: var(--ink-3); margin: 8px 0 0; }
+
+  /* 跟体型建议、疫苗、老年评估一样：一行一张小卡，不用裸列表撑版面 */
+  .soon ul { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 6px; }
+  .soon li { display: flex; align-items: baseline; gap: 10px; font-size: 13.5px; color: var(--ink-2); margin: 0;
+             padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); line-height: 1.55; }
+  .soon .syear { flex: none; font-size: 11.5px; color: var(--teal); background: var(--teal-soft);
+                 border-radius: 999px; padding: 2px 8px; }
+  .soon .evbox { margin-top: 8px; }
+  .tip { font-size: 12px; color: var(--ink-3); line-height: 1.65; margin: 8px 0 0; }
+
+  /* ---- 页脚 ---- */
+  .disc { margin-top: 34px; border-top: 1px solid var(--line); padding-top: 14px; font-size: 12px; color: var(--ink-3); line-height: 1.75; }
+  .disc b { color: var(--ink-2); }
+  .evnote { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; margin: 0 0 12px; color: var(--ink-2); }
+  .src { margin-top: 6px; }
+  /* 署名收尾：整页最后一行，比正文小一档、浅一档，读到时已经读完结论了。
+     不给它边框、不给它背景 —— 它是签名，不是又一个卡片。 */
+  .signline { margin: 14px 0 0; font-size: 12px; color: var(--ink-3); line-height: 1.7; }
+
+  /* ---- 依据页 ---- */
+  .ev-layout { margin-top: 18px; }
+  .evn { display: none; }
+  /* 锚点跳过来别正好贴在屏幕顶上 */
+  .evsec, [id] { scroll-margin-top: 14px; }
+  /* 手机上左侧索引是隐藏的，31 条一路滚到底太苦 —— 给一个就地展开的目录 */
+  .evtoc { display: none; }
+  @media (max-width: 899px) {
+    /* 老板 2026-11-23：下滑看依据时，目录入口要一直在。整块吸顶，选中一项后
+       JS 会把它折回去，免得展开的格子长期盖住正文。 */
+    .evtoc { display: block; position: sticky; top: 0; z-index: 30; margin: 12px 0 4px;
+             border: 1px solid var(--line); border-radius: 12px; background: var(--card);
+             box-shadow: 0 6px 18px rgba(0, 0, 0, .06); }
+    .evtoc > summary { padding: 12px 14px; font-size: 14px; cursor: pointer; list-style: none; }
+    .evtoc > summary::-webkit-details-marker { display: none; }
+    .v13 .evtoc > summary::after { content: ' 展开'; color: var(--teal); font-size: 12.5px; margin-left: 4px; }
+    .v13 .evtoc[open] > summary::after { content: ' 收起'; }
+    .evtoc[open] > summary { border-bottom: 1px dashed var(--line); }
+    /* 目录一展开就是三十多个格子，会把正文整段推走，而且「收起」跟着滚出屏幕。
+       所以给格子区一个高度上限，自己在里面滚；顶部那行 summary 始终留在原地。 */
+    /* 目录吸顶后锚点要让出它的高度，否则标题正好被压在下面 */
+    .evsec, .ev-layout [id] { scroll-margin-top: 64px; }
+    .evtocg { padding: 8px 10px 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 48vh; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+    /* 手指点得着：一行不短于 44px，长项目名折行也不挤 */
+    .evtocg a { display: flex; align-items: center; min-height: 44px; font-size: 13px; color: var(--ink-2); text-decoration: none; padding: 6px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); line-height: 1.35; }
+    .evtocg-t { grid-column: 1 / -1; font-size: 11.5px; color: var(--ink-3); margin: 6px 0 0; }
+  }
+  .evsec { padding: 18px 0 6px; border-top: 1px solid var(--line); }
+  .evsec h2 { font-size: 18px; margin: 0 0 6px; }
+  /* 「去哪个科，这一栏是怎么定的」默认收起（老板 2026-11-23：这一块是方法论，
+   * 十个人里九个不看，摊在页尾会让页面看起来还有一大段没读）。
+   * 折起来以后 summary 必须长得和别的节标题一模一样：字还是 18px h2，
+   * 只在右侧多一个「展开」，否则会像另一种组件，用户不敢点。 */
+  .evfold > details > summary { display: flex; align-items: center; gap: 8px; list-style: none; cursor: pointer; }
+  .evfold > details > summary::-webkit-details-marker { display: none; }
+  .evfold > details > summary h2 { flex: 1 1 auto; margin: 0; }
+  .v13 .evfold > details > summary::after { content: '展开'; flex: none; color: var(--teal); font-size: 12.5px; }
+  .v13 .evfold > details[open] > summary::after { content: '收起'; }
+  .evfold > details[open] > summary { margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px dashed var(--line); }
+  /* 收起时这一节只剩一行标题，别再留 6px 屁股 —— 否则标题和页脚之间空出一段，像内容没加载出来 */
+  .evfold { padding-bottom: 0; }
+  /* 底部那个分享按钮：位置在方法论模块上面，和下一位读者的动作对齐
+   * （看完所有依据、准备发出去的那一刻）。样式直接用 .ev-actions，不另起一套。
+   *
+   * 2026-11-23 老板问：「为什么底部这颗和顶部那颗大小差这么多」。
+   * 是我自作主张压小的 —— 上一版它单独一颗满宽，看着像输入框，我就把宽/高/字号一起收了，
+   * 结果同一个动作在同一页上有两种尺寸。现在一律回到 .btn 原生规格（52px / 17px），
+   * 和页头那两颗完全一致；两处只差宽度，那是因为页头是两颗并排、这里只有一颗。 */
+  .evshare2 { margin: 18px 0 0; }
+  .evv { font-size: 14.5px; margin: 0 0 8px; line-height: 1.7; }
+  /* 偏向天平只放在依据页：跟 .ref / .badv 一样是"卡内一段说明"，不另造样式 */
+  .evlean { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline;
+            border-left: 3px solid var(--amber); background: var(--card); border-radius: 10px;
+            padding: 10px 12px; margin: 0 0 10px; font-size: 12.5px; color: var(--ink-2); line-height: 1.7; }
+  .evlean .apick { flex: none; font-weight: 600; }
+  /* ---- 依据页三段说明：去哪做 / 它为什么在你清单里 / 能查出什么 ----
+   * 三条共用同一条规则，不是"抄了一份一样的样式"：改一处三个一起变，
+   * 谁也没法让其中一行悄悄长得不一样（老板 2026-11-22：三个模块必须统一）。
+   * 所以「去哪做」连强调都不做 —— 科室名不加粗、不染青。 */
+  .evr, .ewv { font-size: 13px; color: var(--ink-2); margin: 0 0 6px; line-height: 1.7; }
+  .evr b, .ewv b { color: var(--ink); }
+  /* 标准项目那一节：按"在体检中心的哪个位置"分组，两列（科室 / 项目）对齐。
+   * 不分两列的话，20 项会排成一堵墙，读完也不知道哪项在哪做。 */
+  .ewb { margin: 2px 0 8px; }
+  .ewbg { list-style: none; margin: 0; padding: 0; }
+  .ewbg li { display: grid; grid-template-columns: 10.5em minmax(0, 1fr); gap: 2px 10px; font-size: 12.5px; line-height: 1.6; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+  .ewbg li:last-child { border-bottom: 0; }
+  .ewbd { color: var(--ink); font-weight: 600; }
+  .ewbi { color: var(--ink-2); }
+  .evc { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; margin-top: 9px; font-size: 13px; }
+  .evh { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; margin-bottom: 3px; }
+  .evorg { font-size: 12.5px; color: var(--ink-2); }
+  .evdoc { font-size: 14.5px; margin: 0 0 7px; line-height: 1.45; }
+  .evh b { font-size: 13.5px; }
+  .evy { font-size: 12px; color: var(--ink-3); }
+  .evc p { margin: 4px 0; line-height: 1.65; }
+  .evc blockquote { margin: 6px 0; padding-left: 9px; border-left: 2px solid var(--line); color: var(--ink-3); font-size: 12.5px; line-height: 1.7; }
+  .evc a { color: var(--teal); font-size: 12.5px; }
+  /* ---- 依据：折叠框 + 卡片内表格（老板第 1 条） ----
+   * 不展开时只占一行，跟频次同高；展开是一张表。
+   * 表只回答"谁说的、哪份文件、证据强度、去哪看原文"，原文摘录留在依据页。 */
+  .evbox { margin: 9px 0 0; border-top: 1px dashed var(--line); padding-top: 8px; }
+  .evbox > summary { display: flex; align-items: baseline; gap: 8px; cursor: pointer; list-style: none; }
+  .evbox > summary::-webkit-details-marker { display: none; }
+  .v13 .evbox > summary::after { content: '展开 ›'; font-size: 11.5px; color: var(--teal); margin-left: auto; }
+  .v13 .evbox[open] > summary::after { content: '收起 ⌃'; }
+  .evcnt { font-size: 12.5px; color: var(--teal); font-weight: 600; }
+  .evx { font-size: 11.5px; color: var(--ink-3); }
+  .evtw { margin-top: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .evt { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  .evt th { text-align: left; font-weight: 400; color: var(--ink-3); padding: 0 6px 4px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .evt td { padding: 6px 6px 6px 0; border-bottom: 1px solid #f0ece4; vertical-align: top; line-height: 1.55; color: var(--ink-2); }
+  .evt td:first-child { max-width: 8em; }
+  .evt th:last-child, .evt td:last-child { text-align: right; padding-right: 0; white-space: nowrap; }
+  /* 手机上四列一定挤。改成每行一小块：上排「谁 + 原文」，下排「文件 + 强度」。
+     读起来是"谁说的 — 原文在哪 / 哪份文件 — 证据强度"，不用左右滑，也不用眯眼看列。 */
+  @media (max-width: 599px) {
+    .evt thead { display: none; }
+    .evt tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 10px; padding: 9px 0; border-bottom: 1px solid #f0ece4; }
+    .evt td { display: block; border: 0; padding: 0; }
+    .evt td:nth-child(1) { grid-column: 1; grid-row: 1; font-size: 11px; color: var(--ink-3); }
+    .evt td:nth-child(2) { grid-column: 1; grid-row: 2; color: var(--ink); }
+    .evt td:nth-child(3) { grid-column: 2; grid-row: 2; justify-self: end; }
+    .evt td:nth-child(4) { grid-column: 2; grid-row: 1; justify-self: end; font-size: 11.5px; }
+  }
+  .evt td a { color: var(--teal); text-decoration: none; }
+  .evy { color: var(--ink-3); font-size: 10.5px; margin-left: 4px; }
+  .st { font-size: 11px; padding: 1px 6px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+  .st-strong { color: #0b5d56; background: var(--teal-soft); }
+  .st-cond { color: var(--amber); background: var(--amber-soft); }
+  .st-against { color: #a1341f; background: #fbeee9; }
+  .st-ins { color: var(--ink-3); background: var(--gray-soft); }
+  .st-guide { color: #3c4a6b; background: #eceff7; }
+  .evall { display: inline-block; margin-top: 8px; font-size: 12px; color: var(--teal); text-decoration: none; }
+  .evnote2 { font-size: 11.5px; color: var(--ink-3); margin: 8px 0 0; line-height: 1.6; }
+  .evcite { font-size: 11px; color: var(--ink-3); margin: 4px 0 6px; }
+  /* 手机上看依据是"读"，不是"扫"：13px 对着手机偏小，抬到 14px，行距也放开。
+     强度药丸和机构名同样放大一档 —— 这一页的读者是来核对的，不是来扫标题的。 */
+  @media (max-width: 599px) {
+    .evc { font-size: 14px; padding: 12px 14px; }
+    .evc p { line-height: 1.75; margin: 6px 0; }
+    .evc blockquote { font-size: 13px; line-height: 1.8; padding-left: 10px; margin: 8px 0; }
+    .evorg { font-size: 13px; }
+    .evc a { font-size: 13px; }
+    .evdoc { font-size: 15.5px; }
+    .evcite { font-size: 11.5px; line-height: 1.6; }
+    .evh .st { font-size: 11.5px; padding: 2px 7px; }
+    /* 手机上两列一挤，科室名会被压成两三行、项目名跟着换行 —— 干脆上下排：
+     * 第一行科室，第二行项目。字也各抬半档，这一页的信号是"读"，不是"扫"。 */
+    .ewbg li { grid-template-columns: minmax(0, 1fr); gap: 1px; padding: 7px 0; font-size: 13px; }
+    .ewbd { font-size: 13.5px; }
+  }
+
+  /* ---- 页尾：依据分类标准 ---- */
+  .legend { margin: 16px 0 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 11px 13px; }
+  .legend > summary { font-size: 13px; color: var(--ink-2); cursor: pointer; list-style: none; }
+  .legend > summary::-webkit-details-marker { display: none; }
+  .v13 .legend > summary::after { content: ' 展开 ›'; color: var(--teal); margin-left: 4px; }
+  .v13 .legend[open] > summary::after { content: ' 收起 ⌃'; }
+  .legend dl { margin: 10px 0 0; }
+  /* 标签列定宽：每行各自 max-content 的话，说明文字会一行一个起点，看着像没对齐 */
+  .legend dl > div { display: grid; grid-template-columns: 6.4em minmax(0, 1fr); gap: 4px 10px; padding: 7px 0; border-top: 1px dashed var(--line); align-items: start; }
+  .legend dt .st { font-size: 10.5px; padding: 1px 5px; white-space: normal; }
+  .legend dt { margin: 0; }
+  .legend dd { margin: 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
+  .legnote { font-size: 11.5px; color: var(--ink-3); margin: 10px 0 0; line-height: 1.65; }
+
+  /* ---- 回到顶部 ---- */
+  /* ---- 回到顶部 ----
+   * 两个入口：右下角浮动那颗（滚过一屏才出现），和页尾那颗普通链接。
+   * 浮动那颗用深色实心：原来白底描边在米白页面上几乎看不见 —— 老板在 PC 上说"没有按钮"，
+   * 一半原因就是它太淡了，滚到头也认不出来。
+   */
+  .totop { position: fixed; right: 14px; bottom: 18px; z-index: 60; display: none; font-size: 13px; font-weight: 600; min-height: 44px; padding: 10px 15px; border-radius: 999px; border: 1px solid #1b1a17; background: #1b1a17; color: #fffefb; box-shadow: 0 8px 22px rgba(0, 0, 0, .22); cursor: pointer; }
+  .totop.show { display: block; }
+  .totop-end { display: inline-block; margin-top: 12px; font-size: 13px; color: var(--teal); text-decoration: none; border-bottom: 1px dashed currentColor; padding-bottom: 1px; }
+
+  /* ---- 回到我的清单（悬浮） ----
+   * 老板 2026-11-23 选方案 1：底部一颗胶囊，和右下角那颗「回到顶部」一左一右。
+   * 几处刻意的选择：
+   *   · 白底 + 青字，而「回到顶部」是黑底白字 —— 两颗都在底部，必须一眼分得出
+   *     "哪颗是回去、哪颗是上去"，同色同形会让人每次都要读一遍字；
+   *   · 底部齐平（同一个 bottom），不是叠在它上面：一行两个动作，视线不用上下跳；
+   *   · 淡入而不是直接 display:none/block：突然弹出来的东西在长页面里会被当成广告。
+   * 手机上两颗并排要放得下：胶囊文字收到 7 个字，320px 屏也挤不着。 */
+  .backfab {
+    position: fixed; left: 14px; bottom: 18px; z-index: 60;
+    display: inline-flex; align-items: center; gap: 4px;
+    min-height: 44px; padding: 10px 15px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--card); color: var(--teal);
+    font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 8px 22px rgba(27, 26, 23, .16);
+    opacity: 0; visibility: hidden; transform: translateY(6px);
+    transition: opacity .16s ease, transform .16s ease, visibility .16s;
+  }
+  .backfab.show { opacity: 1; visibility: visible; transform: translateY(0); }
+  /* 底部两颗浮件各占 44px 高 + 18px 间距：页尾最后一行要在它们上面收住，
+     否则滚到底时「↑ 回到顶部」那条普通链接正好压在胶囊底下（点到的是浮件）。
+     只加在依据页：`.page` 这台机器打印稿也在用，别把纸面也推高了。 */
+  .page.v13 { padding-bottom: 96px; }
+
+  /* ---- 折叠区块：不用做的那一段默认收起来（老板第 6 条） ---- */
+  .fold { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 12px 14px; margin-top: 8px; }
+  .fold > summary { display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; }
+  .fold > summary::-webkit-details-marker { display: none; }
+  .fsum { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .fsum b { font-size: 15.5px; }
+  .fsum i { font-style: normal; font-size: 12.5px; color: var(--ink-3); line-height: 1.55; }
+  .fgo { margin-left: auto; flex: none; font-size: 12px; color: var(--teal); border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px; }
+  .fgo::before { content: '点开看'; }
+  .fold[open] .fgo { color: var(--ink-3); }
+  .fold[open] .fgo::before { content: '收起'; }
+  .fold[open] > summary { padding-bottom: 8px; border-bottom: 1px dashed var(--line); }
+  .fold .rows { margin-top: 10px; }
+
+  /* ================= PC（≥900px） =================
+   * 不是把手机拉宽：A 版出左侧目录，B 版两列，C 版左问右答，
+   * 依据页出左侧项目索引。正文长度也放宽到 760，屏幕上不会一条字跑一整行。 */
+  @media (min-width: 900px) {
+    .page, .screen.result { max-width: 1104px; padding: 40px 36px 90px; }
+    .rhead h1 { font-size: 34px; }
+    .sub { font-size: 15px; }
+    .tops b { font-size: 18px; }
+
+    /* A：目录常驻左侧。页头、正文都进同一个网格 —— 三段的左边缘才对得齐，
+       不再用 fixed + margin-left 硬挪（那样目录和正文永远差几十像素）。 */
+    .doc { display: grid; grid-template-columns: 168px minmax(0, 1fr); grid-template-areas: "toc head" "toc body"; gap: 0 48px; }
+    .doc > .rhead { grid-area: head; }
+    .totop { right: 28px; bottom: 28px; padding: 11px 16px; }
+    .backfab { left: 28px; bottom: 28px; padding: 11px 18px; font-size: 13.5px; }
+    .doc > .toc { grid-area: toc; align-self: start; position: sticky; top: 36px; display: flex; flex-direction: column; gap: 2px; width: auto; overflow: visible; padding: 35px 0 0; }
+    .doc > .toc a { justify-content: flex-start; border: 0; background: none; padding: 6px 8px; border-radius: 8px; font-size: 13.5px; }
+    .doc > .toc a.on { background: var(--card); border: 0; }
+    .doc > .docbody { grid-area: body; }
+    .docbody { max-width: 780px; }
+
+    /* B：两列 */
+    .tl { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 34px; align-items: start; }
+    .tsec { margin-top: 18px; }
+    .card2, .donot, .base, .vacs, .refs { max-width: 760px; }
+    .vacs .vrow { font-size: 14.5px; }
+
+    /* C：左问右答 */
+    .qa-layout { display: grid; grid-template-columns: 220px 1fr; gap: 44px; align-items: start; }
+    .qn { display: block; position: sticky; top: 40px; }
+    .qn a { display: flex; gap: 8px; font-size: 13.5px; color: var(--ink-2); text-decoration: none; padding: 7px 9px; border-radius: 8px; line-height: 1.45; }
+    .qn a i { flex: none; font-style: normal; color: var(--teal); font-weight: 700; font-size: 12px; }
+    .qa-a { font-size: 17px; max-width: 700px; }
+
+    /* 依据页：左侧索引 */
+    .ev-layout { display: grid; grid-template-columns: 230px 1fr; gap: 44px; align-items: start; }
+    .evn { display: block; position: sticky; top: 40px; font-size: 13px; }
+    .evn a { display: block; color: var(--ink-2); text-decoration: none; padding: 3px 0; }
+    .evnt { font-size: 11.5px; letter-spacing: .08em; color: var(--ink-3); margin: 12px 0 4px; }
+    .evnt:first-child { margin-top: 0; }
+  }
+  @media (max-width: 899px) {
+    /* 老板 2026-11-23：手机上结果页很长，目录不能只在页首出现一次。
+       钉在顶部，读到哪一段都能一键跳回别的模块。
+       负 margin 让底色铺满屏幕，不然左右会露出两条"没盖住"的正文。 */
+    .doc > .toc {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      margin: 0 -20px;
+      padding: 8px 20px 9px;
+      background: rgba(247, 244, 238, .96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 4px 12px rgba(27, 26, 23, .05);
+    }
+    .doc > .toc a { padding: 8px 4px; font-size: 12.5px; }
+    /* 锚点跳转时别让标题钻到吸顶目录底下。高度由 JS 实测写进 --toc-h，
+       不同清单的目录格数不同（2~6 格），写死一个数一定会挡。 */
+    .docbody [id], .rhead [id] { scroll-margin-top: calc(var(--toc-h, 72px) + 10px); }
+  }
+  @media print {
+    .toc, .qn, .evn, .gapbar, .totop, .totop-end, .legend { display: none !important; }
+    .docbody { margin-left: 0 !important; }
+  }
+
+  /* ---- 「做之前先跟医生说」 ----
+   * 跟 redFlags（出现这些情况要去看医生）不是一回事：那块是报警，这块是"开口提醒"。
+   * 折叠行的字号、颜色、右侧指示器全部照「依据 N 条」那行 —— 一页里两种折叠件
+   * 长得不一样，读者就得重新学一遍"点哪"。 */
+  /* 规格照抄 .evbox：一条虚线 + 8px 内边距 + 右侧「展开 ›」。
+   * 一页里两个折叠行必须长得一样，否则读者得学两遍"这行点得动吗"。 */
+  .tell { margin: 9px 0 0; border-top: 1px dashed var(--line); padding-top: 8px; }
+  .tell > summary {
+    display: flex; align-items: baseline; gap: 8px;
+    cursor: pointer; list-style: none;
+  }
+  .tell > summary::-webkit-details-marker { display: none; }
+  .tell .tc { font-size: 12.5px; font-weight: 600; color: var(--teal); }
+  .tell .tn { font-size: 11.5px; color: var(--ink-3); }
+  /* .v13 前缀是必须的：全局 details[open] summary::after 是 (0,1,3)，
+   * 这里只有 (0,2,2) 才压得住，否则展开后指示器会变成那个全局的「 － 」。 */
+  .v13 .tell > summary::after {
+    content: '展开 ›'; margin-left: auto;
+    font-size: 11.5px; color: var(--teal);
+  }
+  .v13 .tell[open] > summary::after { content: '收起 ⌃'; }
+  .tell ul { margin: 7px 0 0; padding-left: 17px; }
+  .tell li { font-size: 12.5px; line-height: 1.7; color: var(--ink-2); }
+
+  /* ---- 标准项目里那位"要单独约"的：洁牙 ----
+   * 卡片本体直接用 .atom（同一套底色、边框、圆角、内边距），这里只管两件事：
+   * ① 跟上面那 19 个 chip 分开 —— 一条虚线，说明它不在套餐内；
+   * ② 那句小标签，字号沿用 .evx（11.5px），不再自造一套。 */
+  .scaling { margin: 20px 0 0; padding-top: 16px; border-top: 1px dashed var(--line); }
+  .sc-kick { font-size: 11.5px; color: var(--ink-3); margin: 0 0 8px; }
+
+  /* ---- 大字模式 ----
+   * R11 把结果页换成 v13 这套零件时，`html[data-ls="big"]` 那批规则还留在旧 class 上
+   * （.item h3 / .verdict-line / .vac h3 …），结果这个开关在结果页**一点作用都没有**——
+   * 按钮会改口成「标准字」，字号却一动不动。对一群 60 岁以上用户来说这不是小毛病。
+   * 这里按同一比例（约 ×1.16）把正文层补上；标题层级不动，避免一屏塞不下。
+   * 选择器都带 html[data-ls] 前缀，压得住 .atom.key .an 这类双类名规则。 */
+  html[data-ls="big"] .sh { font-size: 21.5px; }
+  html[data-ls="big"] .sh span { font-size: 14px; }
+  html[data-ls="big"] .toc a { font-size: 15px; }
+  html[data-ls="big"] .toc a i { font-size: 13px; }
+  html[data-ls="big"] .an { font-size: 18.5px; }
+  html[data-ls="big"] .atom.key .an { font-size: 21px; }
+  html[data-ls="big"] .aw { font-size: 15.5px; }
+  html[data-ls="big"] .atom.key .aw { font-size: 16px; }
+  html[data-ls="big"] .af { font-size: 14.5px; }
+  html[data-ls="big"] .apick { font-size: 14px; }
+  html[data-ls="big"] .tip { font-size: 14px; }
+  html[data-ls="big"] .evcnt { font-size: 14.5px; }
+  html[data-ls="big"] .evx { font-size: 13.5px; }
+  html[data-ls="big"] .evt { font-size: 13.5px; }
+  html[data-ls="big"] .tell .tc { font-size: 14.5px; }
+  html[data-ls="big"] .tell .tn,
+  html[data-ls="big"] .sc-kick { font-size: 13.5px; }
+  html[data-ls="big"] .tell li { font-size: 14.5px; }
+  /* 三段说明一起放大：以前只放大「去哪做」、.evr 不动 —— 同一节里两种字号，
+   * 正是这一轮要去掉的那种不统一。 */
+  html[data-ls="big"] .evr, html[data-ls="big"] .ewv { font-size: 14.5px; }
+  html[data-ls="big"] .ewbg li { font-size: 14px; }
+  html[data-ls="big"] .rgo { font-size: 14px; }
+
+  /* ---- 结果页里的两张风险提示卡（默认折叠）----
+   * 它们不是 A/B/C 项目，所以不进 .rows、不进目录计数；放在相关段落之后，
+   * 想看的人自己点开。样式沿用卡片边框 + 虚线分隔，不加新配色。 */
+  .risknote { margin: 18px 0; border: 1px solid var(--line); border-radius: 12px; background: var(--card); overflow: hidden; }
+  .risknote > summary {
+    list-style: none; cursor: pointer; padding: 13px 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-size: 14px; font-weight: 700; line-height: 1.55; color: var(--ink);
+  }
+  .risknote > summary::-webkit-details-marker { display: none; }
+  .risknote > summary::after { content: '展开 ›'; font-size: 11.5px; font-weight: 400; color: var(--teal); white-space: nowrap; }
+  .risknote[open] > summary::after { content: '收起 ⌃'; }
+  .rnbody { padding: 2px 14px 14px; border-top: 1px dashed var(--line); font-size: 12.5px; line-height: 1.8; color: var(--ink-2); }
+  .rnbody p { margin: 8px 0; }
+  .rnbody ol { margin: 8px 0 0 18px; }
+  .rnbody li { margin: 5px 0; }
+  .rnbody b { color: var(--ink); }
+  .rnsrc { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line); font-size: 11px; line-height: 1.7; color: var(--ink-3); }
+
+  /* ---- 「不建议做」模块里的套餐差异说明 ----
+   * 和上面的 C 档项目同一层，但用虚线隔开：C 档是"指南明确不推荐"，这里是"本单没列为常规项"。 */
+  .unlisted { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--line); }
+  .unlisted h3 { margin: 0 0 8px; font-size: 14px; line-height: 1.55; color: var(--ink); }
+  .ul-examples { margin: 0; font-size: 12px; line-height: 1.85; color: var(--ink-2); }
+  .ul-lead { margin: 12px 0 4px; font-size: 12.5px; font-weight: 700; color: var(--ink); }
+  .ul-list { margin: 0; padding-left: 18px; }
+  .ul-list li { margin: 3px 0; font-size: 12.5px; line-height: 1.8; color: var(--ink-2); }
+
+  html[data-ls="big"] .risknote > summary { font-size: 16px; }
+  html[data-ls="big"] .rnbody,
+  html[data-ls="big"] .ul-examples,
+  html[data-ls="big"] .ul-lead,
+  html[data-ls="big"] .ul-list li { font-size: 14.5px; }
+
+  /* ---- hover 只给真指针设备 ----
+   * 触摸屏上 :hover 会"粘住"：手指抬起后那行底色还留着，用户以为还是选中的。
+   * 这套样式原来只服务 demo（有人在电脑上看），现在产品也在用，所以按不变量
+   * no-hover-on-touch 一刀切 —— 五处全部关进 (hover: hover) 里。
+   * 放在文件末尾是为了让 .toc a:hover 压得住 .doc > .toc a 的常态底色（同级、后者更早）。 */
+  @media (hover: hover) and (pointer: fine) {
+    .evlink:hover { color: var(--teal); border-color: var(--teal); }
+    .evt td a:hover { text-decoration: underline; }
+    .toc a:hover { background: var(--card); }
+    .qn a:hover { background: var(--card); }
+    .evn a:hover { color: var(--teal); }
+  }

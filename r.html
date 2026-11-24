@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f766e" />
+    <!--
+      结果页：只给拿到链接的人看，不进搜索引擎索引。
+      为什么单独一个入口而不是在 / 里用 JS 判断：
+      纯静态站不可能对不同 URL 返回不同 HTML，而百度对 JS 动态插入的 meta 识别不可靠。
+      独立入口 + 写死 noindex 是唯一 100% 生效的做法。
+    -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>你的体检清单 · 长命百岁体检项目指南</title>
+    <meta name="description" content="按你的情况生成的体检项目清单，每条都带频率和出处。" />
+    <!--
+      分享卡片：真正被转发的是这一页，所以 og 不能只做在首页。
+      这里的内容必须是**固定的**，不能带任何个人信息 —— 微信抓取时会把卡片内容缓存到服务器。
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="长命百岁体检项目指南" />
+    <meta property="og:title" content="一份按公开指南整理的体检清单" />
+    <meta property="og:description" content="哪些建议做、哪些你来定、哪些建议不做 —— 每条都能点开原文核对。" />
+    <meta property="og:image" content="./og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>
+      <p style="padding: 24px; font-family: system-ui, sans-serif">
+        这个页面需要开启 JavaScript 才能显示清单。请在浏览器设置里允许 JavaScript，或回到首页重新填写。
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

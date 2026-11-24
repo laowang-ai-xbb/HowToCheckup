@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>长命百岁体检项目指南 · 体检做什么项目，来这查</title>
+    <meta
+      name="description"
+      content="回答几道选择题，按权威指南给出你的体检项目清单：建议做的、你来定的、建议不做的，每条都带频率和出处。"
+    />
+    <!--
+      旧版分享链接是 /?p=xxx（query）。跳到结果页入口，让 noindex 生效。
+      新版链接是 r.html#p=xxx（hash），不会走到这里；但也兜住 hash 落在首页的情况。
+      用 URLSearchParams 判断而不是 indexOf('p=')：后者会把 ?group=1 这类参数误判。
+    -->
+    <script>
+      (function () {
+        var q = location.search, h = location.hash;
+        if (new URLSearchParams(q).has('p') || /[#&]p=/.test(h)) {
+          location.replace('r.html' + q + h);
+        }
+      })();
+    </script>
+    <!--
+      og 标签：链接被转发到微博/QQ/钉钉/Telegram 时的卡片样式。
+      微信主要读 title 和首图，对 og 依赖较弱，但做了不亏。
+      注意：og:image 规范要求绝对 URL，域名确定后把 ./og.png 换成 https://域名/og.png
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="长命百岁体检项目指南" />
+    <meta property="og:title" content="长命百岁体检项目指南 · 体检做什么项目，来这查" />
+    <meta
+      property="og:description"
+      content="按你的年龄、性别和身体情况，从权威指南里算出：哪些建议做、哪些你来定、哪些建议不做。每条都写清频率和出处。"
+    />
+    <meta property="og:image" content="./og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>
+      <p style="padding: 24px; font-family: system-ui, sans-serif">
+        这个工具需要开启 JavaScript。请在浏览器设置里允许 JavaScript 后刷新。
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "_why": "构建标识。它会被编进产物（html[data-v] 和 JS 里的字符串），作用是在网上看到某个高度相似的站点时，能判断它是不是从本仓库编出来的。它不是注释，删掉它需要动源码 —— 那本身就是一种证据。",
+  "id": "tjzn-2026-11-24-9c41d7",
+  "author": "老王AI瞎bb",
+  "repo": "HowToCheckup",
+  "createdAt": "2026-11-24",
+  "license": "MIT",
+  "note": "下面三处埋点只登记哈希，明文不写在这里 —— 写在这里等于把清单交给抄的人。需要核对时用 sha256(明文) 取前 16 位比对，明文另存在仓库外。",
+  "canaries": [
+    {
+      "file": "src/print-sheet.js",
+      "sha256_16": "bd5ec13da3d36050"
+    },
+    {
+      "file": "src/keyboard.js",
+      "sha256_16": "67eab6db6703cdf9"
+    },
+    {
+      "file": "src/main.js",
+      "sha256_16": "607f6bfaff663e8e"
+    }
+  ]
+}

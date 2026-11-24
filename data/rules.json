@@ -1,0 +1,2409 @@
+{
+  "schemaVersion": "1.0.0",
+  "updatedAt": "2026-11-18",
+  "note": "status=verified 表示已核对原文；pending 表示依据方向明确但原文尚未逐条核对，上线前必须清零。",
+  "rules": [
+    {
+      "id": "base-package",
+      "name": "基础体检项目（每年一次的基础套餐）",
+      "displayName": "基础体检项目",
+      "category": "A",
+      "catalogIds": [
+        "general",
+        "internal",
+        "surgery",
+        "eye",
+        "ent",
+        "dental",
+        "ecg",
+        "cbc",
+        "urine",
+        "stool-routine",
+        "stool-ob",
+        "liver",
+        "renal",
+        "glucose",
+        "lipids",
+        "uric",
+        "abd-us",
+        "questionnaire"
+      ],
+      "topics": [
+        "baseline"
+      ],
+      "when": {
+        "ageMin": 18
+      },
+      "verdict": "每次体检都该做的基础项目",
+      "reason": "这是《健康体检基本项目专家共识》的必选部分（1+X 中的 1），用于评估血压、血糖血脂、肝肾功能、贫血、尿路与消化道出血等基础健康状况，是性价比最高的一块。",
+      "whatItFinds": "能发现高血压、糖尿病、血脂异常、肝肾功能异常、贫血、尿路感染、消化道隐性出血；看不出早期肺癌和早期胃肠癌——基础套餐做过，不等于防过癌。",
+      "frequency": {
+        "type": "interval",
+        "text": "每年 1 次；18–34 岁健康者可 1–2 年 1 次",
+        "years": 1,
+        "basis": "practice",
+        "basisNote": "团体标准附录 A 只规定\"查哪些项目\"，不规定间隔。\"每年 1 次\"是体检行业通行做法，也是本工具给的默认节奏，不是任何指南条文。"
+      },
+      "priority": 1,
+      "redFlags": [
+        "不明原因体重明显下降",
+        "持续发热或乏力"
+      ],
+      "evidence": [
+        {
+          "org": "中华医学会健康管理学分会《健康体检基本项目专家共识（2022）》",
+          "year": "2023",
+          "point": "2022 版共识\"1+X\"框架里的\"1\"＝基本体检项目，分四块：自测问卷、体格检查、实验室检查、辅助检查。生化检查含肝肾功能、血脂、血糖、尿酸、**甲状腺功能**；辅助检查只有十二导联心电图、胸部正侧位片、腹部超声（女性加子宫附件）。注意：甲功是 2022 版才加进基本项目的，2014 版没有。",
+          "url": "https://cmab.yiigle.com/uploads/guide_html/5811.html",
+          "status": "verified",
+          "grade": "专家共识（中华健康管理学杂志 2023;17(9):649-660，中华医学知识库公开全文）",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "采用“1+X”的体检项目设计体系框架,“1”为基本体检项目,“X”为专项体检项目。",
+            "生化检查包括肝功能、肾功能、血脂、血糖、尿酸、甲状腺功能",
+            "(3)辅助检查:主要包括心电图检查、放射检查和超声检查3个部分。"
+          ]
+        },
+        {
+          "org": "中国医院协会《中国医院质量安全管理 第2-30部分：患者服务 健康体检》",
+          "year": "2020",
+          "grade": "团体标准（附录 A 健康体检基本项目目录，注明引自 2014 共识）",
+          "point": "T/CHAS 10-2-30—2020 附录 A 健康体检基本项目目录：一般检查（身高、体重、血压、脉搏）、物理检查（内、外、眼、耳鼻咽喉、口腔、妇科）、实验室检查（血常规、尿常规、粪便常规+潜血、肝功能、肾功能、血脂、空腹血糖、尿酸）、辅助检查（心电图、胸片、腹部超声），并注明引自 2014 年共识。",
+          "url": "http://szsyyxh.org/ziye/main2/files/%E9%99%84%E4%BB%B63%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%A0%87%E5%87%86.pdf",
+          "status": "verified",
+          "strength": "strong",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "实验室检查常规检查:血常规、尿常规、粪便常规 + 潜血",
+            "生化检查:肝功能、肾功能、血脂、空腹血糖、尿酸",
+            "超声检查:肝、胆、胰、脾、肾",
+            "(出处: 健康体检基本项目专家共识, 中华健康管理学杂志2014年4月第8卷第2期)"
+          ]
+        }
+      ],
+      "notes": "18–34 岁健康人群可以 1–2 年 1 次——这条比上面的通行做法更宽松，是我们的保守建议，也不是指南给的数字。另外：本工具把甲功仍放在\"与医生商量\"档（见\"甲状腺功能\"那条），没有因为 2022 版把它列进基本项目就改判该做——国内共识和国际证据在这一点上不一致，我们按\"有分歧就交给你和医生\"处理。"
+    },
+    {
+      "id": "oral-scaling",
+      "name": "洁牙（洗牙）",
+      "category": "A",
+      "catalogIds": [
+        "scaling"
+      ],
+      "topics": [
+        "baseline"
+      ],
+      "when": {
+        "ageMin": 18
+      },
+      "verdict": "人人该做，不分年龄",
+      "reason": "牙石是唾液里的矿物质和牙菌斑结合、钙化成的，刷牙刷不掉，只能靠医生的器械清。它一直刺激牙龈，是牙周病的主要诱因，而牙周病是成年人掉牙的第一原因。老人尤其要紧：牙不好就嚼不动、吃不全，营养跟着掉。",
+      "whatItFinds": "洁牙时医生是挨个牙面过一遍，顺带能看清牙龈出不出血、牙周袋有多深、有没有蛀牙和口腔黏膜的异常。体检里那项「口腔科检查」只是看一眼，两件事不能互相替代。",
+      "frequency": {
+        "type": "interval",
+        "text": "每年 1 次",
+        "years": 1,
+        "basis": "guideline",
+        "basisNote": "「每年一次」是《中国居民口腔健康指南》的原话，不是我们折中的数字。指南对老年人也没有加密——加密的是口腔检查（半年一次），洁牙仍是每年一次。"
+      },
+      "priority": 3,
+      "tellDoctor": [
+        "正在吃抗凝药或抗血小板药（华法林、阿司匹林、氯吡格雷这类）",
+        "有出血性疾病（如血友病、血小板减少）",
+        "血压、血糖最近控制得不好，或者正在发热、口腔里正发炎",
+        "怀孕了（孕 4–6 个月相对合适，头三个月和后三个月一般不做）",
+        "装过心脏起搏器"
+      ],
+      "evidence": [
+        {
+          "org": "国家卫生健康委员会《中国居民口腔健康指南》",
+          "year": "2009",
+          "point": "提倡每年洁牙一次，由口腔科医生清除牙石和菌斑；老人每半年一次口腔检查、每年至少洁牙一次，孕期治疗宜在 4–6 个月，并选有执业资质的口腔机构。",
+          "url": "https://www.nhc.gov.cn/cmsresources/mohjbyfkzj/cmsrsdocument/doc6117.doc",
+          "status": "verified",
+          "grade": "官方指南（国家卫健委发布，官网原文页）",
+          "checkedAt": "2026-11-22",
+          "strength": "strong",
+          "quotes": [
+            "提倡每年洁牙（洗牙）一次",
+            "因此需定期到医院由口腔科医生进行洁牙，最好每年一次。",
+            "老年人应每半年至少进行一次口腔健康检查，发现问题，及时处理。每年至少洁牙一次。",
+            "维护良好的口腔健康对于老年人摄入足量、均衡的营养，从而促进老年人的全身健康是至关重要的。",
+            "怀孕4~6个月是孕期治疗口腔疾病的最佳时期",
+            "怀孕7~9个月尽可能避免口腔治疗",
+            "进行口腔保健和治疗，一定要选择具备执业资质的口腔医疗机构，才能保证好的医疗质量和严格的感染控制。"
+          ]
+        }
+      ],
+      "notes": "这一项多数体检套餐不含，要单独约口腔科 —— 卡上那句「通常要单独约」说的就是这件事，避免用户到院才发现。\"这几类人做之前先跟医生说\"（tellDoctor）不是指南条文：中国没有一份指南给出\"洁牙禁忌清单\"，所以这一栏只用一种永远成立的表述 —— 先把情况告诉医生，由医生判断能不能做、要不要改方案。它既不判\"不推荐\"，也不进\"不用做\"档。网上流传的\"洗牙前抗凝药停 3–7 天\"是危险说法，本工具不写。"
+    },
+    {
+      "id": "colorectal-screening",
+      "name": "结直肠癌筛查（肠镜 / 便潜血）",
+      "category": "A",
+      "catalogIds": [
+        "colonoscopy",
+        "fit",
+        "stool-ob"
+      ],
+      "topics": [
+        "cancer-colorectal"
+      ],
+      "when": {
+        "any": [
+          {
+            "all": [
+              {
+                "ageMin": 45
+              },
+              {
+                "ageMax": 75
+              }
+            ]
+          },
+          {
+            "all": [
+              {
+                "familyHistory": "colorectal"
+              },
+              {
+                "ageMin": 40
+              },
+              {
+                "ageMax": 75
+              }
+            ]
+          }
+        ]
+      },
+      "verdict": "45–75 岁应做结直肠癌筛查；一级亲属患结直肠癌者从 40 岁开始",
+      "reason": "结直肠癌是少数能通过筛查真正降低死亡率的癌症：发现息肉当场切除即可阻断癌变。中国指南建议一般风险人群 45–75 岁筛查；一级亲属（父母、子女、亲兄弟姐妹）确诊结直肠癌者属高风险，应从 40 岁起或比亲属发病年龄提前 10 年开始，每 5 年一次结肠镜。75 岁以上按个体情况由医生决定。",
+      "whatItFinds": "能发现并当场切除癌前息肉、发现早期肠癌；便潜血只能提示出血，不能替代肠镜。",
+      "frequency": {
+        "type": "interval",
+        "text": "肠镜每 5–10 年 1 次；或每年便潜血",
+        "years": 5
+      },
+      "skipIfDoneWithin": 5,
+      "priority": 2,
+      "redFlags": [
+        "便血或黑便",
+        "排便习惯持续改变超过 2 周",
+        "不明原因贫血"
+      ],
+      "evidence": [
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "结直肠癌防癌体检以结肠镜为一线方法；散发性结直肠癌按年龄、性别、一级亲属家族史、吸烟、BMI 评分，累计≥4 分认定为高风险人群（其中“50 岁以上从未做肠镜”单独计 3 分）",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南（卫健委委托）",
+          "checkedAt": "2026-11-17",
+          "strength": "strong",
+          "quotes": [
+            "结直肠癌防癌体检推荐结肠镜检查作为一线检查方法",
+            "以上各项累计评分≥4分者，认定为高风险人群。"
+          ]
+        },
+        {
+          "org": "USPSTF",
+          "year": "2021",
+          "point": "45–49 岁筛查（B 级）；50–75 岁筛查（A 级）；76–85 岁个体化决定（C 级）；85 岁以上不推荐开始筛查（D 级）",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-B",
+          "checkedAt": "2026-11-17",
+          "quotes": [
+            "The USPSTF recommends screening for colorectal cancer in adults aged 45 to 49 years.",
+            "The USPSTF recommends screening for colorectal cancer in all adults aged 50 to 75 years."
+          ],
+          "strength": "strong"
+        },
+        {
+          "org": "国家卫生健康委《结直肠癌筛查与早诊早治方案（2024年版）》",
+          "year": "2024",
+          "grade": "官方方案（经台州市人民政府网站转载）",
+          "point": "散发性结直肠癌高风险人群（无结直肠癌病史）推荐筛查起止年龄 40~74 岁；一线方法为结肠镜，每 5~10 年 1 次，未检出病变者可 10 年复查。",
+          "url": "https://www.zjtz.gov.cn/art/2024/9/13/art_1229797451_59096737.html",
+          "status": "verified",
+          "strength": "strong",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "推荐筛查起止年龄在40~74岁。",
+            "常规筛查的频率为每5~10年进行1次结肠镜检查,无病变检出者,结肠镜复查间隔可为10年;每年进行1次大便潜血检查。"
+          ]
+        }
+      ],
+      "notes": "口径差异：2025 防癌体检指南用的是评分法（年龄、性别、吸烟、BMI、家族史、未做过肠镜累加≥4 分算高风险），不是\"到 45 岁就查\"。本工具取 45 岁起（USPSTF 2021 与国内筛查指南的年龄口径），比评分法覆盖更宽——按评分法算不到 4 分的人，在这里也会被建议筛查。这是有意的偏保守。"
+    },
+    {
+      "id": "lung-ldct-high-risk",
+      "name": "肺癌筛查：低剂量螺旋 CT（高危人群）",
+      "category": "A",
+      "catalogIds": [
+        "ldct"
+      ],
+      "topics": [
+        "cancer-lung"
+      ],
+      "when": {
+        "ageMin": 50,
+        "ageMax": 79,
+        "any": [
+          {
+            "packYears": {
+              "gte": 20
+            }
+          },
+          {
+            "secondhand": "yes"
+          },
+          {
+            "occupationDust": "yes"
+          },
+          {
+            "familyHistory": "lung"
+          },
+          {
+            "pastHistory": "chronicLung"
+          }
+        ]
+      },
+      "verdict": "符合高危条件者，每年做一次低剂量螺旋 CT",
+      "reason": "低剂量 CT 是唯一被证实能降低肺癌死亡率的筛查手段；胸片对早期肺癌漏诊率极高，不能替代。",
+      "whatItFinds": "能发现肺部几毫米的结节和早期肺癌；不能判断结节良恶性，发现结节后需按医生要求随访。",
+      "frequency": {
+        "type": "interval",
+        "text": "每年 1 次",
+        "years": 1
+      },
+      "skipIfDoneWithin": 1,
+      "priority": 3,
+      "redFlags": [
+        "持续咳嗽超过 2 周或咯血",
+        "不明原因胸痛、声音嘶哑"
+      ],
+      "evidence": [
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "肺癌高风险人群：50–74 岁、无肺癌病史，且吸烟≥20 包年（含戒烟不足 15 年）、与吸烟者共同生活或同室工作≥20 年、慢阻肺、职业暴露≥1 年、一级亲属肺癌，符合任一条件",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南（卫健委委托）",
+          "checkedAt": "2026-11-17",
+          "strength": "strong",
+          "quotes": [
+            "肺癌高风险人群为50-74岁，无肺癌病史，且符合以下任意一项者：",
+            "吸烟包年数≥20包年，包括曾经吸烟≥20包年，但戒烟不足15年。",
+            "无肺内非钙化结节检出(阴性),建议进入下年度体检;"
+          ]
+        },
+        {
+          "org": "USPSTF",
+          "year": "2021",
+          "point": "50–80 岁、吸烟≥20 包年且目前吸烟或戒烟不足 15 年者，每年 1 次低剂量螺旋 CT（B 级）",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/lung-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-B",
+          "checkedAt": "2026-11-17",
+          "strength": "strong",
+          "quotes": [
+            "the USPSTF recommends annual screening for lung cancer with LDCT in adults aged 50 to 80 years who have at least a 20 pack-year smoking history"
+          ]
+        },
+        {
+          "org": "中国肺癌低剂量CT筛查指南（2025年版）",
+          "year": "2025",
+          "point": "中国自己的肺癌筛查指南：50–80 岁且符合高危条件者参加筛查，多数指南推荐年度性筛查。这是\"每年 1 次、上界到 80 岁\"的直接出处（国家癌症中心那份防癌体检指南只到 74 岁）。两处原文都写\"年度/下年度\"，没有写成\"每年 1 次\"的数字。",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12972581/",
+          "status": "verified",
+          "grade": "指南（国家级筛查专指南）",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "多数肺癌筛查指南推荐对高危人群采用LDCT进行年度性筛查",
+            "建议同时符合以下两项条件者参加肺癌筛查:(1)原则上年龄介于50-80岁。"
+          ]
+        }
+      ],
+      "notes": "中国《健康体检机构防癌体检指南（2025 年版）》写的是 50–74 岁；USPSTF 写的是 50–80 岁。两者上界不一致，本工具 A 档取到 79 岁——75–79 岁的高危吸烟者仍建议每年一次低剂量 CT，80 岁以上一律进「与医生商量」。",
+      "manualCheck": {
+        "ages": "指南原文是\"50-80 岁\"；A 档写到 79 岁，是为了给 80 岁以上的承接规则（lung-ldct-80plus）留边界，两条不重叠。"
+      }
+    },
+    {
+      "id": "lung-ldct-not-high-risk",
+      "name": "肺癌筛查：非高危人群不常规做低剂量 CT",
+      "category": "C",
+      "catalogIds": [
+        "ldct"
+      ],
+      "topics": [
+        "cancer-lung"
+      ],
+      "when": {
+        "ageMin": 18,
+        "none": [
+          {
+            "packYears": {
+              "gte": 20
+            }
+          },
+          {
+            "secondhand": "yes"
+          },
+          {
+            "occupationDust": "yes"
+          },
+          {
+            "familyHistory": "lung"
+          },
+          {
+            "pastHistory": "chronicLung"
+          }
+        ]
+      },
+      "verdict": "不属于高危人群，不必每年做低剂量 CT",
+      "reason": "非高危人群做 CT 筛查的获益很小，而假阳性会导致反复复查、穿刺甚至手术，伤害大于获益。",
+      "whatItFinds": "能发现肺结节，但绝大多数结节是良性，查出来反而增加焦虑和过度随访。",
+      "frequency": {
+        "type": "interval",
+        "text": "不建议常规做；有症状或医生认为需要时再做",
+        "years": 0
+      },
+      "redFlags": [
+        "持续咳嗽超过 2 周或咯血",
+        "不明原因胸痛、声音嘶哑",
+        "不明原因体重下降"
+      ],
+      "evidence": [
+        {
+          "org": "中国肺癌低剂量CT筛查指南（2025年版）",
+          "year": "2025",
+          "point": "指南把筛查对象限定为\"同时符合以下两项条件者\"：50–80 岁，且至少符合一条高危条件（吸烟≥20 包年、职业暴露、家族史合并吸烟等）。不符合条件的人不在筛查对象范围内 —— 指南没有给他们做 LDCT 的依据。",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12972581/",
+          "status": "verified",
+          "grade": "指南（国家级筛查专指南）",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "建议同时符合以下两项条件者参加肺癌筛查:(1)原则上年龄介于50-80岁。"
+          ],
+          "absence": true
+        }
+      ]
+    },
+    {
+      "id": "stomach-gastroscopy-high-risk",
+      "name": "上消化道癌筛查：胃癌 / 食管癌高危人群",
+      "category": "A",
+      "catalogIds": [
+        "gastroscopy"
+      ],
+      "topics": [
+        "cancer-stomach"
+      ],
+      "when": {
+        "ageMin": 45,
+        "ageMax": 74,
+        "any": [
+          {
+            "hpStatus": "positive"
+          },
+          {
+            "pastHistory": "chronicGastric"
+          },
+          {
+            "familyHistory": "stomach"
+          },
+          {
+            "alcohol": "heavy"
+          },
+          {
+            "smoking": "yes"
+          },
+          {
+            "smoking": "quit"
+          }
+        ]
+      },
+      "verdict": "45 岁以上且符合任一高危条件，应做上消化道癌（食管 / 胃）内镜筛查",
+      "reason": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》把\"上消化道癌高风险人群\"定义为：年龄≥45 岁，且符合以下任一项——① 居住在胃癌/食管癌高发地区（县级标化发病率胃癌>20/10 万、食管癌>15/10 万）；② 一级亲属有胃癌或食管癌病史；③ 幽门螺杆菌检测（呼气试验、血清抗体、粪便抗原）任一阳性；④ 吸烟（累计≥6 个月）、重度饮酒（≥50g 乙醇/天）、高盐或腌制饮食、热烫饮食；⑤ 患有慢性萎缩性胃炎、胃溃疡、胃息肉、残胃、肥厚性胃炎、恶性贫血等癌前疾病。胃镜同时看食管和胃，一次检查覆盖两个部位。",
+      "whatItFinds": "能直接看到食管和胃黏膜的毫米级病变，发现早期癌和癌前病变；发现息肉或早期癌可在内镜下直接切除，不必开刀。",
+      "frequency": {
+        "type": "interval",
+        "years": 5,
+        "text": "内镜无异常者每 5 年 1 次；癌前病变按分层：萎缩性胃炎局限者 3 年、累及全胃或低级别上皮内瘤变 1 年、高级别上皮内瘤变 3–6 个月"
+      },
+      "skipIfDoneWithin": 5,
+      "priority": 4,
+      "redFlags": [
+        "持续上腹痛或餐后饱胀",
+        "黑便",
+        "不明原因消瘦",
+        "吞咽困难"
+      ],
+      "evidence": [
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "胃癌/食管癌高风险人群：年龄≥45 岁且符合任一高危条件。内镜检查无异常的胃癌高风险人群原则上每 5 年进行 1 次内镜；癌前病变按病理分层随访（局限萎缩性胃炎 3 年、累及全胃或低级别上皮内瘤变 1 年、高级别 3–6 个月）。原文见《中国肿瘤》2025;34(9):667-697。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南（卫健委委托，WHO 指南制定手册方法）",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "胃癌高风险人群：年龄≥45岁，且符合以下任意一项：",
+            "上消化道癌防癌体检推荐首选内镜学检查，检查无异常者原则上每5年进行1次内镜检查"
+          ]
+        }
+      ],
+      "notes": "间隔不要照\"年年做\"来理解：指南对\"内镜没查出问题\"的高危人群给的是 5 年一次。真正的加密来自癌前病变的分层随访，那是医生按病理结果定的，不是体检套餐能替代的。本工具 A 档上限取 74 岁，75 岁以上按高龄原则与医生商量（指南本身未设上限）。 另有《中国胃癌筛查与早诊早治指南（2022，北京）》结论一致（45 岁起、限高危），全文在《中国肿瘤》期刊付费墙内，未作为引用。 原文的高危条件还包括\"居住于胃癌/食管癌高发地区（县级标化发病率阈值）\"\"高盐、腌制、热烫饮食\"\"慢性食管炎、Barrett 食管、贲门失弛缓、反流性食管炎等\"以及食管癌前病变史。本工具没有采集地区和饮食习惯，这几类人即使这里显示\"不属于高危\"，也应当主动告诉医生。",
+      "manualCheck": {
+        "ages": "指南只写\"年龄≥45 岁\"，没有给上限；74 岁是承接 75 岁以上规则（stomach-gastroscopy-75plus）的算术边界。"
+      }
+    },
+    {
+      "id": "stomach-gastroscopy-average-risk",
+      "name": "胃癌筛查：一般风险人群",
+      "category": "B",
+      "catalogIds": [
+        "gastroscopy"
+      ],
+      "topics": [
+        "cancer-stomach"
+      ],
+      "when": {
+        "ageMin": 45,
+        "ageMax": 74,
+        "none": [
+          {
+            "hpStatus": "positive"
+          },
+          {
+            "pastHistory": "chronicGastric"
+          },
+          {
+            "familyHistory": "stomach"
+          },
+          {
+            "alcohol": "heavy"
+          },
+          {
+            "smoking": "yes"
+          },
+          {
+            "smoking": "quit"
+          }
+        ]
+      },
+      "verdict": "指南只推荐给高危人群，所以你不在\"必须做\"里。但中国是胃癌高发国，45 岁后做一次基线胃镜，能把风险分层定下来。",
+      "reason": "两份国家级指南（2022 胃癌筛查指南、2025 防癌体检指南）都只对\"45 岁以上且符合高危条件\"的人推荐胃镜，都没有推荐一般风险人群常规筛查。所以它不该进\"该做\"，但也没有证据说做一次有害——中国是胃癌高发国，一次胃镜的绝对风险很低，因此放进\"商议\"档，由你和医生定。",
+      "whatItFinds": "能发现早期胃癌和癌前病变；一般风险人群获益小于高危人群，需权衡检查不适与获益。",
+      "frequency": {
+        "type": "interval",
+        "text": "如做，每 3–5 年 1 次",
+        "years": 5,
+        "basis": "practice",
+        "basisNote": "权威指南只对高风险人群给了\"无异常者每 5 年 1 次\"；一般风险人群没有条文，界面上的 3–5 年取自国内体检实践。"
+      },
+      "skipIfDoneWithin": 5,
+      "redFlags": [
+        "持续上腹痛或餐后饱胀",
+        "黑便",
+        "不明原因消瘦",
+        "吞咽困难"
+      ],
+      "evidence": [
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "仅对\"年龄≥45 岁且符合任一高危条件\"者定义为高风险人群并推荐内镜筛查；未推荐一般风险人群常规筛查。原文见《中国肿瘤》2025;34(9):667-697。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "避免一般风险人群的过度检查",
+            "一般风险人群采用健康促进模式"
+          ]
+        }
+      ],
+      "notes": "已核原文：2025 防癌体检指南的高危人群门槛是 45 岁，不是部分媒体转述的 40 岁。若你有幽门螺杆菌感染、一级亲属胃癌史、长期吸烟或重度饮酒、癌前疾病，请按\"高危\"那条走，不要停在这一档。 另有《中国胃癌筛查与早诊早治指南（2022，北京）》结论一致（45 岁起、限高危），全文在《中国肿瘤》期刊付费墙内，未作为引用。",
+      "manualCheck": {
+        "ages": "45 岁起取自胃癌高风险定义\"年龄≥45 岁\"；74 岁同样是承接 75 岁以上规则的边界，指南本身没给一般风险人群的年龄区间。"
+      },
+      "lean": "for",
+      "leanNote": "国内指南只把胃镜推荐给\"45 岁以上且符合高危条件\"的人，所以它进不了\"该做\"。但中国胃癌发病率比欧美高得多，国际指南不筛，是因为他们那边没这么常见——这一点不能照搬。做一次胃镜，知道有没有萎缩、肠化，后面十几年查不查、多久查，就都有依据了。"
+    },
+    {
+      "id": "breast-cancer-screening",
+      "name": "乳腺癌筛查（女性）",
+      "category": "A",
+      "catalogIds": [
+        "breast-us",
+        "mammography"
+      ],
+      "topics": [
+        "cancer-breast"
+      ],
+      "when": {
+        "gender": "female",
+        "ageMin": 40,
+        "ageMax": 74,
+        "none": [
+          {
+            "familyHistory": "breast"
+          },
+          {
+            "familyHistory": "ovarian"
+          }
+        ]
+      },
+      "verdict": "40 岁起应做乳腺癌筛查",
+      "reason": "中国女性乳腺癌发病高峰比欧美提前约 10 年，美国预防服务工作组 2024 年也把起始年龄下调到 40 岁；中国女性乳腺致密比例高，超声是主力，40 岁以上可联合钼靶。",
+      "whatItFinds": "能发现早期乳腺癌和癌前病变；乳腺超声对微小钙化不如钼靶敏感，两者互补。",
+      "frequency": {
+        "type": "interval",
+        "text": "每 1–2 年 1 次乳腺超声；40 岁以上联合钼靶（每 2 年）",
+        "years": 1
+      },
+      "skipIfDoneWithin": 1,
+      "priority": 3,
+      "redFlags": [
+        "无痛性乳房肿块",
+        "乳头溢液或皮肤凹陷",
+        "腋窝淋巴结肿大"
+      ],
+      "evidence": [
+        {
+          "org": "USPSTF",
+          "year": "2024",
+          "point": "40–74 岁女性每 2 年一次乳腺 X 线摄影筛查（B 级）；75 岁以上证据不足（I 级），按个体情况决定。",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/breast-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-B",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "The USPSTF recommends biennial screening mammography for women aged 40 to 74 years."
+          ],
+          "strength": "strong"
+        },
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "一般风险人群的乳腺体检间隔是每 1–2 年 1 次乳腺超声，不是固定每年；不具备超声条件时用乳腺 X 线摄影。本工具界面上写\"每年 1 次超声\"，取的是这个区间的上端（更积极的一端）。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南（国家级防癌体检指南，注册版本）",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "每1-2年应进行一次乳腺超声检查;",
+            "如不具备乳腺超声检查条件,宜使用乳腺X线摄影检查。"
+          ]
+        }
+      ],
+      "notes": "间隔两家权威说的不一样：国家癌症中心《健康体检机构防癌体检指南（2025 年版）》给一般风险人群的是每 1–2 年 1 次乳腺超声；USPSTF 给的是 40–74 岁每 2 年一次钼靶。本工具按\"每 1–2 年\"写，不主张比这更密——年年查并不比两年查更能降低死亡率，反而多出假阳性。"
+    },
+    {
+      "id": "breast-cancer-screening-high-risk",
+      "name": "乳腺癌筛查：一级亲属有乳腺癌或卵巢癌（高危）",
+      "category": "A",
+      "catalogIds": [
+        "breast-us",
+        "mammography"
+      ],
+      "topics": [
+        "cancer-breast"
+      ],
+      "when": {
+        "gender": "female",
+        "ageMin": 40,
+        "ageMax": 74,
+        "any": [
+          {
+            "familyHistory": "breast"
+          },
+          {
+            "familyHistory": "ovarian"
+          }
+        ]
+      },
+      "verdict": "一级亲属有乳腺癌或卵巢癌，40 岁起每年筛查，并建议做遗传咨询",
+      "reason": "2025 防癌体检指南把\"一级亲属有乳腺癌或卵巢癌史\"列为乳腺癌高风险的第一条——卵巢癌和乳腺癌共享 BRCA1/2 突变，家族里出现卵巢癌，乳腺癌风险同样升高。这类人应从 40 岁起每年 1 次超声 + 钼靶，必要时加乳腺 MRI，并到遗传咨询门诊评估是否携带致病突变。",
+      "whatItFinds": "同一般筛查；额外价值是识别需要做基因层面评估的人，其直系亲属也可能因此受益。",
+      "frequency": {
+        "type": "interval",
+        "text": "每年 1 次超声 + 钼靶；必要时加乳腺 MRI",
+        "years": 1
+      },
+      "skipIfDoneWithin": 1,
+      "priority": 2,
+      "redFlags": [
+        "无痛性乳房肿块",
+        "乳头溢液或皮肤凹陷",
+        "腋窝淋巴结肿大"
+      ],
+      "evidence": [
+        {
+          "org": "USPSTF《BRCA 相关癌症：风险评估、遗传咨询与检测》",
+          "year": "2019",
+          "point": "有乳腺癌/卵巢癌/输卵管癌/腹膜癌个人史或家族史的女性，应先用简短的家系风险评估工具过一遍；阳性者转遗传咨询，必要时做 BRCA1/2 检测（B 级）。这一步做在前面，\"要不要提前筛查、要不要加 MRI\"才有依据。",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/brca-related-cancer-risk-assessment-genetic-counseling-and-genetic-testing",
+          "status": "verified",
+          "grade": "USPSTF-B",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "The USPSTF recommends that primary care clinicians assess women with a personal or family history of breast, ovarian, tubal, or peritoneal cancer or who have an ancestry associated with breast cancer susceptibility 1 and 2 (BRCA1/2) gene mutations with an appropriate brief familial risk assessment tool."
+          ]
+        },
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "grade": "指南（卫健委委托）",
+          "point": "乳腺癌高风险人群：一级亲属有乳腺癌或卵巢癌史即属高危（另有二级亲属 50 岁前患病≥2 人、BRCA1/2 突变携带等情形）。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "strength": "strong",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "1)有遗传家族史,即具备以下任意一项者:",
+            "a)一级亲属有乳腺癌或卵巢癌史;",
+            "高风险人群宜从40岁起筛,筛查措施为: \n每年应进行一次乳腺超声联合乳腺X线摄影检查;"
+          ]
+        }
+      ],
+      "notes": "高风险人群的间隔比一般风险更密：国家癌症中心 2025 年版防癌体检指南写的是\"每年 1 次乳腺超声联合乳腺 X 线摄影\"，BRCA1/2 突变携带者还要加乳腺 MRI。这里的\"每年\"是有条文的，和一般风险那条的\"每 1–2 年\"不是一回事。",
+      "manualCheck": {
+        "ages": "指南对高风险人群只写\"从 40 岁起筛\"，没有上限；74 岁是承接 75 岁以上规则（breast-cancer-75plus）的边界。"
+      }
+    },
+    {
+      "id": "cervical-cancer-screening",
+      "name": "宫颈癌筛查（女性）",
+      "category": "A",
+      "catalogIds": [
+        "tct",
+        "hpv"
+      ],
+      "topics": [
+        "cancer-cervix"
+      ],
+      "when": {
+        "gender": "female",
+        "ageMin": 25,
+        "ageMax": 64
+      },
+      "verdict": "25–64 岁女性应定期做宫颈癌筛查",
+      "reason": "宫颈癌几乎全部由高危型 HPV 持续感染引起，筛查可以在癌前阶段发现并处理，是最成熟的癌症筛查之一。",
+      "whatItFinds": "能发现癌前病变和高危 HPV 感染；筛查正常不代表终身安全，需按间隔复查。",
+      "frequency": {
+        "type": "interval",
+        "text": "TCT 每 3 年，或 HPV+TCT 联合每 5 年",
+        "years": 3
+      },
+      "skipIfDoneWithin": 3,
+      "priority": 3,
+      "redFlags": [
+        "接触性出血",
+        "阴道异常出血或排液"
+      ],
+      "notes": "65 岁以上、既往筛查充分且结果正常者，可与医生商议停止筛查。",
+      "evidence": [
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "推荐 HR-HPV 核酸检测和/或细胞学检查作为宫颈癌初筛首选方法；结果异常者转阴道镜或组织病理学检查，并追踪随访。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "宫颈癌防癌体检推荐高危型人乳头瘤病毒核酸检测和/或细胞学检查作为初筛首选方法",
+            "（1）25-64周岁女性，每3-5年进行宫颈癌筛查体检。"
+          ]
+        },
+        {
+          "org": "USPSTF",
+          "year": "2018",
+          "point": "21–65 岁筛查：21–29 岁每 3 年细胞学；30–65 岁每 3 年细胞学、每 5 年 HR-HPV 单独或联合检测（A 级）。",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/cervical-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-A",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "The USPSTF concludes with high certainty that the benefits of screening every 3 years with cytology alone, every 5 years with hrHPV testing alone, or in combination in women aged 30 to 65 years outweigh the harms."
+          ],
+          "strength": "strong"
+        }
+      ]
+    },
+    {
+      "id": "liver-cancer-screening",
+      "name": "肝癌筛查：甲胎蛋白 + 肝脏超声（高危人群）",
+      "category": "A",
+      "catalogIds": [
+        "afp",
+        "abd-us"
+      ],
+      "topics": [
+        "cancer-liver"
+      ],
+      "when": {
+        "any": [
+          {
+            "all": [
+              {
+                "pastHistory": "hbv"
+              },
+              {
+                "ageMin": 40
+              }
+            ]
+          },
+          {
+            "pastHistory": "cirrhosis"
+          },
+          {
+            "all": [
+              {
+                "familyHistory": "liver"
+              },
+              {
+                "ageMin": 40
+              }
+            ]
+          },
+          {
+            "all": [
+              {
+                "alcohol": "heavy"
+              },
+              {
+                "ageMin": 40
+              }
+            ]
+          }
+        ]
+      },
+      "verdict": "乙肝/丙肝、肝硬化、肝癌家族史、长期大量饮酒者应做肝癌筛查",
+      "reason": "肝癌高危人群包括：乙肝或丙肝感染者、各种原因导致的肝硬化、肝癌家族史、长期大量饮酒所致的酒精性肝病。这些人群应每 6 个月做一次腹部超声 + 甲胎蛋白，因为肝癌早期几乎没有症状，等到有症状往往已错过根治机会。",
+      "whatItFinds": "能发现肝脏占位和甲胎蛋白升高；对小病灶不如增强 CT/MRI 敏感，异常需进一步检查。",
+      "frequency": {
+        "type": "interval",
+        "text": "每 6 个月 1 次",
+        "years": 0.5
+      },
+      "skipIfDoneWithin": 0.5,
+      "priority": 2,
+      "redFlags": [
+        "右上腹持续疼痛",
+        "皮肤巩膜黄染",
+        "腹胀明显加重"
+      ],
+      "evidence": [
+        {
+          "org": "国家卫生健康委员会《原发性肝癌诊疗指南（2022年版）》",
+          "year": "2022",
+          "point": "肝癌高危人群包括 HBV 和/或 HCV 感染、过度饮酒、非酒精性脂肪性肝炎、其他原因所致肝硬化、有肝癌家族史者，尤其是年龄>40 岁男性。建议高危人群至少每隔 6 个月行超声联合 AFP 检查（证据等级 2，推荐 A）。",
+          "url": "https://www.nhc.gov.cn/cms-search/downFiles/e8b02c99ab2d4ebea07a4c636eace9c9.pdf",
+          "status": "verified",
+          "grade": "推荐 A",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "高危人群至少每隔6 个月进行 1 次检查。"
+          ]
+        },
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "把\"乙肝/丙肝慢性感染且年龄≥40 岁\"写进肝癌高风险人群定义，这是本工具 40 岁起点的直接出处。注意间隔上两家不一致：本指南说\"原则上每年 1 次\"，肝癌诊疗指南说\"至少每隔 6 个月 1 次\"——本工具取更密的 6 个月，见下方说明。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南（国家级防癌体检指南，注册版本）",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "乙型或(和)丙型肝炎病毒慢性感染且年龄≥40岁者。",
+            "肝癌高风险人群原则上每年进行1次超声检查联合AFP检测。"
+          ]
+        }
+      ],
+      "notes": "两家权威给的间隔不一样：国家癌症中心的防癌体检指南写\"每年 1 次\"，原发性肝癌诊疗指南写\"至少每隔 6 个月 1 次\"。本工具显示 6 个月——因为乙肝/丙肝加肝硬化这类人进展快，间隔取短更安全，而且 6 个月本身也是诊疗指南认可的下限。如果你已经在专科随访，按专科的节奏走。"
+    },
+    {
+      "id": "hp-test-once",
+      "name": "幽门螺杆菌检测（一生至少一次）",
+      "category": "A",
+      "catalogIds": [
+        "hp-test"
+      ],
+      "topics": [
+        "infection-hp",
+        "cancer-stomach"
+      ],
+      "when": {
+        "ageMin": 18
+      },
+      "verdict": "建议一生至少检测一次幽门螺杆菌",
+      "reason": "幽门螺杆菌是 WHO 认定的 1 类致癌物，我国感染率约 40–60%，根除后可降低胃癌风险，检测无创、便宜。",
+      "whatItFinds": "能确认是否感染幽门螺杆菌；查出阳性建议消化内科规范根除，根除后复查确认。",
+      "frequency": {
+        "type": "once",
+        "text": "一生 1 次（根除后复查除外）",
+        "years": 0
+      },
+      "priority": 5,
+      "evidence": [
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "胃癌高风险人群判定条件之一：尿素呼气试验、血清 Hp 抗体、粪便 Hp 抗原任一阳性。Hp 检测是判定胃癌高风险、进而决定是否做胃镜的依据",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南（卫健委委托）",
+          "checkedAt": "2026-11-17",
+          "strength": "strong",
+          "quotes": [
+            "尿素呼气试验(urea breath test, UBT)、血清幽门螺杆菌（Hp）抗体、粪便Hp抗原检测任一阳性；"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bone-density-65f",
+      "name": "骨密度检查（65 岁以上女性）",
+      "category": "A",
+      "catalogIds": [
+        "bone-density"
+      ],
+      "topics": [
+        "bone"
+      ],
+      "when": {
+        "gender": "female",
+        "ageMin": 65
+      },
+      "verdict": "65 岁以上女性应做骨密度检查",
+      "reason": "绝经后骨量快速流失，骨质疏松导致的髋部骨折对老年人致命性很高，而骨密度检查简单、便宜。但也不必年年查：USPSTF 引用的队列研究显示，间隔 4–8 年重复检测并不能提高骨折预测的准确性。",
+      "whatItFinds": "能测出骨量减少和骨质疏松；不能预测跌倒风险，需结合平衡能力评估。",
+      "frequency": {
+        "type": "interval",
+        "text": "如首次结果正常，4–8 年内不必复查；骨量减少者按医生要求复查",
+        "years": 4
+      },
+      "priority": 4,
+      "evidence": [
+        {
+          "org": "USPSTF",
+          "year": "2025",
+          "point": "65 岁及以上女性筛查骨质疏松（B 级推荐）",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/osteoporosis-screening",
+          "status": "verified",
+          "grade": "USPSTF-B",
+          "checkedAt": "2026-11-17",
+          "quotes": [
+            "The USPSTF recommends screening for osteoporosis to prevent osteoporotic fractures in women 65 years or older.",
+            "Cohort studies evaluating screening intervals suggest that repeating BMD testing at an interval of 4 to 8 years does not result in additional accuracy in predicting fractures."
+          ],
+          "strength": "strong"
+        }
+      ]
+    },
+    {
+      "id": "chest-xray-routine",
+      "name": "胸部 X 线（常规体检）",
+      "category": "B",
+      "catalogIds": [
+        "chest-xray"
+      ],
+      "topics": [
+        "baseline"
+      ],
+      "when": {
+        "ageMin": 18
+      },
+      "verdict": "不必年年拍。它查不出早期肺癌 —— 那要靠低剂量 CT；有持续咳嗽、咯血、消瘦时拍才有意义。",
+      "reason": "2014 年体检共识把胸片列为必选，但放射学分会主张按临床指征而非固定周期，2025 年防癌体检指南明确“筛查肺癌勿用胸片”。权威之间存在分歧，因此放入商议档。",
+      "whatItFinds": "能看肺炎、肺结核、心脏增大、肋骨骨折；对小于 1 厘米的肺结节和早期肺癌漏诊率高，不能用于肺癌筛查。",
+      "frequency": {
+        "type": "interval",
+        "text": "无症状者 2–3 年 1 次或不查；有吸烟史、粉尘暴露者可每年",
+        "years": 2,
+        "basis": "practice",
+        "basisNote": "2014 共识把胸片列进必选项目，但没有写间隔；\"2–3 年 1 次\"取自国内体检实践。国际主流（USPSTF）已判无症状人群胸片筛查无获益。"
+      },
+      "skipIfDoneWithin": 2,
+      "evidence": [
+        {
+          "org": "中华医学会健康管理学分会《健康体检基本项目专家共识（2022）》",
+          "year": "2023",
+          "grade": "专家共识（中华健康管理学杂志 2023;17(9):649-660，中华医学知识库公开全文）",
+          "point": "2022 版表 1 的放射检查仍然只列\"胸部正位片或正侧位片\"。也就是说：国内体检的基本项目目录里，胸片一直是必选项；而 USPSTF 判定无症状人群做胸片筛查无获益。两边都在，这就是本条归\"与医生商量\"的原因。",
+          "url": "https://cmab.yiigle.com/uploads/guide_html/5811.html",
+          "status": "verified",
+          "strength": "conditional",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "胸部正位片或正侧位片:肺部、心脏、胸廓、纵隔"
+          ]
+        },
+        {
+          "org": "USPSTF",
+          "year": "2021",
+          "point": "不推荐用胸部 X 线（胸片）进行肺癌筛查；低剂量 CT 是唯一被证实能降低肺癌死亡率的影像手段。",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/lung-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF（不推荐）",
+          "checkedAt": "2026-11-18",
+          "strength": "against",
+          "quotes": [
+            "they have not been found to be beneficial include sputum cytology, chest radiography, and measurement of biomarker levels"
+          ]
+        },
+        {
+          "org": "中国医院协会《中国医院质量安全管理 第2-30部分：患者服务 健康体检》",
+          "year": "2020",
+          "point": "附录 A\"健康体检基本项目目录\"把 X 线胸片列进了辅助检查（与心电图、腹部超声并列）。这是\"胸片算必选\"这一方的依据，也是本条标为争议项的原因：2014 年的国内目录还把它列为必选，而 USPSTF 已判定无症状人群做胸片筛查无获益。",
+          "url": "http://szsyyxh.org/ziye/main2/files/%E9%99%84%E4%BB%B63%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%A0%87%E5%87%86.pdf",
+          "status": "verified",
+          "grade": "团体标准（附录 A 健康体检基本项目目录）",
+          "checkedAt": "2026-11-18",
+          "strength": "conditional",
+          "quotes": [
+            "X线检查胸片:肺部、心脏、胸廓、纵膈、膈肌"
+          ]
+        }
+      ],
+      "disputed": true,
+      "lean": "against",
+      "leanNote": "国内体检目录一直把胸片当必选，但 2025 年防癌体检指南已经写明\"筛查肺癌勿用胸片\"。无症状时年年拍，多数是在走流程。真正该拍的是有症状的时候。"
+    },
+    {
+      "id": "thyroid-us-screening",
+      "name": "甲状腺超声筛查（无症状人群）",
+      "category": "C",
+      "catalogIds": [
+        "thyroid-us"
+      ],
+      "topics": [
+        "thyroid"
+      ],
+      "when": {
+        "ageMin": 18,
+        "none": [
+          {
+            "familyHistory": "thyroid"
+          },
+          {
+            "pastHistory": "thyroid"
+          }
+        ]
+      },
+      "verdict": "没有高危因素，不必把甲状腺超声作为常规筛查",
+      "reason": "高分辨率超声会查出大量终生不威胁健康的惰性微小癌，导致不必要的穿刺和手术（可能声嘶、终身服药）。中国 2023 年甲状腺结节指南明确“不建议非高危普通人群超声筛查甲状腺结节”，USPSTF 同样不推荐。",
+      "whatItFinds": "能发现甲状腺结节；但结节在成人中检出率约 20%，绝大多数是良性，查出后多数只需随访。",
+      "frequency": {
+        "type": "interval",
+        "text": "不建议常规筛查；已发现结节者按医生要求随访（通常 6–12 个月）",
+        "years": 0
+      },
+      "redFlags": [
+        "颈部无痛性肿块且逐渐增大",
+        "声音嘶哑持续不愈",
+        "吞咽或呼吸困难"
+      ],
+      "evidence": [
+        {
+          "org": "中华医学会科学普及部《甲状腺结节知多少?》",
+          "year": "2023",
+          "point": "中国成人里，超声能查出直径 0.5 cm 以上甲状腺结节的人占 20.43%，其中只有 8%–16% 是恶性。换句话说，给健康人做甲状腺超声，五个里有一个会被贴上\"有结节\"的标签，而绝大多数是良性——这正是它不适合当常规筛查项目的原因：查出来的是焦虑，不是病。",
+          "url": "https://www.cma.org.cn/art/2023/6/28/art_4584_51517.html",
+          "status": "verified",
+          "grade": "科普图文（介绍 2023 年第二版指南观点）",
+          "checkedAt": "2026-11-17",
+          "quotes": [
+            "在中国成人中通过超声检查发现直径0.5cm以上甲状腺结节的患病率达到20.43%,其中8%-16%为恶性肿瘤"
+          ]
+        },
+        {
+          "org": "USPSTF",
+          "year": "2017",
+          "point": "不推荐在无症状成人中筛查甲状腺癌（D 级）",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/thyroid-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-D",
+          "checkedAt": "2026-11-17",
+          "quotes": [
+            "The USPSTF recommends against screening for thyroid cancer in asymptomatic adults."
+          ],
+          "strength": "against"
+        }
+      ],
+      "notes": "如果你已经确诊甲状腺结节、甲减、甲亢或做过甲状腺手术，这一条不适用——你需要的是按医生要求复查，见\"已确诊甲状腺疾病\"一条。"
+    },
+    {
+      "id": "tumor-markers-panel",
+      "name": "肿瘤标志物套餐（体检常规组合）",
+      "displayName": "肿瘤标志物套餐",
+      "category": "C",
+      "catalogIds": [
+        "tumor-panel",
+        "cea",
+        "ca125",
+        "ca199",
+        "ca153",
+        "scc",
+        "nse"
+      ],
+      "topics": [
+        "tumor-markers"
+      ],
+      "when": {
+        "ageMin": 18
+      },
+      "verdict": "不建议把肿瘤标志物套餐当作防癌筛查年年做",
+      "reason": "标志物敏感性和特异性都不够：升高不等于有癌（炎症、良性病都会升高），正常也不能排除癌。国家卫健委 2024 年多份早诊早治方案明确不推荐用生物标志物做肺癌、胃癌、食管癌筛查。",
+      "whatItFinds": "主要用于已确诊肿瘤患者的疗效监测和复发随访，不适合健康人群筛查。",
+      "frequency": {
+        "type": "interval",
+        "text": "不建议作为常规体检项目年年查",
+        "years": 0
+      },
+      "notes": "已经确诊肿瘤、正在治疗或随访的人，肿瘤标志物是必要的监测手段，不属于本条范围，请遵医嘱。",
+      "evidence": [
+        {
+          "org": "国家卫生健康委《肺癌筛查与早诊早治方案（2024年版）》",
+          "year": "2024",
+          "point": "方案明确：肺癌筛查不推荐使用胸部 X 线、MRI、PET-CT、生物标志物检测。胃癌/食管癌 2024 年版方案同样不推荐生物标志物检测用于筛查。",
+          "url": "https://www.zjtz.gov.cn/art/2024/9/13/art_1229797451_59096737.html",
+          "status": "verified",
+          "grade": "官方方案（经台州市人民政府网站转载，原文为国卫办医急函〔2024〕方案）",
+          "checkedAt": "2026-11-17",
+          "strength": "against",
+          "quotes": [
+            "不推荐使用胸部X线检查、MRI检查、PET-CT检查、生物标志物检测等进行肺癌筛查。"
+          ]
+        },
+        {
+          "org": "中国医院协会《中国医院质量安全管理 第2-30部分：患者服务 健康体检》",
+          "year": "2020",
+          "point": "附录 A 的实验室检查必选清单只有：血常规、尿常规、粪便常规+潜血、肝功能、肾功能、血脂、空腹血糖、尿酸——不含任何肿瘤标志物。",
+          "url": "http://szsyyxh.org/ziye/main2/files/%E9%99%84%E4%BB%B63%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%A0%87%E5%87%86.pdf",
+          "status": "verified",
+          "grade": "团体标准（附录 A 健康体检基本项目目录）",
+          "checkedAt": "2026-11-17",
+          "quotes": [
+            "实验室检查常规检查:血常规、尿常规、粪便常规 + 潜血",
+            "生化检查:肝功能、肾功能、血脂、空腹血糖、尿酸"
+          ],
+          "absence": true
+        }
+      ]
+    },
+    {
+      "id": "pet-ct-screening",
+      "name": "PET-CT 全身扫描（健康人体检）",
+      "category": "C",
+      "catalogIds": [
+        "pet-ct"
+      ],
+      "topics": [
+        "advanced-imaging"
+      ],
+      "when": {
+        "ageMin": 18
+      },
+      "verdict": "健康人不必用 PET-CT 做体检",
+      "reason": "PET-CT 不是癌症筛查工具：对早期小病灶不敏感，辐射剂量高、价格昂贵，还常查出无法定性的“可疑影”引发一连串检查。它真正的用途是已确诊肿瘤的分期和疗效评估。",
+      "whatItFinds": "能显示代谢活跃的病灶，用于肿瘤分期；不能替代胃镜、肠镜等确诊手段，也不适合健康人筛查。",
+      "frequency": {
+        "type": "interval",
+        "text": "健康体检不建议做",
+        "years": 0
+      },
+      "notes": "已确诊肿瘤者用 PET-CT 做分期和疗效评估是必要的临床检查，不属于体检范畴，请遵医嘱。",
+      "evidence": [
+        {
+          "org": "SNMMI（美国核医学与分子影像学会）Choosing Wisely 清单第 1 条",
+          "year": "2013",
+          "point": "原句：Do not use PET/CT for cancer screening in healthy individuals.（不要用 PET/CT 给健康人做癌症筛查）",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5313457/",
+          "status": "verified",
+          "grade": "学会建议（经同行评议文献逐字引用）",
+          "checkedAt": "2026-11-17",
+          "strength": "against",
+          "quotes": [
+            "Do not use PET/CT for cancer screening in healthy individuals."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "psa-70plus",
+      "name": "前列腺 PSA 筛查（70 岁及以上男性）",
+      "category": "C",
+      "catalogIds": [
+        "psa"
+      ],
+      "topics": [
+        "cancer-prostate"
+      ],
+      "when": {
+        "gender": "male",
+        "ageMin": 70
+      },
+      "verdict": "70 岁以上不建议再做 PSA 筛查",
+      "reason": "70 岁以后 PSA 筛查的获益很小，而假阳性会带来穿刺、感染和过度治疗。USPSTF 将其列为 D 级（不推荐）。",
+      "whatItFinds": "PSA 升高不等于前列腺癌，前列腺增生、炎症都会升高；确诊需要穿刺。",
+      "frequency": {
+        "type": "interval",
+        "text": "不建议常规筛查",
+        "years": 0
+      },
+      "redFlags": [
+        "排尿困难或尿流变细加重",
+        "无痛性血尿",
+        "骨痛伴不明原因消瘦"
+      ],
+      "evidence": [
+        {
+          "org": "USPSTF",
+          "year": "2018",
+          "point": "70 岁及以上男性不推荐 PSA 筛查（D 级）",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/prostate-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-D",
+          "checkedAt": "2026-11-17",
+          "quotes": [
+            "The USPSTF recommends against PSA-based screening for prostate cancer in men 70 years and older."
+          ],
+          "strength": "against"
+        }
+      ]
+    },
+    {
+      "id": "psa-50-69",
+      "name": "前列腺癌筛查（PSA）：50–69 岁",
+      "category": "B",
+      "catalogIds": [
+        "psa"
+      ],
+      "topics": [
+        "cancer-prostate"
+      ],
+      "when": {
+        "gender": "male",
+        "ageMin": 50,
+        "ageMax": 69
+      },
+      "verdict": "查与不查，获益和代价接近。想查就查，不想查也不算错 —— 前提是两边的账你都知道了。",
+      "reason": "中国《健康体检机构防癌体检指南（2025年版）》把\"年龄≥50 岁的男性\"直接列为前列腺癌高风险人群并推荐检测血清 PSA；而 USPSTF 对 55–69 岁只给 C 级（个体化决定），70 岁以上给 D 级（不推荐）。两份指南一个推荐、一个谨慎，恰说明这件事取决于你自己的取舍——所以我们不放进\"该做\"，放进\"和医生商量\"。",
+      "whatItFinds": "能早期发现前列腺癌；也会查出大量终身不会造成问题的癌，带来穿刺、感染和过度治疗。",
+      "frequency": {
+        "type": "interval",
+        "years": 2,
+        "text": "如查：高风险人群每 2 年 1 次；PSA<1 ng/mL 的 60 岁以上男性可考虑停止"
+      },
+      "evidence": [
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "前列腺癌高风险人群为预期寿命 10 年以上且符合下列之一：① 年龄≥50 岁；② 年龄≥45 岁且一级亲属有前列腺癌家族史；③ 携带 BRCA2 突变且年龄≥40 岁。体检内容为血清 PSA，临界值 4 ng/mL，两次超值排除干扰后转泌尿专科；PSA<1 ng/mL 的 60 岁以上男性推荐停止前列腺癌体检。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "前列腺癌高风险人群为预期寿命10年以上且符合下列条件之一的男性:",
+            "年龄≥50岁。",
+            "针对前列腺癌高风险人群,建议定期(每两年1次)监测血清PSA水平。"
+          ]
+        },
+        {
+          "org": "USPSTF",
+          "year": "2018",
+          "point": "55–69 岁个体化决定（C 级，需与医生讨论获益与危害）；70 岁以上不推荐 PSA 筛查（D 级）。对家族史等高危人群因证据不足未给单独推荐。",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/prostate-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-C/D",
+          "checkedAt": "2026-11-18",
+          "strength": "conditional",
+          "quotes": [
+            "For men aged 55 to 69 years, the decision to undergo periodic prostate-specific antigen (PSA)-based screening for prostate cancer should be an individual one."
+          ]
+        }
+      ],
+      "notes": "起始年龄按中国指南取 50 岁（原文已核，此前误取 55 岁）。一级亲属有前列腺癌者从 45 岁开始，见另一条。PSA 的争议在于过度诊断，单次升高不等于癌，务必先复查再决定是否穿刺。",
+      "lean": "either",
+      "leanNote": "国内指南把 50 岁以上男性直接列为高风险、推荐查 PSA；USPSTF 只对 55–69 岁给\"个体化决定\"。差别在于代价：假警报会把人推去做穿刺，而穿刺有感染和出血风险，也可能查出进展很慢、一辈子不需要治疗的前列腺癌。这笔账没有标准答案。"
+    },
+    {
+      "id": "base-package-male",
+      "name": "基础项目·男性附加（泌尿系超声）",
+      "category": "A",
+      "catalogIds": [
+        "urinary-us"
+      ],
+      "topics": [
+        "baseline"
+      ],
+      "when": {
+        "gender": "male",
+        "ageMin": 18
+      },
+      "verdict": "男性基础套餐应含泌尿系超声",
+      "reason": "共识必选项目对男性单列输尿管、膀胱、前列腺区域超声，用于发现结石、增生等常见问题。",
+      "whatItFinds": "能发现肾/输尿管结石、膀胱异常、前列腺增大；不能替代 PSA（是否查 PSA 见专项规则）。",
+      "frequency": {
+        "type": "interval",
+        "text": "每年 1 次",
+        "years": 1,
+        "basis": "practice",
+        "basisNote": "同基础套餐：目录只定项目、不定间隔，\"每年 1 次\"属体检行业通行做法。"
+      },
+      "priority": 2,
+      "evidence": [
+        {
+          "org": "中华医学会健康管理学分会《健康体检基本项目专家共识（2022）》",
+          "year": "2023",
+          "point": "2022 版表 1 的超声检查只有两项：腹部超声（肝、胆、胰、脾、肾）和女性子宫附件。男性相关的只有外科体检里的\"外生殖器（男性）\"与\"肛诊\"。**泌尿系/前列腺超声不在基本项目目录内**——本工具把它并进男性基础套餐属保守加法，不是目录要求。",
+          "url": "https://cmab.yiigle.com/uploads/guide_html/5811.html",
+          "status": "verified",
+          "grade": "专家共识（中华健康管理学杂志 2023;17(9):649-660，中华医学知识库公开全文）",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "外科:皮肤、头颈、脊柱、四肢、关节、浅表淋巴结、甲状腺、肛诊、外生殖器(男性)、乳腺(女性)"
+          ]
+        },
+        {
+          "org": "中国医院协会《中国医院质量安全管理 第2-30部分：患者服务 健康体检》",
+          "year": "2020",
+          "grade": "团体标准（附录 A 健康体检基本项目目录）",
+          "point": "附录 A 目录中，男性的性别相关检查是「外科：…外生殖器（男）」。前列腺/膀胱超声属于共识正文里的专项深化项，不在目录表内——本工具把它并进基础套餐，属保守加法。",
+          "url": "http://szsyyxh.org/ziye/main2/files/%E9%99%84%E4%BB%B63%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%A0%87%E5%87%86.pdf",
+          "status": "verified",
+          "strength": "strong",
+          "quotes": [
+            "外科:浅表淋巴结、甲状腺、乳腺、脊柱四肢关节、肛门、外生殖器(男)"
+          ],
+          "checkedAt": "2026-11-18"
+        }
+      ]
+    },
+    {
+      "id": "base-package-female",
+      "name": "基础项目·女性附加（妇科检查、子宫附件超声）",
+      "category": "A",
+      "catalogIds": [
+        "gyn-exam",
+        "pelvic-us"
+      ],
+      "topics": [
+        "baseline"
+      ],
+      "when": {
+        "gender": "female",
+        "ageMin": 18
+      },
+      "verdict": "女性基础套餐应含妇科检查与子宫附件超声",
+      "reason": "共识必选项目对女性单列妇科检查与子宫及附件超声，用于发现子宫肌瘤、卵巢囊肿等常见问题。",
+      "whatItFinds": "能发现子宫肌瘤、卵巢囊肿、内膜异常；不能替代宫颈癌筛查（TCT/HPV 见专项规则）。",
+      "frequency": {
+        "type": "interval",
+        "text": "每年 1 次",
+        "years": 1,
+        "basis": "practice",
+        "basisNote": "同基础套餐：目录只定项目、不定间隔，\"每年 1 次\"属体检行业通行做法。"
+      },
+      "priority": 2,
+      "notes": "无性生活女性请提前告知医生，可改经腹部超声。乳腺只在基本项目里做触诊，乳腺超声属于加项（见\"乳腺癌筛查\"那条）。",
+      "evidence": [
+        {
+          "org": "中华医学会健康管理学分会《健康体检基本项目专家共识（2022）》",
+          "year": "2023",
+          "point": "2022 版表 1 的超声检查写明\"腹部超声：肝、胆、胰、脾、肾；女性：子宫、附件\"——子宫附件超声确实在基本项目里（2014 版没写明，本工具此前按\"保守加法\"处理，2022 版已把这条写进去）。乳腺则只在物理检查里以触诊形式出现（\"外科：…乳腺（女性）\"），乳腺超声不在基本项目内。",
+          "url": "https://cmab.yiigle.com/uploads/guide_html/5811.html",
+          "status": "verified",
+          "grade": "专家共识（中华健康管理学杂志 2023;17(9):649-660，中华医学知识库公开全文）",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "腹部超声:肝、胆、胰、脾、肾女性:子宫、附件",
+            "妇科:外阴、内诊"
+          ]
+        },
+        {
+          "org": "中国医院协会《中国医院质量安全管理 第2-30部分：患者服务 健康体检》",
+          "year": "2020",
+          "grade": "团体标准（附录 A 健康体检基本项目目录）",
+          "point": "附录 A 目录中，女性的性别相关检查是「妇科：外阴、内诊」。子宫附件超声属于专项深化项，不在目录表内——本工具把它并进基础套餐，属保守加法。",
+          "url": "http://szsyyxh.org/ziye/main2/files/%E9%99%84%E4%BB%B63%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%A0%87%E5%87%86.pdf",
+          "status": "verified",
+          "strength": "strong",
+          "quotes": [
+            "妇科:外阴、内诊"
+          ],
+          "checkedAt": "2026-11-18"
+        }
+      ]
+    },
+    {
+      "id": "carotid-us-screening",
+      "name": "颈动脉超声（无症状常规体检）",
+      "category": "C",
+      "catalogIds": [
+        "carotid-us"
+      ],
+      "topics": [
+        "cardiovascular"
+      ],
+      "when": {
+        "ageMin": 18,
+        "none": [
+          {
+            "familyHistory": "prematureCvd"
+          }
+        ]
+      },
+      "verdict": "没有症状、也没有家族史的人，不必把颈动脉超声作为常规筛查。（一级亲属里有人在 55 岁/65 岁前得过心梗或脑卒中的人另说，那种情况在\"商议\"里。）",
+      "reason": "对无症状人群筛查颈动脉狭窄，既不能有效预防卒中，又会带来不必要的手术和药物干预。USPSTF 列为 D 级（不推荐）。已有高血压、糖尿病、既往脑梗者属于疾病随访，由医生安排，不属于体检筛查。",
+      "whatItFinds": "能看颈动脉斑块和狭窄程度；对无症状人群，查出轻度斑块多数只需控制危险因素，不会改变处理方案。",
+      "frequency": {
+        "type": "interval",
+        "text": "不建议常规筛查",
+        "years": 0
+      },
+      "redFlags": [
+        "突发一侧肢体无力或麻木",
+        "说话不清、口角歪斜、视物模糊——立即急诊"
+      ],
+      "evidence": [
+        {
+          "org": "USPSTF",
+          "year": "2021",
+          "point": "无症状成人不推荐筛查颈动脉狭窄（D 级）",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/carotid-artery-stenosis-screening",
+          "status": "verified",
+          "grade": "USPSTF-D",
+          "checkedAt": "2026-11-17",
+          "quotes": [
+            "The USPSTF recommends against screening for asymptomatic carotid artery stenosis in the general adult population."
+          ],
+          "strength": "against"
+        }
+      ]
+    },
+    {
+      "id": "aaa-screening",
+      "name": "腹主动脉瘤超声（65–75 岁吸烟男性，一次）",
+      "category": "A",
+      "catalogIds": [
+        "aaa-us"
+      ],
+      "topics": [
+        "cardiovascular"
+      ],
+      "when": {
+        "gender": "male",
+        "ageMin": 65,
+        "ageMax": 75,
+        "any": [
+          {
+            "smoking": "yes"
+          },
+          {
+            "smoking": "quit"
+          }
+        ]
+      },
+      "verdict": "65–75 岁且吸烟的男性，建议做一次腹主动脉瘤超声",
+      "reason": "腹主动脉瘤破裂死亡率极高且平时无症状，一次超声即可筛查，是少数“性价比极高但常被忽略”的项目。USPSTF 列为 B 级推荐。",
+      "whatItFinds": "能测量腹主动脉直径、发现动脉瘤；一次正常通常无需复查。",
+      "frequency": {
+        "type": "once",
+        "text": "一生 1 次（正常者无需复查）",
+        "years": 0
+      },
+      "priority": 3,
+      "evidence": [
+        {
+          "org": "USPSTF",
+          "year": "2019",
+          "point": "65–75 岁有吸烟史的男性一次性超声筛查腹主动脉瘤（B 级）",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/abdominal-aortic-aneurysm-screening",
+          "status": "verified",
+          "grade": "USPSTF-B",
+          "checkedAt": "2026-11-17",
+          "quotes": [
+            "The USPSTF recommends 1-time screening for abdominal aortic aneurysm (AAA) with ultrasonography in men aged 65 to 75 years who have ever smoked."
+          ],
+          "strength": "strong"
+        }
+      ]
+    },
+    {
+      "id": "hepatitis-bc-screening",
+      "name": "乙肝、丙肝筛查（成人至少一次）",
+      "category": "A",
+      "catalogIds": [
+        "hbv",
+        "hcv"
+      ],
+      "topics": [
+        "infection-hepatitis",
+        "cancer-liver"
+      ],
+      "when": {
+        "ageMin": 18
+      },
+      "verdict": "建议一生至少查一次乙肝、丙肝",
+      "reason": "丙肝可以治愈、乙肝可以控制，但两者早期几乎没症状。中国是乙肝大国，很多人不知道自己携带。查一次血即可明确，是性价比极高的项目。",
+      "whatItFinds": "能确认是否感染乙肝/丙肝；阳性者需进一步查病毒载量和肝功能，并纳入肝癌筛查。",
+      "frequency": {
+        "type": "once",
+        "text": "一生至少 1 次；高危者按医生要求复查",
+        "years": 0
+      },
+      "priority": 3,
+      "evidence": [
+        {
+          "org": "中华医学会肝病学分会、感染病学分会《慢性乙型肝炎防治指南（2022年版）》",
+          "year": "2022",
+          "point": "推荐意见 8：在不涉及入托、入学和入职的健康体格检查或就医时，应进行 HBsAg 筛查；对一般人群均应进行 HBsAg 筛查（B1）。原文刊于《中华肝脏病杂志》2022;30(12):1309-1331。",
+          "url": "https://grxjbzlkzzx.whsjytyy.com/upload/20241219/67641695ecd9b.pdf",
+          "status": "verified",
+          "grade": "B1（推荐强度 1，强推荐）",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "推荐意见8:在不涉及入托、入学和入职的健康体格检查或就医时,应进行HBsAg筛查。对一般人群均应进行HBsAg筛查,特别是人类免疫缺陷病毒"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "echo-routine",
+      "name": "心脏彩超（无症状常规体检）",
+      "category": "B",
+      "catalogIds": [
+        "echo"
+      ],
+      "topics": [
+        "cardiovascular"
+      ],
+      "when": {
+        "ageMin": 18
+      },
+      "verdict": "没有心脏症状和病史，这一项可以先省。有杂音、胸闷心悸，或高血压多年，才值得查一次。",
+      "reason": "无症状人群常规做心脏彩超的获益缺乏证据支持，多数异常发现不会改变处理。有高血压多年、心脏杂音、胸闷心悸者属有指征检查，应由医生安排。",
+      "whatItFinds": "能看心脏结构、瓣膜、射血分数；不能诊断冠心病（需冠脉 CT 或造影）。",
+      "frequency": {
+        "type": "interval",
+        "text": "不常规做；有指征时按医生要求",
+        "years": 0
+      },
+      "redFlags": [
+        "活动后胸闷胸痛",
+        "夜间不能平卧、下肢水肿",
+        "心悸伴黑矇"
+      ],
+      "evidence": [
+        {
+          "org": "中华医学会健康管理学分会《健康体检基本项目专家共识（2022）》",
+          "year": "2023",
+          "point": "2022 版表 1 的辅助检查只有三部分：十二导联心电图、胸部正侧位片、腹部超声（女性加子宫附件）。**没有超声心动图**——心脏彩超需要有心慌、胸闷、杂音或心脏病史才有做的理由。",
+          "url": "https://cmab.yiigle.com/uploads/guide_html/5811.html",
+          "status": "verified",
+          "grade": "专家共识（中华健康管理学杂志 2023;17(9):649-660，中华医学知识库公开全文）",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "(3)辅助检查:主要包括心电图检查、放射检查和超声检查3个部分。",
+            "十二导联心电图",
+            "胸部正位片或正侧位片:肺部、心脏、胸廓、纵隔",
+            "腹部超声:肝、胆、胰、脾、肾女性:子宫、附件"
+          ],
+          "absence": true
+        },
+        {
+          "org": "中国医院协会《中国医院质量安全管理 第2-30部分：患者服务 健康体检》",
+          "year": "2020",
+          "point": "附录 A\"健康体检基本项目目录\"的辅助检查只有三样：心电图、X 线胸片、腹部超声（肝胆胰脾肾）。超声心动图（心脏彩超）不在其中——它需要有心慌、胸闷、杂音或心脏病史才有做的理由。",
+          "url": "http://szsyyxh.org/ziye/main2/files/%E9%99%84%E4%BB%B63%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%A0%87%E5%87%86.pdf",
+          "status": "verified",
+          "grade": "团体标准（附录 A 健康体检基本项目目录）",
+          "checkedAt": "2026-11-18",
+          "absence": true,
+          "quotes": [
+            "辅助检查心电图检查:心率及心电图结论\nX线检查胸片:肺部、心脏、胸廓、纵膈、膈肌\n超声检查:肝、胆、胰、脾、肾"
+          ]
+        }
+      ],
+      "lean": "against",
+      "leanNote": "两份国内体检基本项目目录里都没有超声心动图 —— 它需要理由才做：心脏杂音、胸闷气短、心电图异常，或高血压十年以上。没有这些，查出来的\"轻度反流\"\"少量积液\"多数不用处理，却要跟着复查好几年。"
+    },
+    {
+      "id": "head-ct-routine",
+      "name": "头颅 CT / MRI（无症状常规体检）",
+      "category": "C",
+      "catalogIds": [
+        "head-ct"
+      ],
+      "topics": [
+        "advanced-imaging"
+      ],
+      "when": {
+        "ageMin": 18
+      },
+      "verdict": "没有症状，不必把头颅 CT/MRI 放进常规体检",
+      "reason": "无症状人群做头颅影像的阳性率极低，查出的小白点多为无临床意义的腔隙灶，反而引发焦虑和反复复查；CT 还有辐射。",
+      "whatItFinds": "能发现脑梗灶、占位、萎缩；不能预测未来是否中风，中风预防靠血压血脂管理。",
+      "frequency": {
+        "type": "interval",
+        "text": "不建议常规做",
+        "years": 0
+      },
+      "redFlags": [
+        "突发剧烈头痛",
+        "一侧肢体无力、言语不清",
+        "不明原因反复头晕伴呕吐"
+      ],
+      "evidence": [
+        {
+          "org": "中华医学会健康管理学分会《健康体检基本项目专家共识（2022）》",
+          "year": "2023",
+          "point": "2022 版表 1 的辅助检查只有三部分：十二导联心电图、胸部正侧位片、腹部超声（女性加子宫附件）。**没有任何头颅影像**（CT 或 MRI）。国家层面的体检基本项目目录里根本没有这一项。",
+          "url": "https://cmab.yiigle.com/uploads/guide_html/5811.html",
+          "status": "verified",
+          "grade": "专家共识（中华健康管理学杂志 2023;17(9):649-660，中华医学知识库公开全文）",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "(3)辅助检查:主要包括心电图检查、放射检查和超声检查3个部分。",
+            "十二导联心电图",
+            "胸部正位片或正侧位片:肺部、心脏、胸廓、纵隔",
+            "腹部超声:肝、胆、胰、脾、肾女性:子宫、附件"
+          ],
+          "absence": true
+        },
+        {
+          "org": "中国医院协会《中国医院质量安全管理 第2-30部分：患者服务 健康体检》",
+          "year": "2020",
+          "point": "附录 A\"健康体检基本项目目录\"里，影像相关的只有三样：心电图、X 线胸片、腹部超声（肝胆胰脾肾）。没有任何头颅影像（CT 或 MRI）。也就是说，国家层面的体检基本项目目录里根本没有这一项。",
+          "url": "http://szsyyxh.org/ziye/main2/files/%E9%99%84%E4%BB%B63%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%A0%87%E5%87%86.pdf",
+          "status": "verified",
+          "grade": "团体标准（附录 A 健康体检基本项目目录）",
+          "checkedAt": "2026-11-18",
+          "absence": true,
+          "quotes": [
+            "辅助检查心电图检查:心率及心电图结论",
+            "X线检查胸片:肺部、心脏、胸廓、纵膈、膈肌",
+            "超声检查:肝、胆、胰、脾、肾"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tsh-screening",
+      "name": "甲状腺功能（TSH）无症状筛查",
+      "category": "B",
+      "catalogIds": [
+        "tsh"
+      ],
+      "topics": [
+        "thyroid"
+      ],
+      "when": {
+        "ageMin": 18
+      },
+      "verdict": "查一次不贵，能发现没症状的甲减；代价是可能牵出一串后续检查。由你的症状、家族史和是否备孕来定。",
+      "reason": "两边说法相反：国内《健康体检基本项目专家共识（2022）》把甲功列进了基本项目；USPSTF 则认为无症状非孕成人筛查甲状腺功能异常的获益与伤害证据不足（I 级）。甲减症状隐匿、检测便宜，查一次不算过度医疗，但它也不像血压血糖那样有明确的人群获益证据——所以放在\"与医生商量\"，由你的症状、家族史和是否备孕决定。备孕和孕期女性应按产科要求检查。",
+      "whatItFinds": "能发现甲亢、甲减；单查 TSH 异常时需加查 FT3、FT4 明确。",
+      "frequency": {
+        "type": "interval",
+        "text": "可与医生商议；备孕/孕期按医嘱",
+        "years": 0
+      },
+      "evidence": [
+        {
+          "org": "USPSTF",
+          "year": "2015",
+          "point": "无症状非孕成人筛查甲状腺功能异常证据不足（I 级）",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/thyroid-dysfunction-screening",
+          "status": "verified",
+          "grade": "USPSTF-I",
+          "checkedAt": "2026-11-17",
+          "quotes": [
+            "The USPSTF concludes that the current evidence is insufficient to assess the balance of benefits and harms of screening for thyroid dysfunction in nonpregnant, asymptomatic adults."
+          ],
+          "strength": "insufficient"
+        },
+        {
+          "org": "中华医学会健康管理学分会《健康体检基本项目专家共识（2022）》",
+          "year": "2023",
+          "point": "2022 版把\"甲状腺功能（总 T、游离 T、TSH）\"写进了基本体检项目的生化检查——国内体检行业的共识认为它该查。这与 USPSTF\"证据不足（I 级）\"的结论相反，是本条归\"与医生商量\"而不是\"该做\"或\"不用做\"的原因。",
+          "url": "https://cmab.yiigle.com/uploads/guide_html/5811.html",
+          "status": "verified",
+          "grade": "专家共识（中华健康管理学杂志 2023;17(9):649-660，中华医学知识库公开全文）",
+          "checkedAt": "2026-11-18",
+          "strength": "conditional",
+          "quotes": [
+            "生化检查包括肝功能、肾功能、血脂、血糖、尿酸、甲状腺功能",
+            "甲状腺功能:总甲状腺激素、游离甲状腺激素、促甲状腺激素"
+          ]
+        }
+      ],
+      "notes": "如果你的体检套餐里已经有甲功，不用特意去掉；如果套餐里没有，也不必为了\"补全\"单独加。真正该查甲功的是这几类人：有甲亢/甲减症状（怕冷怕热、心慌、体重变化、便秘）、颈部有结节或肿大、有甲状腺病家族史、正在备孕或已怀孕、长期服用胺碘酮或锂剂。",
+      "lean": "either",
+      "leanNote": "国内体检共识把甲功写进了基本项目，USPSTF 认为健康人常规筛它的证据不足（I 级）。查 TSH 十几块钱，能揪出没症状的甲减，对女性、备孕、家里有甲状腺病的人更值；另一面是可能顺带查出很小的结节，然后进入定期复查甚至穿刺的流程。"
+    },
+    {
+      "id": "pregnancy-guard",
+      "name": "孕期 / 备孕期：改用孕产检路径",
+      "category": "B",
+      "catalogIds": [],
+      "topics": [
+        "pregnancy"
+      ],
+      "when": {
+        "gender": "female",
+        "pregnant": "yes"
+      },
+      "verdict": "这条路先停：孕期和备孕期该走的是产检，X 线、CT、宫颈筛查都要按产科安排改期或换方式。",
+      "reason": "孕期体检的重点和常规筛查不同：X 线、CT 等辐射检查一般需延期或改用超声；宫颈筛查通常推迟到产后；备孕期该补的是风疹抗体、甲状腺功能、地中海贫血等孕前项目，而不是常规防癌筛查。指南还把骨盆外测量、TORCH 常规筛查明确列为\"孕期不推荐常规检查\"的内容——这两项在不少体检套餐里仍然存在。",
+      "whatItFinds": "提醒把「常规体检」切换成「孕前/孕期保健」路径，避免做到不该做的检查",
+      "frequency": {
+        "type": "once",
+        "text": "按产科医生安排",
+        "years": 0
+      },
+      "notes": "如已怀孕，请直接把这份清单交给产科医生，由医生圈定可做的项目。",
+      "evidence": [
+        {
+          "org": "广州市妇女儿童医疗中心（转载《孕前和孕期保健指南（2018）》全文）",
+          "year": "2018",
+          "point": "三甲医院官网转载的指南全文，页脚注明出处为《中华妇产科杂志》2018 年第 53 卷第 1 期。期刊原文在付费墙后面，这份转载是可免费核对的那一版。",
+          "url": "https://www.gzfezx.com/news/show/4810.html",
+          "status": "verified",
+          "grade": "指南（中华医学会妇产科学分会产科学组；原载中华妇产科杂志 2018;53(1):7-13，广州市妇女儿童医疗中心官网全文转载）",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "必要的检查项目\n 血常规;\n 尿常规;\n 血型(ABO和Rh血型);\n 肝功能;\n 肾功能;\n 空腹血糖水平;",
+            "必要时可进行以下备查项目:子宫颈细胞学检查(1年内未查者);TORCH筛查;"
+          ]
+        }
+      ],
+      "lean": "for",
+      "leanNote": "这不是\"做不做某项\"的问题，是换一套路径。备孕期该补的是风疹抗体、甲功、地中海贫血这些孕前项目；孕期该做的是产检。辐射类检查一般要延期或改超声，宫颈筛查通常推到产后 —— 让产科医生给你排，别照这份清单做。"
+    },
+    {
+      "id": "ovarian-family-history",
+      "name": "卵巢癌：一级亲属有卵巢癌（遗传咨询优先）",
+      "category": "B",
+      "catalogIds": [],
+      "topics": [
+        "cancer-other"
+      ],
+      "when": {
+        "familyHistory": "ovarian"
+      },
+      "verdict": "第一步不是查 CA125，是遗传咨询 + BRCA 检测；确认携带者后，从 30–35 岁起按高危方案查。",
+      "reason": "卫健委《卵巢癌诊疗指南（2022年版）》写得很清楚：普通女性一生患卵巢癌的风险约 1%，CA125 与经阴道超声无论单用还是联用，用于普通人群筛查\"均不能达到满意的筛查效果\"；但 BRCA1/BRCA2 胚系突变携带者一生累积风险达 54%/23%，属高危人群，指南明确推荐这类人从 30～35 岁起定期做盆腔检查 + 血 CA125 + 经阴道超声联合筛查。所以有家族史的人第一步不是去查 CA125，而是先做遗传咨询和基因检测，确定自己属于哪一类人。",
+      "whatItFinds": "遗传咨询与 BRCA 检测能判定你属不属于高危；确诊携带者才谈得上筛查方案与降低风险手术。凭 CA125 给普通人\"查卵巢癌\"，得到的多是假阳性手术。",
+      "frequency": {
+        "type": "interval",
+        "years": 1,
+        "text": "确诊 BRCA1/2 携带者：30–35 岁起定期联合筛查；未检测者先做遗传咨询"
+      },
+      "evidence": [
+        {
+          "org": "国家卫生健康委办公厅《卵巢癌诊疗指南（2022年版）》",
+          "year": "2022",
+          "point": "指南给 BRCA1/2 携带者的方案是两条：30~35 岁起做盆腔检查 + CA125 + 经阴道超声联合筛查；完成生育后做降低风险输卵管-卵巢切除术（RRSO），BRCA1 建议 35~40 岁、BRCA2 可推迟到 40~45 岁。筛查不能替代手术，这点指南写得很明确。",
+          "url": "http://www.nhc.gov.cn/cms-search/downFiles/0feefc11d98840898b136ac3d9a4ee20.pdf",
+          "status": "verified",
+          "grade": "国家级诊疗指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "推荐从30~35岁起开始定期行盆腔检查、血CA125和经阴道超声的联合筛查"
+          ]
+        }
+      ],
+      "notes": "确认携带者还要和妇科肿瘤医生讨论降低风险的手术：BRCA1 建议 35～40 岁、BRCA2 可推迟到 40～45 岁完成生育后行输卵管-卵巢切除（RRSO）。没有家族史的人不建议用 CA125/超声筛查卵巢癌。",
+      "lean": "against",
+      "leanNote": "用 CA125 + 超声去\"筛\"卵巢癌，卫健委指南写明对普通人群达不到满意效果，还会带来大量假阳性和不必要的手术。一级亲属患病的人真正该做的是先弄清自己是不是 BRCA 携带者：是的话从 30–35 岁起按高危方案查，完成生育后还可以谈预防性手术。"
+    },
+    {
+      "id": "diabetes-followup",
+      "name": "糖尿病并发症筛查（已确诊糖尿病）",
+      "category": "B",
+      "catalogIds": [
+        "hba1c",
+        "urine-microalbumin"
+      ],
+      "topics": [
+        "baseline"
+      ],
+      "when": {
+        "pastHistory": "diabetes"
+      },
+      "verdict": "查并发症，不是查糖尿病：尿白蛋白、眼底、足部，每年 1 次。",
+      "reason": "指南写得很直白：T2DM 患者确诊时就要做眼底和神经病变检查，之后糖尿病肾病、视网膜病变、神经病变三类并发症每年筛查 1 次。这些并发症早期没感觉，等有感觉往往已不可逆；而每年一次 UACR + 眼底 + 足部检查的总价，远低于一次透析。另外还有一项几乎没人提醒、体检套餐里也没有：长期吃二甲双胍的人，每年要查 1 次血清维生素 B12。",
+      "whatItFinds": "糖尿病肾病（尿白蛋白/肌酐比值 UACR、血肌酐/eGFR）、视网膜病变（眼底）、周围神经病变（踝反射、针刺觉、震动觉、温度觉、压力觉）。长期服二甲双胍者还需查血清维生素 B12——缺乏会加重周围神经症状，容易被误当成\"糖尿病神经病变\"。",
+      "frequency": {
+        "type": "interval",
+        "years": 1,
+        "text": "并发症每年 1 次；HbA1c 达标者每 6 个月、未达标或刚调方案者每 3 个月；服二甲双胍者每年查 1 次维生素 B12"
+      },
+      "notes": "两件事普通体检套餐不会替你做：① 确诊糖尿病时就要做一次眼底和神经病变检查（不是等到\"满一年\"）；② 长期吃二甲双胍的人每年查 1 次血清维生素 B12——体检套餐里基本没有这一项，需要自己加。另外指南提醒\"糖尿病患者是肿瘤高危人群\"，出现不明原因纳差、乏力、体重下降时要做肿瘤相关评估。",
+      "evidence": [
+        {
+          "org": "中华医学会糖尿病学分会《中国2型糖尿病防治指南（2020年版）》",
+          "year": "2021",
+          "point": "原文（第四章评估）：\"糖尿病视网膜病变、糖尿病肾病和糖尿病神经病变是常见的糖尿病慢性并发症，建议 T2DM 患者每年筛查 1 次这些并发症\"；\"T2DM 患者在诊断时就应做眼底检查和神经病变的检查\"；\"血糖控制良好者每 6 个月测定 1 次 HbA1c，血糖控制不佳或近期调整了治疗方案者 3 个月测定 1 次\"。原文（第十五章糖尿病肾病）：\"T2DM 患者在诊断时即应进行肾脏病变的筛查，以后每年应至少筛查 1 次，包括尿常规、尿白蛋白/肌酐比值（UACR）和血肌酐（计算 eGFR）\"。原文（第十章药物治疗）：\"长期使用二甲双胍者可每年测定 1 次血清维生素 B12 水平，如缺乏应适当补充\"。原文（第十五章视网膜病变）：\"无 DR 者以后至少每 1~2 年复查 1 次，有 DR 者则应增加检查频率\"。载于《中华糖尿病杂志》2021;13(4):315-409，DOI 10.3760/cma.j.cn115791-20210221-00095。",
+          "url": "https://qr.csupress.com.cn/uploadFiles/101/5141/pdf/%E4%B8%AD%E5%9B%BD2%E5%9E%8B%E7%B3%96%E5%B0%BF%E7%97%85%E9%98%B2%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882020%E5%B9%B4%E7%89%88%EF%BC%89.pdf",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "T2DM患者在诊断时就应做眼底检查和神经病变的检查",
+            "建议二甲双胍治疗的糖尿病患者每年测定1次血清维生素B12。"
+          ]
+        }
+      ],
+      "lean": "for",
+      "leanNote": "已经确诊的，这几项不是\"要不要查\"，是必须查：每年 1 次尿白蛋白/肌酐比值、眼底、足部感觉，长期吃二甲双胍的再加 1 次维生素 B12。并发症早期没感觉，等有感觉往往已经不可逆。"
+    },
+    {
+      "id": "hypertension-followup",
+      "name": "已确诊高血压：看心、脑、肾有没有受影响",
+      "category": "B",
+      "catalogIds": [],
+      "topics": [
+        "cardiovascular"
+      ],
+      "when": {
+        "pastHistory": "hypertension"
+      },
+      "verdict": "血压在家量就够了。体检的钱花在靶器官上：心、肾、眼底、颈动脉。",
+      "reason": "血压在家里量就够了，体检的价值在于评估靶器官有没有受损：心电图和心脏超声（左心室肥厚）、尿微量白蛋白（肾）、眼底（视网膜动脉）、颈动脉超声（动脉粥样硬化）。同时每年查血脂、血糖、尿酸——这几项和血压互相加重，一起管才有效。",
+      "whatItFinds": "发现\"血压还没出事、但器官已经开始受损\"的阶段，这是调整用药的关键时机。",
+      "frequency": {
+        "type": "interval",
+        "text": "每年 1 次；血压未达标或刚调药者按医生要求",
+        "years": 1,
+        "basis": "doctor",
+        "basisNote": "高血压指南按血压分级定随访，没有给统一的\"体检间隔\"；界面的\"每年 1 次\"是慢病管理的常规节奏，具体由医生按血压是否达标定。"
+      },
+      "evidence": [
+        {
+          "org": "中国高血压防治指南修订委员会《中国高血压防治指南（2024年修订版）》",
+          "year": "2024",
+          "point": "4.3 实验室检查基本项目含血生化、尿常规、心电图，推荐项目含超声心动图、颈动脉超声、UACR、眼底；4.4 明确靶器官损害评估是高血压诊断评估的重要内容。",
+          "url": "https://www.yantai.gov.cn/cms_files/jcms1/web1/site/attach/0/026946c3e45b43b8a20788d4d63d3e2d.pdf",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "血压升高可引起动脉血管系统和其供应的器官在结构和功能上的改变,导致靶器官损害"
+          ]
+        }
+      ],
+      "lean": "for",
+      "leanNote": "高血压真正的代价是它悄悄损伤的器官，不是那个数字本身。所以体检该查的是：心电图/心脏超声看左心室有没有肥厚、尿微量白蛋白看肾、眼底看视网膜动脉、颈动脉超声看斑块。血脂血糖尿酸每年一起查 —— 它们和血压互相加重。"
+    },
+    {
+      "id": "cvd-followup",
+      "name": "已确诊心脑血管病：做二级预防，不做筛查",
+      "category": "B",
+      "catalogIds": [],
+      "topics": [
+        "cardiovascular"
+      ],
+      "when": {
+        "pastHistory": "cvd"
+      },
+      "verdict": "已经确诊的，做的是二级预防，不是筛查：看指标达不达标、药有没有按时吃。",
+      "reason": "已经得过心梗、脑卒中或确诊冠心病的人，\"筛查\"这个概念不再适用——已经患病的部位不需要再筛一次，查出来也还是那个病。真正决定预后的是：低密度脂蛋白有没有达标、血压血糖有没有达标、有没有按医嘱吃药、心功能是否稳定。这些由心内科/神经内科按方案随访，本清单的筛查建议不适用于已患病部位。",
+      "whatItFinds": "查出\"控制不达标\"，这比任何筛查都更能改变结局。",
+      "frequency": {
+        "type": "interval",
+        "text": "按专科方案，通常 3–12 个月复查一次",
+        "years": 1,
+        "basis": "doctor",
+        "basisNote": "心梗/脑卒中后的复查间隔按危险分层和用药调整走，指南不给统一数字；界面的 3–12 个月是专科随访的常见范围。"
+      },
+      "notes": "已患病部位无需重复筛查；本清单其余项目仍可照做（用于发现其他部位的问题）。",
+      "evidence": [
+        {
+          "org": "中华医学会心血管病学分会《中国心血管病一级预防指南》",
+          "year": "2020",
+          "point": "本指南目标人群为\"尚未发生心血管病临床事件的 18 岁及以上人群\"；ASCVD 指临床明确诊断的动脉粥样硬化性疾病，包括急性冠脉综合征、稳定性冠心病、血运重建术后、缺血性心肌病、缺血性卒中、TIA、外周动脉粥样硬化疾病。已确诊者属二级预防，不在一级预防范围内。原文刊于《中华心血管病杂志》2020;48(12):1000-1038。",
+          "url": "https://csc.cma.org.cn/art/2020/12/25/art_619_36880.html",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "本《指南》的目标人群为尚未发生心血管病临床事件的18岁及以上人群。"
+          ]
+        }
+      ],
+      "lean": "for",
+      "leanNote": "得过心梗、脑卒中，或放过支架、做过搭桥的人，\"再筛一遍\"没有意义 —— 查出来还是那个病。真正决定预后的是低密度脂蛋白、血压、血糖有没有达标，药有没有按时吃，心功能稳不稳。方案由心内科定，普通体检替代不了。"
+    },
+    {
+      "id": "cancer-survivor-followup",
+      "name": "有癌症病史：复查方案由肿瘤科定",
+      "category": "B",
+      "catalogIds": [],
+      "topics": [
+        "cancer-other"
+      ],
+      "when": {
+        "pastHistory": "cancer"
+      },
+      "verdict": "复查按肿瘤科的方案走，不同瘤种差得很远，普通体检套餐替代不了。",
+      "reason": "癌症治疗后的复查是按瘤种、分期、治疗方式定制的：肠癌术后查 CEA + 肠镜 + 影像，乳腺癌查钼靶 + 肿瘤标志物 + 对侧乳腺，肺癌术后查低剂量 CT。这和\"健康人体检\"是两套逻辑。用普通体检套餐代替专科复查，最可能漏掉的恰恰是最该查的那一项。",
+      "whatItFinds": "早期发现复发或第二原发癌——这需要针对性方案，靠加项目解决不了。",
+      "frequency": {
+        "type": "interval",
+        "text": "按肿瘤科方案执行，通常是 3–6 个月起、逐年拉长",
+        "years": 1,
+        "basis": "doctor",
+        "basisNote": "术后复查间隔由瘤种、分期、治疗方式决定，各癌种指南各不相同；这里只给一个大致范围，实际必须照肿瘤科方案执行。"
+      },
+      "notes": "随访频率与项目由瘤种、分期决定，本工具无法替代。请把肿瘤科的复查计划带到体检机构，让医生按计划勾选，而不是买套餐。",
+      "evidence": [
+        {
+          "org": "国家卫生健康委办公厅《卵巢癌诊疗指南（2022年版）》",
+          "year": "2022",
+          "point": "以卵巢癌为例，指南把术后随访写成了阶梯：治疗结束后第 1~2 年每 3 个月一次，之后 3 年每 3~6 个月一次，5 年之后每年一次。复查内容还包括 CA125 等标志物和影像（盆腹腔超声首选）。这正说明\"多久查一次、查什么\"是按瘤种和年限定的，普通体检套餐对不上。",
+          "url": "http://www.nhc.gov.cn/cms-search/downFiles/0feefc11d98840898b136ac3d9a4ee20.pdf",
+          "status": "verified",
+          "grade": "国家级诊疗指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "超声用于治疗后定期随访,廉价、无辐射是其最大的优势"
+          ]
+        }
+      ],
+      "lean": "for",
+      "leanNote": "复查是按瘤种、分期、治疗方式定制的：肠癌术后查 CEA + 肠镜 + 影像，乳腺癌查钼靶 + 对侧乳腺，肺癌术后查低剂量 CT，卵巢癌按年限缩短间隔。用通用体检套餐代替专科复查，最可能漏掉的恰恰是最该查的那一项。"
+    },
+    {
+      "id": "thyroid-followup",
+      "name": "已确诊甲状腺疾病：超声和甲功是随访，必须做",
+      "category": "B",
+      "catalogIds": [
+        "tsh",
+        "thyroid-us"
+      ],
+      "topics": [
+        "thyroid"
+      ],
+      "when": {
+        "pastHistory": "thyroid"
+      },
+      "verdict": "超声和甲功是随访必需项，不能因为套餐里没有就跳过。",
+      "reason": "\"健康人不必筛查甲状腺\"和\"甲状腺病人必须复查\"是两件不冲突的事。已确诊结节、甲减、甲亢或做过甲状腺手术的人，超声和甲功是随访必需项目：结节通常 6–12 个月复查一次，甲减调药期 4–8 周查一次甲功。频率由内分泌科按你的情况定，不能因为\"体检套餐里没有\"就跳过。",
+      "whatItFinds": "看结节有没有变化、药量合不合适——这是治疗的一部分，不是可选项。",
+      "frequency": {
+        "type": "interval",
+        "text": "结节 6–12 个月；甲减调药期 4–8 周",
+        "years": 1,
+        "basis": "doctor",
+        "basisNote": "随访节奏按结节大小、回声、钙化和甲功控制情况定；界面的\"结节 6–12 个月、甲减调药 4–8 周\"是内分泌科常规，不是统一条文。"
+      },
+      "notes": "这一条与\"健康人不必筛查甲状腺\"并不矛盾：前者是筛查，后者是随访。",
+      "evidence": [
+        {
+          "org": "中华医学会内分泌学分会等",
+          "year": "2023",
+          "point": "《甲状腺结节和分化型甲状腺癌诊治指南(第二版)》：确诊结节者按风险分层定期超声随访；甲减替代治疗需定期监测甲功",
+          "url": "https://www.cma.org.cn/art/2023/6/28/art_4584_51517.html",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "多数良性甲状腺结节仅需定期随访,无症状且增长不快的良性结节无须特殊治疗。"
+          ]
+        }
+      ],
+      "lean": "for",
+      "leanNote": "\"健康人不必筛甲状腺\"和\"甲状腺病人必须复查\"不冲突。已确诊结节、甲减、甲亢或做过甲状腺手术的，超声和甲功就是随访本身：结节一般 6–12 个月一次，甲减调药期 4–8 周一次。间隔要改，问开药的医生。"
+    },
+    {
+      "id": "lung-ldct-80plus",
+      "name": "80 岁以上：肺癌筛查看预期寿命",
+      "category": "B",
+      "catalogIds": [
+        "ldct"
+      ],
+      "topics": [
+        "cancer-lung"
+      ],
+      "when": {
+        "ageMin": 80,
+        "any": [
+          {
+            "packYears": {
+              "gte": 20
+            }
+          },
+          {
+            "secondhand": "yes"
+          },
+          {
+            "occupationDust": "yes"
+          },
+          {
+            "familyHistory": "lung"
+          },
+          {
+            "pastHistory": "chronicLung"
+          }
+        ]
+      },
+      "verdict": "80 岁以后还筛不筛，看预期寿命和意愿，不看年龄数字。",
+      "reason": "肺癌筛查的获益要在 5–10 年后才显现。80 岁以上、或身体状况已无法耐受肺部手术的人，继续每年做低剂量 CT 很可能只是查出永远不会造成问题的结节，然后接受不必要的穿刺或手术。中国指南的筛查区间是 50–80 岁，超过这个范围应与医生按个体情况判断。",
+      "whatItFinds": "如果身体底子好、预期寿命长，仍可能获益；否则主要是过度诊断的风险。",
+      "frequency": {
+        "type": "interval",
+        "text": "由医生按个体情况决定，通常不再每年做",
+        "years": 0
+      },
+      "evidence": [
+        {
+          "org": "中国肺癌低剂量CT筛查指南（2025年版）",
+          "year": "2025",
+          "point": "筛查终止年龄应个体化，根据整体健康状况、预期寿命及治疗耐受性判断；若身体状况无法耐受肺癌切除手术，建议停止 LDCT 筛查。",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12972581/",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "原则上年龄介于50-80岁。",
+            "对于筛查终止年龄,应重视个体化风险评估"
+          ]
+        }
+      ],
+      "lean": "either",
+      "leanNote": "筛查的好处要 5–10 年才显现。80 岁以上、或身体已经耐受不了肺部手术的人，继续每年做低剂量 CT，很可能只是查出一堆需要判断的结节，然后接受本来不需要的穿刺或手术。还能健康活十年以上、自己也愿意查的，继续查是合理的。"
+    },
+    {
+      "id": "colorectal-screening-75plus",
+      "name": "结直肠癌筛查：75 岁以上",
+      "category": "B",
+      "catalogIds": [
+        "colonoscopy",
+        "fit"
+      ],
+      "topics": [
+        "cancer-colorectal"
+      ],
+      "when": {
+        "ageMin": 76
+      },
+      "verdict": "75 岁以后继续查肠癌，取决于以前查得干不干净、身体扛不扛得住。",
+      "reason": "查肠癌的好处要 5–10 年才体现，而肠镜的风险（穿孔、出血、麻醉）随年龄上升。USPSTF 对 76–85 岁给的是「个体化决定」，85 岁以上明确不开始新筛查；中国指南的推荐区间是 45–74 岁。所以 75 岁以后不该再统一说「该做」，也不该直接说「不用做」——决定权在预期寿命。",
+      "whatItFinds": "早期结直肠癌和腺瘤。预期寿命不足 10 年时，查出来多半不改变结局，只多承担检查风险。",
+      "frequency": {
+        "type": "interval",
+        "years": 5,
+        "text": "如医生认为该继续：每 5–10 年 1 次肠镜，或每年 1 次便潜血"
+      },
+      "redFlags": [
+        "大便带血或黑便",
+        "排便习惯改变持续两周以上",
+        "不明原因贫血",
+        "不明原因消瘦"
+      ],
+      "evidence": [
+        {
+          "org": "USPSTF",
+          "year": "2021",
+          "point": "45–75 岁筛查（B 级）；76–85 岁个体化决定（C 级）；85 岁以上不推荐新开始筛查（D 级）。",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-B",
+          "checkedAt": "2026-11-17",
+          "strength": "strong",
+          "quotes": [
+            "The USPSTF recommends that clinicians selectively offer screening for colorectal cancer in adults aged 76 to 85 years."
+          ]
+        },
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "指南未对 75 岁以上人群给出统一筛查推荐，是否继续由预期寿命、合并症与既往筛查结果决定。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-17",
+          "quotes": [
+            "其他肠道良性病变:因结直肠癌风险增加并不明显,可视同一般人群处理。结肠镜复查间隔可为5-10年。"
+          ]
+        }
+      ],
+      "notes": "如果你在 74 岁前一直规律筛查、结果都正常，75 岁后多半可以停；如果从来没查过，反而更该和医生认真聊一次。",
+      "lean": "either",
+      "leanNote": "查肠癌的好处要 5–10 年才体现，而肠镜的穿孔、出血、麻醉风险随年龄上升。所以要看三件事：以前查得干不干净、身体能不能扛住肠镜、还能健康活多久。USPSTF 对 76–85 岁给的是\"个体化\"，85 岁以上不再新开始。"
+    },
+    {
+      "id": "stomach-gastroscopy-75plus",
+      "name": "上消化道癌筛查：75 岁以上",
+      "category": "B",
+      "catalogIds": [
+        "gastroscopy"
+      ],
+      "topics": [
+        "cancer-stomach"
+      ],
+      "when": {
+        "ageMin": 75
+      },
+      "verdict": "75 岁以后继续做胃镜，获益变小、风险变大。之前查出过萎缩、肠化的人另说。",
+      "reason": "胃癌筛查的推荐区间是 45–74 岁，75 岁以上没有统一推荐。胃镜本身的不适和麻醉风险随年龄上升，而筛查的获益要多年才显现，因此这一档由预期寿命和合并症决定，不由年龄单独决定。",
+      "whatItFinds": "早期胃癌、食管癌和癌前病变。高龄、身体状况差时，发现早期病变也常因无法耐受治疗而不改变结局。",
+      "frequency": {
+        "type": "interval",
+        "years": 5,
+        "text": "如医生认为该继续：每 3–5 年 1 次"
+      },
+      "redFlags": [
+        "持续上腹痛或餐后饱胀",
+        "黑便",
+        "吞咽困难",
+        "不明原因消瘦"
+      ],
+      "evidence": [
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "将上消化道癌高风险人群定义为 45–74 岁且符合高危条件者；未对 75 岁以上给出筛查推荐。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "胃癌高风险人群:年龄≥45岁,且符合以下任意一项:"
+          ]
+        }
+      ],
+      "notes": "有持续症状（消瘦、黑便、吞咽困难）的人不属于「筛查」范畴，应直接就诊，不受这条年龄限制。",
+      "manualCheck": {
+        "ages": "承接 A 档 74 岁的上界，75 岁起改判\"与医生商量\"；指南的高风险定义只写\"年龄≥45 岁\"，本身没有上限。",
+        "freq": "指南给的是高风险人群\"检查无异常者每 5 年 1 次\"；75 岁以上照这个间隔是保守起见，实际由医生按身体状况和预期寿命定。"
+      },
+      "lean": "either",
+      "leanNote": "胃癌筛查的推荐区间是 45–74 岁，75 岁以上没有统一推荐。胃镜的不适和镇静风险随年龄上升，而获益要多年才显现。之前查出过萎缩性胃炎、肠上皮化生的人，医生可能仍建议按间隔复查；从没查过、也没症状的，多数可以不查。"
+    },
+    {
+      "id": "breast-cancer-75plus",
+      "name": "乳腺癌筛查：75 岁以上",
+      "category": "B",
+      "catalogIds": [
+        "breast-us",
+        "mammography"
+      ],
+      "topics": [
+        "cancer-breast"
+      ],
+      "when": {
+        "gender": "female",
+        "ageMin": 75
+      },
+      "verdict": "75 岁以后还查不查乳腺，指南说证据不足。锚点是还能健康活多久。",
+      "reason": "USPSTF 2024 版明确写「75 岁以上证据不足，按个体情况决定」（I 级）；中国指南的推荐区间是 40–74 岁。证据不足时按我们的规则一律进「商议」档，不给「该做」也不给「不用做」。",
+      "whatItFinds": "早期乳腺癌。高龄女性乳腺组织退化、钼靶准确性下降，且过度诊断（查出终身不会造成问题的病灶）的比例上升。",
+      "frequency": {
+        "type": "interval",
+        "years": 2,
+        "text": "如医生认为该继续：每 1–2 年 1 次",
+        "basis": "doctor",
+        "basisNote": "USPSTF 对 75 岁以上判为证据不足（I 级），没有给间隔；界面的 1–2 年是承接 40–74 岁的既有间隔，是否继续、多久一次由医生定。"
+      },
+      "evidence": [
+        {
+          "org": "USPSTF",
+          "year": "2024",
+          "point": "40–74 岁女性每 2 年一次乳腺 X 线摄影筛查（B 级）；75 岁以上证据不足（I 级），按个体情况决定。",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/breast-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-I",
+          "checkedAt": "2026-11-18",
+          "strength": "insufficient",
+          "quotes": [
+            "The USPSTF concludes that the current evidence is insufficient to assess the balance of benefits and harms of screening mammography in women 75 years or older."
+          ]
+        }
+      ],
+      "notes": "如果身体硬朗、预期寿命还有 10 年以上，继续查通常划算；如果合并严重疾病、生活已不能自理，重点应放在减轻症状而不是找早期癌。发现乳房肿块、皮肤凹陷、乳头溢血，直接就诊。",
+      "lean": "either",
+      "leanNote": "USPSTF 2024 版对 75 岁以上写的是\"证据不足，按个体情况决定\"。判断的锚点是预期寿命，不是年龄本身：还能健康活 10 年以上，继续每 2 年一次有意义；合并症多、行动不便的，查出来也未必愿意接受治疗，可以不查。"
+    },
+    {
+      "id": "cervical-cancer-65plus",
+      "name": "宫颈癌筛查：65 岁以上是否还要查",
+      "category": "B",
+      "catalogIds": [
+        "tct",
+        "hpv"
+      ],
+      "topics": [
+        "cancer-cervix"
+      ],
+      "when": {
+        "gender": "female",
+        "ageMin": 65
+      },
+      "verdict": "查得够、结果一直正常的，65 岁以后可以停；从没好好查过的，还得补。",
+      "reason": "指南允许「65 岁以上、既往筛查充分且结果正常」的女性停止筛查——前提是「查得够」。而中国有不少老年女性一辈子没做过筛查，她们恰恰是宫颈癌发病的高峰人群。我们无法在问卷里判断你的筛查史，所以不替你下「不用做」的结论。",
+      "whatItFinds": "宫颈癌前病变和早期宫颈癌。既往筛查充分者继续查的边际获益很小。",
+      "frequency": {
+        "type": "interval",
+        "years": 3,
+        "text": "既往筛查不充分者：按医生方案补查（如连续 3 次细胞学或 2 次 HPV 联合检测）"
+      },
+      "evidence": [
+        {
+          "org": "USPSTF",
+          "year": "2018",
+          "point": "21–65 岁筛查（A 级）；65 岁以上、既往筛查充分且非高危者可停止筛查。",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/cervical-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-A",
+          "checkedAt": "2026-11-18",
+          "strength": "strong",
+          "quotes": [
+            "The USPSTF recommends against screening for cervical cancer in women older than 65 years who have had adequate prior screening"
+          ]
+        },
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "推荐 HR-HPV 核酸检测和/或细胞学作为宫颈癌初筛首选方法。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "（1）25-64周岁女性，每3-5年进行宫颈癌筛查体检。"
+          ]
+        }
+      ],
+      "notes": "判断标准（供你和医生对话用）：65 岁前 10 年内连续 3 次细胞学阴性，或 2 次 HPV 联合检测阴性，且最近一次在 5 年内 —— 可以停。达不到这个条件，尤其从没查过的，仍要查。出现绝经后阴道出血，直接就诊。",
+      "lean": "against",
+      "leanNote": "指南允许\"65 岁以上、既往筛查充分且结果正常\"的女性停止筛查 —— 前提是\"查得够\"。问题是国内不少老年女性一辈子没做过几次筛查，她们恰恰是发病高峰。所以这里只能给方向：查够了可以停，没查过要补上。"
+    },
+    {
+      "id": "aaa-screening-75plus",
+      "name": "腹主动脉瘤超声：75 岁以上",
+      "category": "B",
+      "catalogIds": [
+        "aaa-us"
+      ],
+      "topics": [
+        "cardiovascular"
+      ],
+      "when": {
+        "gender": "male",
+        "ageMin": 76
+      },
+      "verdict": "一辈子查一次就够。75 岁前查过且正常的，不用再做。",
+      "reason": "USPSTF 只对 65–75 岁有吸烟史的男性推荐一次性超声（B 级），75 岁以上没有推荐（证据不足），且这项检查的价值是「一生一次」——若 75 岁前已做过且正常，再做没有意义。",
+      "whatItFinds": "腹主动脉瘤。它平时没症状，破裂时死亡率极高，所以「查过一次、正常」本身就是有价值的结论。",
+      "frequency": {
+        "type": "once",
+        "years": 0,
+        "text": "如从未查过且医生认为有必要：一生 1 次"
+      },
+      "evidence": [
+        {
+          "org": "USPSTF",
+          "year": "2019",
+          "point": "65–75 岁有吸烟史的男性一次性超声筛查腹主动脉瘤（B 级）；75 岁以上无推荐。",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/abdominal-aortic-aneurysm-screening",
+          "status": "verified",
+          "grade": "USPSTF-B",
+          "checkedAt": "2026-11-17",
+          "strength": "strong",
+          "quotes": [
+            "The USPSTF recommends 1-time screening for abdominal aortic aneurysm (AAA) with ultrasonography in men aged 65 to 75 years who have ever smoked"
+          ]
+        }
+      ],
+      "notes": "腹部能摸到搏动的包块、或腰背持续剧痛，不要等体检，直接急诊——那是可能破裂的信号。",
+      "manualCheck": {
+        "ages": "USPSTF 的一次性超声筛查建议只覆盖 65–75 岁；76 岁起归到\"与医生商量\"，是为了承接 aaa-screening（到 75 岁）的边界。"
+      },
+      "lean": "either",
+      "leanNote": "USPSTF 只对 65–75 岁有吸烟史的男性推荐一次性超声（B 级），75 岁以上没有推荐。这项检查的特别之处是\"一生一次\"：做过且正常就永远不用再做；从没做过、又长期吸烟的男性，可以和医生谈一次补查值不值。"
+    },
+    {
+      "id": "psa-family-45",
+      "name": "前列腺癌筛查（PSA）：45 岁起（一级亲属有前列腺癌）",
+      "category": "B",
+      "catalogIds": [
+        "psa"
+      ],
+      "topics": [
+        "cancer-prostate"
+      ],
+      "when": {
+        "gender": "male",
+        "ageMin": 45,
+        "ageMax": 49,
+        "familyHistory": "prostate"
+      },
+      "verdict": "一级亲属有前列腺癌，风险明显更高，值得 45 岁就开始和医生谈这件事。",
+      "reason": "中国指南把\"年龄≥45 岁且一级亲属有前列腺癌家族史\"单独列为高风险人群——比一般人提前 5 年。USPSTF 则承认家族史者风险更高，但因证据不足未给单独推荐，主张知情决策。两边指向同一个做法：把决定交给泌尿科医生，而不是自己按年龄瞎猜。",
+      "whatItFinds": "家族史者的前列腺癌风险高于一般人，但也更可能查出终身不进展的癌，因此开始筛查的年龄和间隔要个体化。",
+      "frequency": {
+        "type": "interval",
+        "years": 2,
+        "text": "如查：每 1–2 年 1 次，由泌尿科医生定"
+      },
+      "evidence": [
+        {
+          "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+          "year": "2025",
+          "point": "前列腺癌高风险人群定义之一：年龄≥45 岁且一级亲属有前列腺癌家族史。",
+          "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+          "status": "verified",
+          "grade": "指南",
+          "checkedAt": "2026-11-18",
+          "quotes": [
+            "年龄≥45岁且一级亲属有前列腺癌家族史。",
+            "针对前列腺癌高风险人群,建议定期(每两年1次)监测血清PSA水平。"
+          ]
+        },
+        {
+          "org": "USPSTF",
+          "year": "2018",
+          "point": "对有前列腺癌家族史等高危男性，因证据不足未给单独推荐，建议告知风险增加并共同决策。",
+          "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/prostate-cancer-screening",
+          "status": "verified",
+          "grade": "USPSTF-C",
+          "checkedAt": "2026-11-18",
+          "strength": "conditional",
+          "quotes": [
+            "The USPSTF recommends against PSA-based screening for prostate cancer in men 70 years and older"
+          ]
+        }
+      ],
+      "notes": "家族史指父亲、兄弟、儿子。若家族里多人患病或发病年龄很轻，建议直接到泌尿外科评估，不要等体检。",
+      "manualCheck": {
+        "ages": "指南写\"年龄≥45 岁且一级亲属有前列腺癌家族史\"；上界 49 岁是为了给 psa-50-69（50 岁起）让位，两条不重叠。"
+      },
+      "lean": "for",
+      "leanNote": "国内指南专门把\"45 岁以上且一级亲属有前列腺癌\"写成了高风险条件 —— 比一般人提前 5 年。早谈不等于早查：先和泌尿科医生把你的风险、家族史、要不要查 PSA 算一遍，再决定查不查、多久查一次。"
+    },
+    {
+      "id": "dm-family-hba1c",
+      "name": "糖尿病家族史：加一次糖化",
+      "category": "B",
+      "catalogIds": [
+        "hba1c"
+      ],
+      "topics": [
+        "cardiovascular"
+      ],
+      "when": {
+        "ageMin": 35,
+        "familyHistory": "diabetes"
+      },
+      "verdict": "基础套餐里只有空腹血糖。一级亲属里有糖尿病，值得加一项糖化血红蛋白 —— 它不受当天吃没吃饭影响，看的是近 2–3 个月的平均血糖。",
+      "reason": "《中国2型糖尿病防治指南（2020年版）》把「糖尿病家族史(父母、同胞、子女)」写进中国糖尿病风险评分表，是计分项 —— 也就是说家族史会直接改变\"要不要进一步查血糖\"这个判断。空腹血糖只反映抽血那一刻，糖化反映 2–3 个月平均，对\"空腹正常但餐后高\"的人漏得更少。",
+      "whatItFinds": "能发现空腹血糖正常、整体血糖却偏高的人。这类人以餐后血糖升高为主，在中国 2 型糖尿病里占比不低。",
+      "frequency": {
+        "type": "interval",
+        "text": "如做，每 1–3 年 1 次",
+        "years": 3,
+        "basis": "practice",
+        "basisNote": "指南要求对风险评分达标的人查血糖，但没规定糖化血红蛋白的复查间隔；1–3 年取自国内体检与糖尿病前期随访的通行做法。"
+      },
+      "redFlags": [
+        "明显口渴、多尿、体重下降",
+        "反复皮肤或泌尿道感染",
+        "伤口不易愈合"
+      ],
+      "evidence": [
+        {
+          "org": "《中国2型糖尿病防治指南（2020年版）》",
+          "year": "2020",
+          "grade": "指南",
+          "point": "中国糖尿病风险评分表包含「糖尿病家族史(父母、同胞、子女)」，用于筛出应进一步检查血糖的人。",
+          "quote": "糖尿病家族史(父母、同胞、子女)",
+          "url": "https://qr.csupress.com.cn/uploadFiles/101/5141/pdf/%E4%B8%AD%E5%9B%BD2%E5%9E%8B%E7%B3%96%E5%B0%BF%E7%97%85%E9%98%B2%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882020%E5%B9%B4%E7%89%88%EF%BC%89.pdf",
+          "status": "verified",
+          "checkedAt": "2026-11-21"
+        }
+      ],
+      "notes": "只加一项糖化。不加胰岛素释放、C肽：那两项对\"要不要开始干预\"帮助有限，价格却是糖化的几倍。 年龄边界：35 岁这个起点不是指南原文的数字：指南给的是\"风险评分达标者查血糖\"，评分里含家族史；35 岁取自 ADA 与中国体检实践的通行起点（一般人群 40 岁起，高危提前）。",
+      "lean": "for",
+      "leanNote": "偏向做。代价小（一次抽血／一次超声），而且结果会改变后面的决定；不是\"可做可不做\"。",
+      "manualCheck": {
+        "ages": "35 岁不是指南原文的数字：指南给的是\"风险评分达标者查血糖\"，评分里含家族史。35 岁取自 ADA 与中国体检实践的通行起点（一般人群 40 岁起，高危提前）。",
+        "freq": "指南没规定糖化血红蛋白的复查间隔，只要求风险人群查血糖；1–3 年取自国内糖尿病前期随访的通行做法，越靠近 3 年越保守。"
+      }
+    },
+    {
+      "id": "cvd-family-carotid",
+      "name": "早发心血管病家族史：查一次颈动脉",
+      "category": "B",
+      "catalogIds": [
+        "carotid-us"
+      ],
+      "topics": [
+        "cardiovascular"
+      ],
+      "when": {
+        "ageMin": 40,
+        "familyHistory": "prematureCvd"
+      },
+      "verdict": "一级亲属里有人在 55 岁（男）/ 65 岁（女）之前得过心梗或脑卒中，你的血管风险比同龄人高一档。颈动脉超声能看到有没有斑块，不贵、不辐射。",
+      "reason": "《中国2型糖尿病防治指南（2020年版）》在心血管风险评估段落把「冠心病家族史」「早发心血管疾病家族史」列为危险因素。风险分层一变，血脂要降到什么水平、要不要加做血管影像，都跟着变 —— 所以它不该只在\"基础套餐\"里被一笔带过。",
+      "whatItFinds": "能发现没有症状的颈动脉斑块或内膜增厚。这是脑卒中的中间终点，比\"血脂高一点\"更能让人下决心。",
+      "frequency": {
+        "type": "interval",
+        "text": "如做，每 3–5 年 1 次",
+        "years": 5,
+        "basis": "practice",
+        "basisNote": "指南把早发心血管病家族史列为风险因素，但没规定颈动脉超声的复查间隔；3–5 年取自国内体检实践的通行做法。"
+      },
+      "redFlags": [
+        "活动后胸闷、胸痛",
+        "突然一侧肢体无力或说话不清（哪怕几分钟就好）",
+        "夜间不能平卧"
+      ],
+      "evidence": [
+        {
+          "org": "《中国2型糖尿病防治指南（2020年版）》",
+          "year": "2020",
+          "grade": "指南",
+          "point": "心血管风险评估段落把冠心病家族史与早发心血管疾病家族史列为危险因素。",
+          "quote": "肥胖、高血压、血脂紊乱、吸烟、冠心病家族史",
+          "url": "https://qr.csupress.com.cn/uploadFiles/101/5141/pdf/%E4%B8%AD%E5%9B%BD2%E5%9E%8B%E7%B3%96%E5%B0%BF%E7%97%85%E9%98%B2%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882020%E5%B9%B4%E7%89%88%EF%BC%89.pdf",
+          "status": "verified",
+          "checkedAt": "2026-11-21"
+        }
+      ],
+      "notes": "只放 B 档（商议）。家族史不等于一定会得，颈动脉干净也不等于心脏没问题 —— 真要看冠脉，得做冠脉钙化积分或 CTA，那是另一档的事。 年龄边界：40 岁这个起点参照中国血脂管理指南的一般人群起点（40 岁以上查血脂）；有早发家族史者本就该更早，40 岁是保守值。",
+      "lean": "for",
+      "leanNote": "偏向做。代价小（一次抽血／一次超声），而且结果会改变后面的决定；不是\"可做可不做\"。",
+      "manualCheck": {
+        "ages": "40 岁参照中国血脂管理指南的一般人群起点（40 岁以上查血脂）；有早发家族史的人本就该更早，取 40 岁是保守值，不冒进。",
+        "freq": "指南把早发家族史列为风险因素，但没给颈动脉超声的复查间隔；3–5 年取自国内体检实践，斑块阴性的人取 5 年。"
+      }
+    }
+  ]
+}

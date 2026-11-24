@@ -1,0 +1,292 @@
+{
+  "version": "R13",
+  "updatedAt": "2026-11-23",
+  "why": "老板 18:33 的原话：「这条我上次已经确认过了，为什么又让我确认？」上一版靠我记着来保证不重复问，记漏一次就再烦他一次。这份文件是明账：他拍过板的东西记在这里，跨轮次不丢。check:board 会拿它和 demo/board.html 里的条目比对 —— 账上有、页面上却没有（或被挪回「要你拍板」区），直接报错。",
+  "rule": "state = in-product 表示「他定了，而且已经做进产品」。这类条目只允许出现在折叠区，永远不许出现在「要你拍板」区。",
+  "items": {
+    "P2": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "性别选择的视觉引导",
+      "decision": "方案 1 呼吸描边",
+      "state": "in-product",
+      "where": "src/main.js · src/styles.css"
+    },
+    "P3": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "底部 4 个按钮怎么摆",
+      "decision": "方案 3 跟着段落走",
+      "state": "in-product",
+      "where": "src/main.js"
+    },
+    "J1": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "回看上一题后的「下一步」",
+      "decision": "只在回看场景出现，正序答题页永不出现",
+      "state": "in-product",
+      "where": "src/main.js"
+    },
+    "J2": {
+      "round": "R5",
+      "date": "2026-11-21",
+      "topic": "不确定项的补答路径",
+      "decision": "缺口每条给「去补这一题」；「不确定」和「不方便说」两种拒答态都要留入口，不许只认其中一种",
+      "state": "in-product",
+      "where": "src/main.js（GAP_SPECS 表驱动，unknown/declined 都进循环）＋ tests/body-unit.mjs"
+    },
+    "J4": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "证据强度标签与正文标签样式",
+      "decision": "合并成一套视觉样式",
+      "state": "in-product",
+      "where": "src/styles.css"
+    },
+    "J5": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "年龄四段提示文案",
+      "decision": "用老板给的原文：0 岁 / <18 / 120–149 / ≥150",
+      "state": "in-product",
+      "where": "src/main.js"
+    },
+    "J8": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "「这题跳过」与「不确定」",
+      "decision": "删掉跳过；吸烟/二手烟/饮酒/油烟/粉尘五题统一用「不方便说」（declined）",
+      "state": "in-product",
+      "where": "src/questions.js · data/inputs.schema.json"
+    },
+    "J9": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "饮酒题的问法",
+      "decision": "不问「经常喝、量不小」，改问「一周几次、一次到不到量」",
+      "state": "in-product",
+      "where": "src/questions.js · data/inputs.schema.json"
+    },
+    "J11": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "依据口径是否展示",
+      "decision": "只写进数据层注释留底，界面一个字不出现",
+      "state": "in-product",
+      "where": "data/inputs.schema.json"
+    },
+    "D1": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "首页三个外链",
+      "decision": "三个全换（国家癌症防控平台 / https / USPSTF 补中文名）",
+      "state": "in-product",
+      "where": "src/main.js"
+    },
+    "D2": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "「站在谁的肩膀上」位置",
+      "decision": "搬到首页，与结果页共用同一份文案",
+      "state": "in-product",
+      "where": "src/main.js"
+    },
+    "D3": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "首页年龄数字对齐",
+      "decision": "居中",
+      "state": "in-product",
+      "where": "src/styles.css"
+    },
+    "D4": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "「还剩 N 题」",
+      "decision": "整块拿掉",
+      "state": "in-product",
+      "where": "src/main.js"
+    },
+    "D5": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "首页卡片说明文案",
+      "decision": "用老板给的原文",
+      "state": "in-product",
+      "where": "src/main.js"
+    },
+    "D6": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "年龄校验时机",
+      "decision": "边输边判：一位数不判、停手 650ms 才判、合法年龄沉默",
+      "state": "in-product",
+      "where": "src/main.js"
+    },
+    "D7": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "轮播句档位",
+      "decision": "维持首页两档、结果页三档，其他地方不动",
+      "state": "in-product",
+      "where": "（无改动，仅记结论）"
+    },
+    "D8": {
+      "round": "R2",
+      "date": "2026-11-20",
+      "topic": "免责声明出现位置",
+      "decision": "只留首页和结果页",
+      "state": "in-product",
+      "where": "（无改动，仅记结论）"
+    },
+    "D10": {
+      "round": "R3",
+      "date": "2026-11-20",
+      "topic": "页尾致敬文案里的名字",
+      "decision": "杨圣 → 天才杨，小马哥 → 天才姚",
+      "state": "in-product",
+      "where": "src/main.js（CREDITS）"
+    },
+    "EGG": {
+      "round": "R4",
+      "date": "2026-11-21",
+      "topic": "彩蛋样式",
+      "decision": "方案 3（进来那一瞬）；「不是医嘱」那行小字全部删掉",
+      "state": "in-product",
+      "where": "src/main.js（.veil / .eggband）· src/egg.js · data/egg.json · src/styles.css",
+      "note": "出处 2026-11-21 核对后更正：原话出自 2026-11-10 上市路演视频，不是《Machines of Loving Grace》。逐字原文与转写来源见 data/egg.json 的 _source_note 与 sources。"
+    },
+    "P1": {
+      "round": "R5",
+      "date": "2026-11-21",
+      "topic": "结果页整体结构",
+      "decision": "v12 三版作废，按新要求重出 3 版（结论卡 / 时间表 / 一问一答）；R11 定：用①结论卡，已进产品",
+      "state": "in-product",
+      "where": "src/views13.js（零件）+ src/v13.css（同一套样式）+ src/main.js 的 renderResult（总装）；demo/v13-a.html 是同源的排版稿"
+    },
+    "J3": {
+      "round": "R5",
+      "date": "2026-11-21",
+      "topic": "依据怎么排",
+      "decision": "不塞进正文：依据另起一页，正文每项只留一行「依据 N 条」，展开是四列表；R11 已把依据页做成产品的一页（e.html）",
+      "state": "in-product",
+      "where": "e.html + src/evidence.js（依据页，手机折叠目录 / PC 左侧索引）；结果页每卡的「依据 N 条」指向 e.html#p=..&a=ruleId"
+    },
+    "J6": {
+      "round": "R5",
+      "date": "2026-11-21",
+      "topic": "基础 18 项怎么摆",
+      "decision": "不放正文中段：压到清单之后，按「抽血 / 留尿留便 / 医生动手 / 机器照 / 按性别加」分组，只占一小块",
+      "state": "in-product",
+      "where": "src/views13.js · baseHTML（产品结果页 #yearly）"
+    },
+    "J7": {
+      "round": "R4",
+      "date": "2026-11-21",
+      "topic": "同一项被算两遍",
+      "decision": "同意（含全面排查）：sameAs + exclusiveGroup + 渲染层合并；排查结论只有 2 处真重叠",
+      "state": "in-product",
+      "where": "src/engine.js · data/catalog.json · scripts/check-dupes.mjs"
+    },
+    "J10": {
+      "round": "R4",
+      "date": "2026-11-21",
+      "topic": "体型怎么问",
+      "decision": "方案 2（算 BMI）＋不确定/不方便说、≥65 填 BMI 和腰围、方案 1 去掉胖瘦词",
+      "state": "in-product",
+      "where": "src/questions.js（kind:body + SHAPE_OPTIONS）· src/body.js · src/main.js · data/inputs.schema.json",
+      "note": "方案 2 主路径＝填身高体重算 BMI；【不确定】→ 结果页缺口回补留入口；【不方便说】→ 降级方案 1（四个穿衣尺码，全站不出现偏瘦/正常/偏胖/肥胖）；≥65 加腰围与掉秤追问。"
+    },
+    "J12": {
+      "round": "R4",
+      "date": "2026-11-21",
+      "topic": "选项文案标准",
+      "decision": "同意：依据口径不对用户展示，只做内部留底",
+      "state": "in-product",
+      "where": "data/rules.json"
+    },
+    "R1": {
+      "round": "R4",
+      "date": "2026-11-21",
+      "topic": "家族史选项",
+      "decision": "不加题、在已有题里加选项；阿尔茨海默不进规则。已加 diabetes / prematureCvd 两条 B 档规则",
+      "state": "in-product",
+      "where": "src/questions.js · data/rules.json"
+    },
+    "R2": {
+      "round": "R4",
+      "date": "2026-11-21",
+      "topic": "酒精阈值",
+      "decision": "同意：只写上限、改问法、直说没有安全量；折算公式内部留底",
+      "state": "in-product",
+      "where": "src/questions.js（alcohol.hint）· data/inputs.schema.json",
+      "note": "只写上限（男 140g/周、25g/日；女 80g/周、15g/日），并直说「没有安全的饮酒量」；改问一周几次＋一次到不到量；折算公式仍只做内部留底。"
+    },
+    "R3": {
+      "round": "R4",
+      "date": "2026-11-21",
+      "topic": "BMI 界值",
+      "decision": "同意：65 岁前后两套界值、老人不出现肥胖、追问掉秤",
+      "state": "in-product",
+      "where": "src/body.js（BMI_CUTS / waistLevel / weightLossNote）· src/main.js 体型卡 · tests/body-unit.mjs",
+      "note": "18–64：18.5/24.0/28.0；65–79：20.0–26.9；80+：22.0–26.9。≥65 只判偏低/正常/偏高，不出现「肥胖」。腰围男90/女85。掉秤 ≥5% 同时提示肌少症。界值边界由 57 条断言钉住。"
+    },
+    "P1v": {
+      "round": "R11",
+      "date": "2026-11-22",
+      "topic": "三版选一个",
+      "decision": "选①结论卡（老板原话：结果页用现在最新改完的结论卡，你可以去改产品了）",
+      "state": "in-product",
+      "where": "src/main.js · renderResult（必做 → 看你的情况 → 标准项目 → 疫苗 → 老年评估 → 体型 → 不用做 → 再过几年）"
+    },
+    "K1": {
+      "round": "R12",
+      "date": "2026-11-22",
+      "topic": "洗牙进不进清单、要不要按人分层",
+      "decision": "选方案 1：进「标准项目」，人人每年一次，不按年龄分档。追问的「有的人不能洗牙」不做成规则，改成卡上「这几类人做之前先跟医生说」5 条 —— 产品只提醒开口，不替医生判能不能做",
+      "state": "in-product",
+      "where": "data/rules.json（oral-scaling）· data/catalog.json（scaling）· src/views13.js（scalingHTML / tellDoctorHTML）· src/main.js（从「必做」摘出，归「标准项目」）"
+    },
+    "R13fix": {
+      "round": "R13",
+      "date": "2026-11-23",
+      "topic": "第 1/2/5/6/7/8 条的落地（无选择题）",
+      "decision": "照原话改：体型提示文案、疫苗「必须由你的医生判断」、存图底部祝福语、打印按钮恢复（除微信外一律给）、依据页「去哪个科」默认折叠并在其上方加分享按钮",
+      "state": "in-product",
+      "where": "src/main.js · data/vaccines.json · src/share-image.js · src/env.js · src/evidence.js · src/v13.css"
+    },
+    "R13dash": {
+      "round": "R13",
+      "date": "2026-11-23",
+      "topic": "结果页虚线为什么从来没出现",
+      "decision": "不是缺数据：claimed 取的是归一后剩余的 shownIds，基础套餐先认领走了重叠项 → 恒空。改按规则声明的 catalogIds ∩ 标准项目算，并对 catalog 的 sameAs 做别名归一",
+      "state": "in-product",
+      "where": "src/main.js（claimed）· src/views13.js（canon/chip）· scripts/lib/invariants.mjs（claimed-from-catalog-not-shown）· tests/mutation.mjs"
+    },
+    "R13lean": {
+      "round": "R13",
+      "date": "2026-11-23",
+      "topic": "偏向要不要机器自动改",
+      "decision": "不做自动改值（受控词表实测 21 条会改错 11 条，B 档偏向是编辑判断不是原文一句）；改为依据指纹机制：原文变/偏向被偷改/新规则未登记/规则删除，check:lean 一律红，人重读后 accept:lean 签字",
+      "state": "in-product",
+      "where": "scripts/lib/lean-basis.mjs · scripts/check-lean.mjs · data/lean-basis.json · tests/lean-unit.mjs · package.json"
+    },
+    "R13fab": {
+      "round": "R13",
+      "date": "2026-11-23",
+      "topic": "依据页下滑时怎么回清单",
+      "decision": "选方案 1：底部一颗胶囊（和右下角「回到顶部」一左一右、底部齐平），滚过 400px 才淡入；与页头那颗共用 goBack，只带 #p= 画像不带 a= 锚点；页尾补 96px 让位。方案 2 右侧竖贴、方案 3 底部工具条不采用，留在 demo/v17-fab-share.html 备查",
+      "state": "in-product",
+      "where": "src/evidence.js（backfab + goBack）· src/v13.css（.backfab / .page.v13 让位）· tests/browser-check.mjs"
+    },
+    "R13home": {
+      "round": "R13",
+      "date": "2026-11-23",
+      "topic": "首页分享按钮放哪",
+      "decision": "选方案 1：页头右上角小胶囊，文案「发你关心的人」；复制定稿整段话 + 产品入口，不带任何画像。方案 2 字链、方案 3 窄条不采用",
+      "state": "in-product",
+      "where": "src/main.js（homehead / act=homeshare）· src/styles.css（.homehead / .hshare）· tests/browser-check.mjs"
+    }
+  }
+}

@@ -1,0 +1,301 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "体检项目指南 · 用户输入定义",
+  "version": "1.0.0",
+  "note": "规则 when 条件中引用的任何字段必须在此登记，否则 validate 报错（防职业暴露类断链 bug）。",
+  "fields": {
+    "age": {
+      "type": "number",
+      "min": 18,
+      "max": 100,
+      "required": true,
+      "label": "年龄（周岁）",
+      "note": "直接收实岁，判定不做任何档位映射。档位是 bug 温床：只要存在'区间→单点'的映射，就会有阈值落在区间内部导致整档丢失（2026-11-17 已发生）。UI 用数字输入框（type=text + inputmode=numeric，不用 type=number，iOS 会出上下箭头误触），实时校验 18–100。"
+    },
+    "gender": {
+      "type": "enum",
+      "values": [
+        "male",
+        "female"
+      ],
+      "required": false,
+      "label": "性别"
+    },
+    "pregnant": {
+      "type": "enum",
+      "values": [
+        "yes",
+        "no",
+        "unknown",
+        "declined"
+      ],
+      "defaultOnly": [
+        "unknown"
+      ],
+      "required": false,
+      "label": "是否怀孕或备孕",
+      "note": "unknown 只作引擎默认值（没答过），用户选不出；用户能选的是 no / yes / declined（不方便说）。"
+    },
+    "smoking": {
+      "type": "enum",
+      "values": [
+        "no",
+        "yes",
+        "quit",
+        "unknown",
+        "declined"
+      ],
+      "defaultOnly": [
+        "unknown"
+      ],
+      "required": false,
+      "label": "吸烟",
+      "note": "unknown 是引擎默认值（没答过），declined 才是用户主动选的「不方便说」。二者不能合并：前者可以补问，后者不该再追问。"
+    },
+    "packYears": {
+      "type": "number",
+      "required": false,
+      "label": "吸烟包年数",
+      "note": "界面只问'跨没跨过 20 包年'，实际存入的是档位标记 20/10/0，不是真实包年数。规则统一用 >= 20 判定；新增更高阈值前必须先加档，否则规则永不触发（validate.mjs 会报错）。"
+    },
+    "secondhand": {
+      "type": "enum",
+      "values": [
+        "no",
+        "yes",
+        "declined",
+        "unknown"
+      ],
+      "defaultOnly": [
+        "unknown"
+      ],
+      "required": false,
+      "label": "二手烟暴露",
+      "note": "「是/不是」型题只有 declined（不方便说），没有「不确定」——你自己家有没有人抽烟，不存在不知道。unknown 只作引擎默认值（没答过），用户选不出来。"
+    },
+    "alcohol": {
+      "type": "enum",
+      "values": [
+        "none",
+        "light",
+        "heavy",
+        "declined",
+        "unknown"
+      ],
+      "defaultOnly": [
+        "unknown"
+      ],
+      "required": false,
+      "label": "饮酒",
+      "note": "仅数据层留底（不展示给用户，见 J11）：heavy 的临床口径是「重度饮酒」= 男性平均每天 ≥50g 纯酒精、女性 ≥25g（约等于 50 度白酒 100ml / 啤酒 2 瓶 / 红酒 400ml），或单次暴饮。界面只问「一周几次、一次到多少」，不问「算不算经常」，因为后者要用户自己下判断。"
+    },
+    "cookingOilFume": {
+      "type": "enum",
+      "values": [
+        "no",
+        "yes",
+        "declined",
+        "unknown"
+      ],
+      "defaultOnly": [
+        "unknown"
+      ],
+      "required": false,
+      "label": "长期厨房油烟",
+      "informationalOnly": true,
+      "note": "同 secondhand，只有 declined。"
+    },
+    "bodyMode": {
+      "type": "enum",
+      "values": ["bmi", "shape", "unknown", "declined"],
+      "required": false,
+      "label": "体型这一题的回答方式",
+      "informationalOnly": true,
+      "note": "bmi = 填了身高体重；shape = 选了「不方便说」，降级到方案 1 的穿衣尺码；unknown = 选了「不确定」（结果页留回补入口）；declined = 连降级那题也没选。三态刻意分开：不确定可以补，不方便说是权利，两者对结果页的说法完全不同。"
+    },
+    "bodyHeight": {
+      "type": "number",
+      "min": 80,
+      "max": 230,
+      "unit": "厘米",
+      "required": false,
+      "label": "身高",
+      "informationalOnly": true,
+      "note": "越界（<80 或 >230）视为没填，不硬算。"
+    },
+    "bodyWeight": {
+      "type": "number",
+      "min": 20,
+      "max": 250,
+      "unit": "公斤",
+      "required": false,
+      "label": "体重",
+      "informationalOnly": true,
+      "note": "用于算 BMI，也是「掉 5% 是多少公斤」的基数。"
+    },
+    "bodyWaist": {
+      "type": "number",
+      "min": 40,
+      "max": 200,
+      "unit": "厘米",
+      "required": false,
+      "label": "腰围",
+      "informationalOnly": true,
+      "note": "只对 65 岁及以上问（方案 2 的附加项）。切点：男性 ≥90、女性 ≥85 厘米算中心性肥胖 —— 老人肌肉少、体重轻但肚子大，只看 BMI 会把他判成正常。"
+    },
+    "bodyShape": {
+      "type": "enum",
+      "values": ["s", "m", "l", "xl"],
+      "required": false,
+      "label": "体型（降级问法：穿衣尺码）",
+      "informationalOnly": true,
+      "note": "方案 1 的四个档，只有在用户选「不方便说」时才走这条路。选项文案只说买衣服的事，全站不出现偏瘦 / 正常 / 偏胖 / 肥胖（老板 J10 的硬要求）。它只是 BMI 的替代品，精度差，结果页必须说明这一点。"
+    },
+    "weightLoss": {
+      "type": "enum",
+      "values": ["none", "lt5", "ge5", "unknown"],
+      "defaultOnly": ["unknown"],
+      "required": false,
+      "label": "近一年体重变化",
+      "informationalOnly": true,
+      "note": "只对 65 岁及以上问。只认一个切点：非计划性下降 ≥5%。ge5 会同时提示肌少症和「查一下有没有别的病在消耗」。"
+    },
+    "occupationDust": {
+      "type": "enum",
+      "values": [
+        "yes",
+        "no",
+        "declined",
+        "unknown"
+      ],
+      "defaultOnly": [
+        "unknown"
+      ],
+      "required": false,
+      "label": "是否长期接触粉尘/石棉/化工",
+      "note": "同 secondhand，只有 declined。"
+    },
+    "occupationTypes": {
+      "type": "array",
+      "items": [
+        "construction",
+        "mining",
+        "chemical",
+        "welding",
+        "diesel",
+        "other"
+      ],
+      "required": false,
+      "label": "职业暴露类型",
+      "informationalOnly": true,
+      "note": "仅用于结果页给出针对性提示；档位由 occupationDust 决定"
+    },
+    "province": {
+      "type": "string",
+      "required": false,
+      "label": "所在省份",
+      "informationalOnly": true,
+      "note": "仅作提示与高发区判断"
+    },
+    "familyHistory": {
+      "type": "array",
+      "items": [
+        "colorectal",
+        "breast",
+        "lung",
+        "liver",
+        "stomach",
+        "thyroid",
+        "prostate",
+        "ovarian",
+        "diabetes",
+        "prematureCvd",
+        "dementia"
+      ],
+      "sentinelValues": [
+        "unknown",
+        "declined"
+      ],
+      "required": false,
+      "label": "家族史（父母、子女、亲兄弟姐妹）",
+      "note": "2026-11-21 起增加 diabetes / prematureCvd 两个值；2026-11-23 加 dementia：≥65 岁且勾选时，结果页给一条折叠风险提示，但不进 A/B/C 清单。刻意**没有**加 hypertension：它不改变任何检查项（血压本来就在基础套餐里），加了只会让人多勾一个不产生作用的选项 —— 跟\"阿尔茨海默病不进规则\"是同一条理由。",
+      "intentionalNoRule": {
+        "values": [
+          "dementia"
+        ],
+        "reason": "2026-11-23 老板拍板：65+ 且有痴呆家族史，只在结果页显示折叠风险提示；USPSTF 2020 对无症状人群认知筛查给 I 级（证据不足），所以它不改变任何 A/B/C 项目。"
+      }
+    },
+    "pastHistory": {
+      "type": "array",
+      "items": [
+        "hbv",
+        "cirrhosis",
+        "diabetes",
+        "hypertension",
+        "cvd",
+        "cancer",
+        "dementia",
+        "thyroid",
+        "chronicGastric",
+        "chronicLung"
+      ],
+      "sentinelValues": [
+        "unknown",
+        "declined"
+      ],
+      "required": false,
+      "label": "既往病史",
+      "note": "值域同 familyHistory。原 hp 项已删除：与 hpStatus 字段重复且语义冲突（hpStatus 区分阳性/阴性/未知，更精确）。2026-11-20 加 dementia（阿尔茨海默病 / 其他痴呆）。2026-11-21 已定案：它不参与 A/B/C 判定，只触发结果页彩蛋 —— 见 intentionalNoRule（这一条不再算欠账，但校验会每次把它念一遍，防止有人以为漏了）。",
+      "intentionalNoRule": {
+        "values": [
+          "dementia"
+        ],
+        "reason": "R1 已定（2026-11-21 确认）：阿尔茨海默病不改变任何筛查项 —— USPSTF 2020 对无症状人群筛认知障碍给的是 I 级（证据不足）。它只用于触发结果页的彩蛋，所以\"勾了不改变结果\"是设计，不是欠账。"
+      }
+    },
+    "hpStatus": {
+      "type": "enum",
+      "values": [
+        "positive",
+        "negative",
+        "unknown"
+      ],
+      "required": false,
+      "label": "幽门螺杆菌感染状态"
+    },
+    "fallHistory": {
+      "type": "enum",
+      "values": [
+        "yes",
+        "no",
+        "unknown"
+      ],
+      "required": false,
+      "label": "近一年是否跌倒过",
+      "note": "60 岁以上才问。只用于出转诊卡，不参与 A/B/C 判定 —— 跌倒不是「检查项目」，是「该看哪个科」的问题。"
+    },
+    "gaitDifficulty": {
+      "type": "enum",
+      "values": [
+        "yes",
+        "no",
+        "unknown"
+      ],
+      "required": false,
+      "label": "起身行走是否需要搀扶",
+      "note": "专业上对应 TUGT（计时起立行走），但产品不问量表、不评分，只问「要不要扶」。"
+    },
+    "memoryConcern": {
+      "type": "enum",
+      "values": [
+        "yes",
+        "no",
+        "unknown"
+      ],
+      "required": false,
+      "label": "家属是否反映记性变差",
+      "note": "专业上对应 AD8 / Mini-Cog。同样只作为转诊触发条件，不在产品里评分。"
+    }
+  }
+}

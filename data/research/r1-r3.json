@@ -1,0 +1,65 @@
+{
+  "version": "R3.2",
+  "updatedAt": "2026-11-20",
+  "why": "对齐台里 R1/R2/R3 三条从第 1 轮起就挂着「待证据」，我一直只写「下轮给表」，没真查。老板 19:00 直接问：你查了吗？出方案了吗？这份文件就是查的结果 —— 每条结论都必须能追到一句原文，原文存在 data/research/snapshots/ 里，scripts/check-research.mjs 逐句核对，编不出来。",
+  "howToVerify": "node scripts/check-research.mjs（会把每条 quote 拿去快照里做去标签、去空白后的连续匹配，找不到就报错）",
+  "items": {
+    "R2-alcohol-cn": {
+      "topic": "酒精上限（中国口径）",
+      "claim": "中国给的是上限：男性每日≤25g、每周≤140g；女性每日≤15g、每周≤80g。",
+      "quote": "男性酒精摄入量每日不超过25g, 每周不超过140g; 女性酒精摄入量每日不超过15g, 每周不超过80g。",
+      "source": "国家卫生健康委《高血压营养和运动指导原则（2024年版）》第六条第（六）项",
+      "snapshot": "data/research/snapshots/hbp-nutrition-2024-reprint.html",
+      "snapshotNote": "卫健委原 PDF 为扫描件（extract 后仅 431 字，无可检索文本），此处存的是同文政府转载页快照；逐字已核。",
+      "url": "http://www.chinacdc.cn/jkyj/mxfcrxjb2/jswj13947/202410/P020241010504676964420.pdf"
+    },
+    "R2-alcohol-who": {
+      "topic": "酒精上限（WHO 口径）",
+      "claim": "WHO 明确说没有安全量：风险从第一滴开始。",
+      "quote": "when it comes to alcohol consumption, there is no safe amount that does not affect health",
+      "source": "WHO Europe, 2023-01-04《No level of alcohol consumption is safe for our health》",
+      "snapshot": "data/research/snapshots/who-alcohol-2023.html",
+      "url": "https://www.who.int/europe/news/item/04-01-2023-no-level-of-alcohol-consumption-is-safe-for-our-health"
+    },
+    "R3-bmi-standard": {
+      "topic": "BMI 界值（18 岁以上成人）",
+      "claim": "中国成人：<18.5 过低，18.5–23.9 正常，24.0–27.9 超重，≥28.0 肥胖（WS/T 428—2013）。",
+      "quote": "24.0kg/m2≤BMI<28.0kg/m2 为超重，BMI≥28.0kg/m2 为",
+      "source": "国家卫生健康委《体重管理指导原则（2024年版）》",
+      "snapshot": "data/research/snapshots/weight-2024.txt",
+      "url": "https://www.nhc.gov.cn/ylyjs/zcwj/202412/75cb79c171c94def9e768193e65484f7/files/1736390749000_59785.pdf"
+    },
+    "R3-bmi-old": {
+      "topic": "BMI 界值（65 岁以上）",
+      "claim": "65 岁以上适宜 BMI 可略高：20.0–26.9；80 岁以上 22.0–26.9。所以老年人不能用 24/28 那套。",
+      "quote": "适宜体重和BMI 可略高，建议保持在20～26.9 千克/米2",
+      "source": "国家卫生健康委《中国公民健康素养——基本知识与技能释义》",
+      "snapshot": "data/research/snapshots/jiankang-suyang.txt",
+      "url": "https://www.nhc.gov.cn/cms-search/downFiles/0114910a07bd4f71a68d1b22b4b6148f.pdf"
+    },
+    "R1-dm-family": {
+      "topic": "2 型糖尿病家族史",
+      "claim": "糖尿病家族史（父母、同胞、子女）是中国糖尿病风险评分里的一项，会改变血糖筛查的起始与频率。",
+      "quote": "糖尿病家族史(父母、同胞、子女)",
+      "source": "《中国2型糖尿病防治指南（2020年版）》风险评分表",
+      "snapshot": "data/snapshots/9764a3d1c7.txt",
+      "url": "https://qr.csupress.com.cn/uploadFiles/101/5141/pdf/%E4%B8%AD%E5%9B%BD2%E5%9E%8B%E7%B3%96%E5%B0%BF%E7%97%85%E9%98%B2%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882020%E5%B9%B4%E7%89%88%EF%BC%89.pdf"
+    },
+    "R1-cvd-family": {
+      "topic": "早发心血管病家族史",
+      "claim": "冠心病家族史 / 早发心血管疾病家族史被列为心血管风险因素，影响血脂与颈动脉筛查的起点。",
+      "quote": "肥胖、高血压、血脂紊乱、吸烟、冠心病家族史",
+      "source": "《中国2型糖尿病防治指南（2020年版）》心血管风险段落",
+      "snapshot": "data/snapshots/9764a3d1c7.txt",
+      "url": "https://qr.csupress.com.cn/uploadFiles/101/5141/pdf/%E4%B8%AD%E5%9B%BD2%E5%9E%8B%E7%B3%96%E5%B0%BF%E7%97%85%E9%98%B2%E6%B2%BB%E6%8C%87%E5%8D%97%EF%BC%882020%E5%B9%B4%E7%89%88%EF%BC%89.pdf"
+    },
+    "R1-ad-family": {
+      "topic": "阿尔茨海默病家族史",
+      "claim": "无症状人群筛认知障碍，USPSTF 给的是 I（证据不足），所以家族史不该改变任何筛查项 —— 结论是不加进问卷做规则。",
+      "quote": "The USPSTF found that the evidence is insufficient to assess the balance of benefits and harms of screening for cognitive impairment in older adults.",
+      "source": "USPSTF《Cognitive Impairment in Older Adults: Screening》Final Recommendation Statement（2020）",
+      "snapshot": "data/research/snapshots/uspstf-cognitive.html",
+      "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/cognitive-impairment-in-older-adults-screening"
+    }
+  }
+}

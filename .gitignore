@@ -1,0 +1,27 @@
+# 依赖与构建产物
+node_modules/
+dist/
+
+# 抓取过程中的临时文件（不入库，快照走 data/snapshots/）
+.tmp/
+.tmp-*/
+.tmp-*
+.tmp-*.html
+.preview.log
+
+# 巡检报告由 CI 产出并作为 artifact 上传，不必入库
+reports/
+
+# 端到端用例每次跑都会重出的截图，不入库（要看就跑 npm run check:ui）
+tests/shots/
+
+# 本机的助手工作目录（含记忆、自动化），跟产品无关，绝不入库
+.workbuddy/
+
+# 第三方指南的 PDF 全文：只在自己机器上用于逐字核对，不重新分发全文（版权）。
+# HTML 快照保留 —— check:research 要靠它核引文，且是公开网页。
+data/research/snapshots/*.pdf
+
+# 系统垃圾
+.DS_Store
+Thumbs.db

@@ -1,0 +1,329 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-23",
+  "note": "「去哪一栏」的数据源。页面只渲染 dept；basis 留给校验器抽查（guide=原文点名、practice=科室惯例），note 是各条科室该怎么用的底稿，暂不上页面。",
+  "lead": "指南说「该不该查」，医院定「挂哪个号」",
+  "leadNote": "下面三份文件是依据出处。",
+  "base": {
+    "dept": "体检中心",
+    "basis": "guide",
+    "groups": [
+      {
+        "dept": "一般检查室（护士测）",
+        "ids": [
+          "general"
+        ]
+      },
+      {
+        "dept": "内科 · 外科 · 眼科 · 耳鼻喉科 · 口腔科 各诊室",
+        "ids": [
+          "internal",
+          "surgery",
+          "eye",
+          "ent",
+          "dental"
+        ]
+      },
+      {
+        "dept": "检验科（抽血窗口）",
+        "ids": [
+          "cbc",
+          "liver",
+          "renal",
+          "glucose",
+          "lipids",
+          "uric"
+        ]
+      },
+      {
+        "dept": "检验科（尿、便窗口）",
+        "ids": [
+          "urine",
+          "stool-routine",
+          "stool-ob"
+        ]
+      },
+      {
+        "dept": "心电图室 · 超声室",
+        "ids": [
+          "ecg",
+          "abd-us"
+        ]
+      },
+      {
+        "dept": "超声室（男性）",
+        "ids": [
+          "urinary-us"
+        ]
+      },
+      {
+        "dept": "妇科 · 超声室（女性）",
+        "ids": [
+          "gyn-exam",
+          "pelvic-us"
+        ]
+      },
+      {
+        "dept": "不用挂号：候检时自己在手机上填",
+        "ids": [
+          "questionnaire"
+        ]
+      }
+    ]
+  },
+  "extras": {
+    "cga-all": {
+      "dept": "老年科 · 记忆门诊",
+      "note": "这三件事体检中心做不了。记忆的事挂记忆门诊或神经内科，摔过和起身要扶挂老年科，有的医院还有专门的跌倒门诊。",
+      "basis": "practice"
+    },
+    "body-all": {
+      "dept": "不用挂号，自己量就行",
+      "note": "要减重可以找营养科或体重管理门诊 —— 但那是治疗，不是体检。",
+      "basis": "practice"
+    }
+  },
+  "rules": {
+    "oral-scaling": {
+      "dept": "口腔科 · 洁牙门诊",
+      "note": "多数体检套餐里没有这一项，要单独挂号、单独约时间。",
+      "basis": "guide"
+    },
+    "colorectal-screening": {
+      "dept": "消化内科 · 内镜中心",
+      "note": "肠镜要单独预约，做之前要清肠。便潜血在体检中心留样就行，阳性才需要做肠镜。",
+      "basis": "guide"
+    },
+    "colorectal-screening-75plus": {
+      "dept": "消化内科 · 内镜中心",
+      "note": "75 岁以上还做不做，要内镜医生先评估能不能耐受清肠和麻醉。",
+      "basis": "guide"
+    },
+    "lung-ldct-high-risk": {
+      "dept": "放射科 · CT 室",
+      "note": "报告由放射科医师出，片子要在放射科拍 —— 体检中心的 CT 也是放射科在管。",
+      "basis": "guide"
+    },
+    "lung-ldct-not-high-risk": {
+      "dept": "放射科 · CT 室",
+      "note": "医院当然能做。说的是对健康人没有证据支持获益，不是做不了。",
+      "basis": "guide"
+    },
+    "lung-ldct-80plus": {
+      "dept": "放射科 · CT 室",
+      "note": "要不要做先跟医生商量，不是先挂号拍片。",
+      "basis": "guide"
+    },
+    "stomach-gastroscopy-high-risk": {
+      "dept": "消化内科 · 内镜中心",
+      "note": "胃镜要单独预约、前一天晚上开始禁食。做普通还是无痛，当天可以问内镜医生。",
+      "basis": "guide"
+    },
+    "stomach-gastroscopy-average-risk": {
+      "dept": "消化内科 · 内镜中心",
+      "note": "要单独预约，体检套餐里通常不含 —— 跟高危人群那一项是同一台机器。",
+      "basis": "guide"
+    },
+    "stomach-gastroscopy-75plus": {
+      "dept": "消化内科 · 内镜中心",
+      "note": "高龄做之前要先评估能不能耐受，这件事由内镜医生和麻醉医生定。",
+      "basis": "guide"
+    },
+    "breast-cancer-screening": {
+      "dept": "乳腺外科 · 超声室",
+      "note": "超声和钼靶是两台不同的机器、两个科室：超声在超声室，钼靶在放射科。体检中心一般只有超声，钼靶要另外约。",
+      "basis": "guide"
+    },
+    "breast-cancer-screening-high-risk": {
+      "dept": "乳腺外科",
+      "note": "有家族史的不要走体检这条路，让乳腺外科医生按你的风险定查什么、多久查一次。",
+      "basis": "guide"
+    },
+    "breast-cancer-75plus": {
+      "dept": "乳腺外科 · 超声室",
+      "note": "还查不查、查到几岁，由乳腺外科医生结合你的身体情况定。",
+      "basis": "guide"
+    },
+    "cervical-cancer-screening": {
+      "dept": "妇科",
+      "note": "TCT 和 HPV 都在妇科取样，一次取样能同时做两项。避开月经期。",
+      "basis": "guide"
+    },
+    "cervical-cancer-65plus": {
+      "dept": "妇科",
+      "note": "65 岁以上还查不查，看过去的筛查记录 —— 把以前的报告带上，让妇科医生判断。",
+      "basis": "guide"
+    },
+    "liver-cancer-screening": {
+      "dept": "肝病科 或 感染科",
+      "note": "有乙肝、丙肝、肝硬化的挂这两个科；抽血和肝脏超声本身在检验科、超声室做。",
+      "basis": "practice"
+    },
+    "hp-test-once": {
+      "dept": "消化内科",
+      "note": "吹气试验（C13/C14）多数体检中心也能做；要是抽血查抗体，结果阳性只说明感染过，不能说明现在有菌。",
+      "basis": "practice"
+    },
+    "bone-density-65f": {
+      "dept": "骨质疏松门诊 或 内分泌科",
+      "note": "骨密度机（双能 X 线，DXA）一般放在骨质疏松门诊、内分泌科或核医学科，体检中心多数没有。",
+      "basis": "practice"
+    },
+    "aaa-screening": {
+      "dept": "血管外科",
+      "note": "超声本身在超声室做，但这项要血管外科开单 —— 它查的是腹主动脉，不是常规腹部超声。",
+      "basis": "practice"
+    },
+    "aaa-screening-75plus": {
+      "dept": "血管外科",
+      "note": "75 岁以上还做不做，由血管外科医生按你的身体状况定。",
+      "basis": "practice"
+    },
+    "hepatitis-bc-screening": {
+      "dept": "感染科 或 肝病科",
+      "note": "只查乙肝五项、丙肝抗体的话，体检抽血就能做；结果阳性再挂这两个科。",
+      "basis": "practice"
+    },
+    "psa-50-69": {
+      "dept": "泌尿外科",
+      "note": "抽血在检验科，结果由泌尿外科医生看 —— 指南写明 PSA 异常要「转诊由泌尿专科医师」进一步检查。",
+      "basis": "guide"
+    },
+    "psa-family-45": {
+      "dept": "泌尿外科",
+      "note": "有家族史的从 45 岁起就要谈这件事，谈的人该是泌尿外科医生，不是体检套餐。",
+      "basis": "guide"
+    },
+    "psa-70plus": {
+      "dept": "泌尿外科",
+      "note": "70 岁以上不再常规查；有排尿症状的挂泌尿外科，那是有病看病，不是筛查。",
+      "basis": "guide"
+    },
+    "echo-routine": {
+      "dept": "心内科 · 超声室",
+      "note": "心超在超声室做，但要心内科开单并看结果。没症状时它查不出你要的东西。",
+      "basis": "practice"
+    },
+    "chest-xray-routine": {
+      "dept": "放射科 · X 线室",
+      "note": "体检中心标配就有 X 线摄影检查室，不用另挂号。",
+      "basis": "guide"
+    },
+    "tsh-screening": {
+      "dept": "内分泌科",
+      "note": "抽血在检验科；TSH 只是筛查，结果异常要内分泌科加查 FT3、FT4 和抗体。",
+      "basis": "practice"
+    },
+    "thyroid-us-screening": {
+      "dept": "内分泌科 · 超声室",
+      "note": "想查就挂内分泌科开单，别在体检套餐里顺手加 —— 加了多半会查出一堆要随访的小结节。",
+      "basis": "practice"
+    },
+    "thyroid-followup": {
+      "dept": "内分泌科 或 甲状腺外科",
+      "note": "已经在治的，复查方案照你原来的主诊医生说的做，不按体检套餐走。",
+      "basis": "practice"
+    },
+    "tumor-markers-panel": {
+      "dept": "检验科 · 抽血窗口",
+      "note": "医院当然能查，是抽血项目。问题不是查不了，是健康人查了容易假阳性、然后一路复查。",
+      "basis": "practice"
+    },
+    "pet-ct-screening": {
+      "dept": "核医学科 · PET-CT 中心",
+      "note": "要提前预约、全自费、几千块，而且不是每个城市都有。健康人体检不推荐做。",
+      "basis": "practice"
+    },
+    "carotid-us-screening": {
+      "dept": "神经内科 · 超声室",
+      "note": "开单一般是神经内科或血管外科，彩超在超声室做。没症状时它不改变你该做的事。",
+      "basis": "practice"
+    },
+    "head-ct-routine": {
+      "dept": "放射科 · CT／MRI 室",
+      "note": "机器在放射科。有症状（突然说话不清、一侧无力）不是挂这个，是走急诊。",
+      "basis": "practice"
+    },
+    "pregnancy-guard": {
+      "dept": "产科",
+      "note": "怀孕了不走体检这条路：建档、产检都在产科，X 线、CT 这类检查要主动告诉医生你怀孕了。",
+      "basis": "practice"
+    },
+    "ovarian-family-history": {
+      "dept": "妇科肿瘤门诊 或 遗传咨询门诊",
+      "note": "一级亲属有卵巢癌，该谈的是遗传咨询（BRCA 检测），不是加一个超声。",
+      "basis": "practice"
+    },
+    "diabetes-followup": {
+      "dept": "内分泌科",
+      "note": "眼底照相在眼科、尿微量白蛋白在检验科，但开单和判读都在内分泌科 —— 别自己在体检套餐里挑。",
+      "basis": "practice"
+    },
+    "hypertension-followup": {
+      "dept": "心内科 或 高血压门诊",
+      "note": "看心、脑、肾有没有受影响，这件事要主诊医生按你的血压和用药定。",
+      "basis": "practice"
+    },
+    "cvd-followup": {
+      "dept": "心内科 或 神经内科",
+      "note": "已经确诊的做二级预防，复查什么由你的主诊医生定，不按体检清单走。",
+      "basis": "practice"
+    },
+    "cancer-survivor-followup": {
+      "dept": "肿瘤科",
+      "note": "复查方案跟着原来的治疗方案走。换医院也要带上原来的病理和影像。",
+      "basis": "practice"
+    },
+    "dm-family-hba1c": {
+      "dept": "内分泌科",
+      "note": "糖化查的是近三个月的平均血糖，抽血在检验科。",
+      "basis": "practice"
+    },
+    "cvd-family-carotid": {
+      "dept": "神经内科 或 血管外科",
+      "note": "颈动脉超声在超声室做；早发心血管病家族史这件事，值得跟医生当面说一次。",
+      "basis": "practice"
+    }
+  },
+  "vaccines": {
+    "dept": "社区卫生服务中心 · 预防接种门诊"
+  },
+  "sources": [
+    {
+      "org": "中国医院协会《中国医院质量安全管理 第2-30部分：患者服务 健康体检》",
+      "year": "2020",
+      "strength": "standard",
+      "point": "体检机构里必须设内科、外科、耳鼻喉科、眼科、妇科、口腔科，还要有心电图室、超声室、X 线摄影检查室 —— 这就是「基础项目不用各科跑」的依据。",
+      "quotes": [
+        "科室设置至少包括内科、外科、耳鼻喉科、眼科、妇科、口腔科",
+        "应有心电图室、超声室、X线摄影检查室和咨询室"
+      ],
+      "cite": "T/CHAS 10-2-30—2020，2021-01-01 实施",
+      "url": "http://szsyyxh.org/ziye/main2/files/%E9%99%84%E4%BB%B63%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%A0%87%E5%87%86.pdf"
+    },
+    {
+      "org": "国家癌症中心《健康体检机构防癌体检指南（2025年版）》",
+      "year": "2025",
+      "strength": "guide",
+      "point": "要专科做的项目，指南点名了由谁做：内镜由内镜医师做、低剂量 CT 和乳腺 X 线报告由放射科主治医师出、PSA 异常转泌尿专科医师、宫颈筛查在妇科做。",
+      "quotes": [
+        "要求内镜医师开展内镜诊疗工作不少于5年,取得主治医师及以上专业技术职务任职资格",
+        "胸部低剂量CT或乳腺X线等筛查报告应由高年资(3年以上)放射科主治医师出具",
+        "两次检测水平超过4ng/ml者,排除其他因素干扰后,推荐转诊由泌尿专科医师引导进一步临床检查和干预",
+        "宫颈癌体检技术服务质控涉及妇科检查、HPV检测、细胞学检查、阴道镜检查、组织病理检查等各个环节"
+      ],
+      "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx"
+    },
+    {
+      "org": "国家疾控局、国家卫生健康委《预防接种工作规范（2023年版）》",
+      "year": "2023",
+      "strength": "norm",
+      "point": "打疫苗去「接种单位」：由县级以上疾控和卫健部门指定、原则上每个乡镇（街道）至少一个，多数是社区卫生服务中心或乡镇卫生院的预防接种门诊。",
+      "quotes": [
+        "接种单位是指从事预防接种工作的医疗机构",
+        "原则上每个乡镇(街道)至少应具有1个承担免疫规划疫苗接种工作的接种单位"
+      ],
+      "url": "https://www.ahhn.gov.cn/group2/M00/46/52/CtG0ZGW7nqyAY-Z6ACaIWsFywFg261.pdf"
+    }
+  ]
+}

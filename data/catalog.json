@@ -1,0 +1,546 @@
+{
+  "version": "1.3.0",
+  "updatedAt": "2026-11-17",
+  "note": "体检机构常见项目主数据。每个项目必须被某条规则覆盖（A/B/C），或在此标注 notIncluded 及理由。未覆盖且无理由 = 漏项，校验器会报出来。v1.2.0 依据美年大健康等机构在售套餐明细反向补充（外部基准校验）。",
+  "items": [
+    {
+      "id": "general",
+      "name": "一般检查（身高、体重、腰围、血压、脉搏）",
+      "group": "基础体检"
+    },
+    {
+      "id": "internal",
+      "name": "内科检查",
+      "group": "基础体检"
+    },
+    {
+      "id": "surgery",
+      "name": "外科检查（含肛门指检）",
+      "group": "基础体检"
+    },
+    {
+      "id": "eye",
+      "name": "眼科（视力、眼压、眼底）",
+      "group": "基础体检"
+    },
+    {
+      "id": "ent",
+      "name": "耳鼻喉科检查",
+      "group": "基础体检"
+    },
+    {
+      "id": "dental",
+      "name": "口腔科检查",
+      "group": "基础体检"
+    },
+    {
+      "id": "scaling",
+      "name": "洁牙（洗牙）",
+      "group": "基础体检"
+    },
+    {
+      "id": "gyn-exam",
+      "name": "妇科检查（女性）",
+      "group": "基础体检"
+    },
+    {
+      "id": "ecg",
+      "name": "心电图",
+      "group": "基础体检"
+    },
+    {
+      "id": "questionnaire",
+      "name": "健康问卷 / 心理量表",
+      "group": "基础体检"
+    },
+    {
+      "id": "cbc",
+      "name": "血常规",
+      "group": "实验室-常规"
+    },
+    {
+      "id": "urine",
+      "name": "尿常规",
+      "group": "实验室-常规"
+    },
+    {
+      "id": "stool-routine",
+      "name": "便常规",
+      "group": "实验室-常规"
+    },
+    {
+      "id": "stool-ob",
+      "name": "便潜血",
+      "group": "实验室-常规",
+      "exclusiveGroup": "crc-route"
+    },
+    {
+      "id": "liver",
+      "name": "肝功能",
+      "group": "实验室-常规"
+    },
+    {
+      "id": "renal",
+      "name": "肾功能",
+      "group": "实验室-常规"
+    },
+    {
+      "id": "glucose",
+      "name": "空腹血糖",
+      "group": "实验室-常规"
+    },
+    {
+      "id": "lipids",
+      "name": "血脂",
+      "group": "实验室-常规"
+    },
+    {
+      "id": "uric",
+      "name": "尿酸",
+      "group": "实验室-常规"
+    },
+    {
+      "id": "electrolytes",
+      "name": "电解质（钾钠氯钙）",
+      "group": "实验室-常规",
+      "notIncluded": "随肝肾功能生化套餐同查即可，单项无独立筛查获益，不单独决策"
+    },
+    {
+      "id": "coag",
+      "name": "凝血功能",
+      "group": "实验室-常规",
+      "notIncluded": "非常规体检项目；术前、抗凝治疗或有出血倾向时由医生开具"
+    },
+    {
+      "id": "myocardial-enzymes",
+      "name": "心肌酶（CK、CK-MB、LDH）",
+      "group": "实验室-常规",
+      "notIncluded": "用于急性心肌损伤的诊断与监测，不是筛查项目；有胸痛、胸闷症状时急诊查"
+    },
+    {
+      "id": "hba1c",
+      "name": "糖化血红蛋白",
+      "group": "实验室-扩展"
+    },
+    {
+      "id": "homocysteine",
+      "name": "同型半胱氨酸",
+      "group": "实验室-扩展",
+      "notIncluded": "作为独立筛查指标证据不足；心脑血管风险以血压、血脂管理为主"
+    },
+    {
+      "id": "tsh",
+      "name": "甲状腺功能（TSH等）",
+      "group": "实验室-扩展"
+    },
+    {
+      "id": "insulin",
+      "name": "胰岛素释放 / C肽",
+      "group": "实验室-扩展",
+      "notIncluded": "用于糖尿病分型与胰岛功能评估，非筛查项目"
+    },
+    {
+      "id": "crp",
+      "name": "超敏C反应蛋白",
+      "group": "实验室-扩展",
+      "notIncluded": "非筛查项目；有感染或炎症症状时检查"
+    },
+    {
+      "id": "esr",
+      "name": "血沉",
+      "group": "实验室-扩展",
+      "notIncluded": "非筛查项目；怀疑炎症、风湿免疫病时检查"
+    },
+    {
+      "id": "ferritin",
+      "name": "铁蛋白",
+      "group": "实验室-扩展",
+      "notIncluded": "非筛查项目；怀疑贫血或铁代谢异常时检查"
+    },
+    {
+      "id": "vitd",
+      "name": "维生素D",
+      "group": "实验室-扩展",
+      "notIncluded": "普通人群常规检测证据不足；骨质疏松高危者可按医嘱检测"
+    },
+    {
+      "id": "microelements",
+      "name": "微量元素检测",
+      "group": "实验室-扩展",
+      "notIncluded": "无指征检测，缺乏指南支持，多为营销项目"
+    },
+    {
+      "id": "urine-microalbumin",
+      "name": "尿微量白蛋白/肌酐比",
+      "group": "实验室-扩展"
+    },
+    {
+      "id": "blood-type",
+      "name": "血型",
+      "group": "实验室-扩展",
+      "notIncluded": "非健康筛查项目；输血、手术、孕产前需要时检测"
+    },
+    {
+      "id": "cystatin-c",
+      "name": "血清胱抑素C",
+      "group": "实验室-扩展",
+      "notIncluded": "肾功能评估的辅助指标（eGFR），用于已确诊肾病者的随访；健康人筛查不改变结论"
+    },
+    {
+      "id": "adiponectin",
+      "name": "脂联素",
+      "group": "实验室-扩展",
+      "notIncluded": "研究性代谢指标，无筛查指征，不改变任何体检决策"
+    },
+    {
+      "id": "rheuma-panel",
+      "name": "风湿三项（类风湿因子、抗链O、CRP）",
+      "group": "实验室-扩展",
+      "notIncluded": "有晨僵、关节肿痛、长期发热等症状时检查；无症状筛查假阳性高、无获益"
+    },
+    {
+      "id": "hemorheology",
+      "name": "血液流变学（血流变）",
+      "group": "实验室-扩展",
+      "notIncluded": "无指南支持用于疾病筛查，检测重复性差，不能指导治疗，属套餐填充项目"
+    },
+    {
+      "id": "sex-hormones",
+      "name": "性激素六项",
+      "group": "实验室-扩展",
+      "notIncluded": "有月经异常、更年期症状、生育问题或不孕评估时由专科医生开具"
+    },
+    {
+      "id": "thyroid-antibody",
+      "name": "甲状腺抗体（TPOAb、TgAb）",
+      "group": "实验室-扩展",
+      "notIncluded": "甲状腺疾病诊断与随访用；发现甲功异常后由医生追加"
+    },
+    {
+      "id": "abd-us",
+      "name": "腹部超声（肝胆胰脾肾）",
+      "group": "影像检查"
+    },
+    {
+      "id": "urinary-us",
+      "name": "泌尿系超声（男性）",
+      "group": "影像检查"
+    },
+    {
+      "id": "pelvic-us",
+      "name": "子宫附件超声（女性）",
+      "group": "影像检查"
+    },
+    {
+      "id": "thyroid-us",
+      "name": "甲状腺超声",
+      "group": "影像检查"
+    },
+    {
+      "id": "carotid-us",
+      "name": "颈动脉超声",
+      "group": "影像检查"
+    },
+    {
+      "id": "echo",
+      "name": "心脏彩超",
+      "group": "影像检查"
+    },
+    {
+      "id": "breast-us",
+      "name": "乳腺超声",
+      "group": "影像检查"
+    },
+    {
+      "id": "mammography",
+      "name": "乳腺钼靶",
+      "group": "影像检查"
+    },
+    {
+      "id": "chest-xray",
+      "name": "胸部X线（胸片）",
+      "group": "影像检查"
+    },
+    {
+      "id": "ldct",
+      "name": "低剂量螺旋CT（胸部）",
+      "group": "影像检查"
+    },
+    {
+      "id": "head-ct",
+      "name": "头颅CT / MRI",
+      "group": "影像检查"
+    },
+    {
+      "id": "aaa-us",
+      "name": "腹主动脉瘤超声",
+      "group": "影像检查"
+    },
+    {
+      "id": "holter",
+      "name": "动态心电图",
+      "group": "影像检查",
+      "notIncluded": "有心悸、晕厥、胸闷等症状时检查，非筛查项目"
+    },
+    {
+      "id": "stress-test",
+      "name": "运动负荷试验",
+      "group": "影像检查",
+      "notIncluded": "有胸痛等症状、需评估运动耐量时由心内科开具"
+    },
+    {
+      "id": "abi",
+      "name": "踝肱指数（ABI）",
+      "group": "影像检查",
+      "notIncluded": "有下肢缺血症状、糖尿病足风险时检查"
+    },
+    {
+      "id": "spine-xray",
+      "name": "颈椎 / 腰椎 DR",
+      "group": "影像检查",
+      "notIncluded": "有颈腰痛、肢体麻木等神经症状时按需检查；无症状筛查不改变处理，且增加辐射暴露"
+    },
+    {
+      "id": "tcd",
+      "name": "经颅多普勒（TCD／脑彩超）",
+      "group": "影像检查",
+      "notIncluded": "对卒中风险筛查无获益证据，重复性差；评估脑血管应做颈动脉超声或 CTA/MRA，疑有症状由神经内科判断"
+    },
+    {
+      "id": "arteriosclerosis-test",
+      "name": "动脉硬化检测（baPWV 脉搏波速度）",
+      "group": "影像检查",
+      "notIncluded": "可作为心血管风险的辅助参考，但不改变筛查与用药决策，缺少改善结局的证据，不进决策清单"
+    },
+    {
+      "id": "cac-score",
+      "name": "冠脉钙化积分（CAC）",
+      "group": "影像检查",
+      "notIncluded": "用于心血管风险处于临界区间者的他汀决策辅助，属医生判断工具而非体检常规项；本工具列为待评估 B 档"
+    },
+    {
+      "id": "vascular-cta",
+      "name": "头颈部血管成像（CTA／MRA）",
+      "group": "影像检查",
+      "notIncluded": "有 TIA、卒中症状或已发现颈动脉狭窄时由专科开具；无症状筛查无获益证据"
+    },
+    {
+      "id": "whole-body-mri",
+      "name": "全身 MRI／类 PET 全身扫描",
+      "group": "影像检查",
+      "notIncluded": "假阳性率高、后续过度检查多，无证据降低死亡率，指南均不推荐用于健康人筛查"
+    },
+    {
+      "id": "gastroscopy",
+      "name": "胃镜",
+      "group": "内镜"
+    },
+    {
+      "id": "colonoscopy",
+      "name": "肠镜",
+      "group": "内镜",
+      "exclusiveGroup": "crc-route"
+    },
+    {
+      "id": "nasoendoscopy",
+      "name": "鼻咽镜",
+      "group": "内镜",
+      "notIncluded": "鼻咽癌高发区（两广等）高危人群适用，二期纳入规则"
+    },
+    {
+      "id": "afp",
+      "name": "甲胎蛋白（AFP）",
+      "group": "肿瘤标志物"
+    },
+    {
+      "id": "cea",
+      "name": "癌胚抗原（CEA）",
+      "group": "肿瘤标志物"
+    },
+    {
+      "id": "ca125",
+      "name": "CA125",
+      "group": "肿瘤标志物"
+    },
+    {
+      "id": "ca199",
+      "name": "CA19-9",
+      "group": "肿瘤标志物"
+    },
+    {
+      "id": "ca153",
+      "name": "CA15-3",
+      "group": "肿瘤标志物"
+    },
+    {
+      "id": "scc",
+      "name": "SCC",
+      "group": "肿瘤标志物"
+    },
+    {
+      "id": "nse",
+      "name": "NSE",
+      "group": "肿瘤标志物"
+    },
+    {
+      "id": "tumor-panel",
+      "name": "肿瘤标志物套餐（多项组合）",
+      "group": "肿瘤标志物"
+    },
+    {
+      "id": "psa",
+      "name": "前列腺特异性抗原（PSA）",
+      "group": "专项筛查"
+    },
+    {
+      "id": "tct",
+      "name": "宫颈细胞学（TCT）",
+      "group": "专项筛查"
+    },
+    {
+      "id": "hpv",
+      "name": "高危型HPV检测",
+      "group": "专项筛查"
+    },
+    {
+      "id": "fit",
+      "name": "粪便免疫化学检测（FIT）",
+      "group": "专项筛查",
+      "sameAs": "stool-ob",
+      "sameAsNote": "和基础套餐里的「便潜血」是同一项，只是方法不同"
+    },
+    {
+      "id": "pg",
+      "name": "胃蛋白酶原（PG）",
+      "group": "专项筛查",
+      "notIncluded": "2022 胃癌筛查指南不建议单独用于筛查；可与 Hp 联合评估，需医生判断"
+    },
+    {
+      "id": "gastrin17",
+      "name": "胃泌素-17",
+      "group": "专项筛查",
+      "notIncluded": "同上，不建议单独用于胃癌筛查"
+    },
+    {
+      "id": "ebv",
+      "name": "EB病毒抗体",
+      "group": "专项筛查",
+      "notIncluded": "鼻咽癌高发区（两广等）适用，二期纳入规则"
+    },
+    {
+      "id": "stomach-function-3",
+      "name": "胃功能三项（PGⅠ、PGⅡ、G-17）",
+      "group": "专项筛查",
+      "notIncluded": "同 PG、G-17：2022 中国胃癌筛查指南不建议单独用于筛查，需与幽门螺杆菌联合并由医生判读"
+    },
+    {
+      "id": "mrd-early-screening",
+      "name": "基因甲基化／ctDNA 泛癌早筛（如 Septin9）",
+      "group": "专项筛查",
+      "notIncluded": "证据尚不足以替代标准筛查（肠镜、FIT、低剂量CT）；阴性不能排除肿瘤，阳性需标准检查确认，暂不进决策清单"
+    },
+    {
+      "id": "hbv",
+      "name": "乙肝五项 / 表面抗原",
+      "group": "感染筛查"
+    },
+    {
+      "id": "hcv",
+      "name": "丙肝抗体",
+      "group": "感染筛查"
+    },
+    {
+      "id": "hiv",
+      "name": "HIV抗体",
+      "group": "感染筛查",
+      "notIncluded": "非常规体检必选；有高危行为或按当地公共卫生要求检测"
+    },
+    {
+      "id": "syphilis",
+      "name": "梅毒抗体",
+      "group": "感染筛查",
+      "notIncluded": "非常规体检必选；有高危行为、孕产前检查需要时检测"
+    },
+    {
+      "id": "hp-test",
+      "name": "幽门螺杆菌呼气试验（碳13/碳14）",
+      "group": "感染筛查"
+    },
+    {
+      "id": "hp-antibody",
+      "name": "幽门螺杆菌抗体（抽血）",
+      "group": "感染筛查",
+      "notIncluded": "抗体阳性无法区分现症感染与既往感染，不能作为根除治疗依据；应做呼气试验或粪便抗原"
+    },
+    {
+      "id": "bone-density",
+      "name": "骨密度",
+      "group": "功能与其他"
+    },
+    {
+      "id": "spirometry",
+      "name": "肺功能",
+      "group": "功能与其他",
+      "notIncluded": "长期吸烟、粉尘暴露、慢性咳嗽者适用，属有指征项目，二期纳入"
+    },
+    {
+      "id": "hearing",
+      "name": "听力检测",
+      "group": "功能与其他",
+      "notIncluded": "有听力下降主诉或长期噪声暴露时检查"
+    },
+    {
+      "id": "body-composition",
+      "name": "人体成分分析",
+      "group": "功能与其他",
+      "notIncluded": "非疾病筛查项目，减重和健身管理可用"
+    },
+    {
+      "id": "pet-ct",
+      "name": "PET-CT 全身扫描",
+      "group": "高端影像"
+    },
+    {
+      "id": "ttm",
+      "name": "全身热成像（TTM）",
+      "group": "营销类",
+      "notIncluded": "无证据支持用于疾病筛查，属营销项目"
+    },
+    {
+      "id": "food-igg",
+      "name": "食物不耐受IgG检测",
+      "group": "营销类",
+      "notIncluded": "IgG抗体不能诊断食物不耐受，缺乏指南支持"
+    },
+    {
+      "id": "allergy",
+      "name": "过敏原全套筛查",
+      "group": "营销类",
+      "notIncluded": "无症状者无需筛查，有症状按需针对性检测"
+    },
+    {
+      "id": "tcm",
+      "name": "中医体质辨识",
+      "group": "营销类",
+      "notIncluded": "非循证筛查项目，不影响体检项目决策"
+    },
+    {
+      "id": "gene-consumer",
+      "name": "消费级基因检测",
+      "group": "营销类",
+      "notIncluded": "无家族史者常规基因检测无指征；高危者应走遗传咨询"
+    },
+    {
+      "id": "bio-age-clock",
+      "name": "生物学年龄时钟／器官衰老检测",
+      "group": "营销类",
+      "notIncluded": "无临床验证的筛查获益，不能指导任何治疗决策，属商业概念"
+    },
+    {
+      "id": "stress-analysis",
+      "name": "精神压力分析／心率变异性检测",
+      "group": "营销类",
+      "notIncluded": "无筛查获益证据；情绪问题应使用标准化量表（PHQ-9、GAD-7）由医生评估"
+    }
+  ]
+}

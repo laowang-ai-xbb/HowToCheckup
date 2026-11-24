@@ -1,0 +1,1665 @@
+Radiation Safety in Nuclear Medicine Procedures - PMC
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ Skip to main content
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ An official website of the United States government
+ 
+
+ Here's how you know 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Here's how you know 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ Official websites use .gov 
+ 
+
+ A
+ .gov website belongs to an official
+ government organization in the United States.
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+ Secure .gov websites use HTTPS 
+ 
+
+ A lock (
+ 
+ 
+ Lock 
+ 
+ Locked padlock icon
+ 
+ 
+ 
+ ) or https:// means you've safely
+ connected to the .gov website. Share sensitive
+ information only on official, secure websites.
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ Search
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ Log in 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Dashboard
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Publications
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Account settings
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ Log out
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ Search…
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+ Search NCBI
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ Primary site navigation
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ Search
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ Logged in as:
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Dashboard
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Publications
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Account settings
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ Log in
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Search PMC Full-Text Archive 
+ 
+ 
+ 
+ 
+ Search in PMC 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ Journal List
+ 
+ 
+ 
+
+ 
+ 
+ 
+ User Guide
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ PERMALINK
+
+ 
+ 
+ 
+ 
+ Copy 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ As a library, NLM provides access to scientific literature. Inclusion in an NLM database does not imply endorsement of, or agreement with,
+ the contents by NLM or the National Institutes of Health.
+
+ Learn more:
+ PMC Disclaimer 
+ |
+ 
+ PMC Copyright Notice
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ Nucl Med Mol Imaging 
+. 2016 Feb 19;51(1):11–16. doi: 10.1007/s13139-016-0406-0 
+
+ 
+ Search in PMC 
+
+ Search in PubMed 
+
+ View in NLM Catalog 
+
+ Add to search 
+
+ 
+ 
+ Radiation Safety in Nuclear Medicine Procedures
+ 
+ Sang-Geon Cho 
+ Sang-Geon Cho 
+
+ 
+ 1 Department of Nuclear Medicine, Medical Radiation Safety Research Center, Chonnam National University Hospital, 42 Jebong-ro, Dong-gu, 501-757 Gwang-ju, Korea 
+
+ Find articles by Sang-Geon Cho 
+
+ 1 , Jahae Kim 
+ Jahae Kim 
+
+ 
+ 1 Department of Nuclear Medicine, Medical Radiation Safety Research Center, Chonnam National University Hospital, 42 Jebong-ro, Dong-gu, 501-757 Gwang-ju, Korea 
+
+ Find articles by Jahae Kim 
+
+ 1 , Ho-Chun Song 
+ Ho-Chun Song 
+
+ 
+ 1 Department of Nuclear Medicine, Medical Radiation Safety Research Center, Chonnam National University Hospital, 42 Jebong-ro, Dong-gu, 501-757 Gwang-ju, Korea 
+
+ Find articles by Ho-Chun Song 
+
+ 1, ✉ 
+
+ 
+ Author information 
+
+ Article notes 
+
+ Copyright and License information 
+
+ 
+ 
+ 
+ 
+ 1 Department of Nuclear Medicine, Medical Radiation Safety Research Center, Chonnam National University Hospital, 42 Jebong-ro, Dong-gu, 501-757 Gwang-ju, Korea 
+
+ 
+ ✉ Corresponding author.
+
+ Received 2015 Oct 6; Revised 2016 Feb 1; Accepted 2016 Feb 5; Issue date 2017 Mar.
+
+ 
+ © Korean Society of Nuclear Medicine 2016
+
+ PMC Copyright notice 
+
+ PMCID: PMC5313457 PMID: 28250853 
+
+ Abstract
+
+ Since the nuclear disaster at the Fukushima Daiichi Nuclear Power Plant in 2011, radiation safety has become an important issue in nuclear medicine. Many structured guidelines or recommendations of various academic societies or international campaigns demonstrate important issues of radiation safety in nuclear medicine procedures. There are ongoing efforts to fulfill the basic principles of radiation protection in daily nuclear medicine practice. This article reviews important principles of radiation protection in nuclear medicine procedures. Useful references, important issues, future perspectives of the optimization of nuclear medicine procedures, and diagnostic reference level are also discussed.
+
+ Keywords: Diagnostic reference level, Justification, Optimization, Nuclear medicine, Radiation safety
+
+ Introduction
+
+ Since the first use of I-131 for the treatment of thyrotoxicosis by Saul Hertz in 1941, nuclear medicine procedures have served as prerequisites in the diagnosis and treatment of various human diseases. Since the introduction of nuclear medicine in 1959, there has also been an explosive growth in nuclear medicine imaging and therapeutic procedures in Korea, especially in F-18 fluorodeoxyglucose positron emission tomography (FDG PET) and I-131 ablation therapy.
+
+ However, the disaster at the Fukushima Daiichi Nuclear Power Plant in 2011, which was a combined disaster involving a radiation accident, earthquake and tsunami, resulted in deep concerns and even social phobia about exposure to ionizing radiation. As a result, radiation safety emerged as a priority issue in medical fields using ionizing radiation, and is now extremely important as is the medical contribution of nuclear medicine in clinics.
+
+ In such perspectives, the Korean Society of Nuclear Medicine (KSNM) began standardizing nuclear medicine procedures, as the first important step of radiation exposure management. The first standard procedure for F-18 FDG PET was completed in 2013 [ 1 ]. Besides, the preliminary data of diagnostic reference levels (DRLs) for nuclear medicine procedures in Korea were also reported by the Medical Radiation Safety Research Center (MRSRC) [ 2 – 4 ]. Those recent products are encouraging, but most of the other aspects of radiation safety still remain uninvestigated in Korea. So, it is quite difficult to refer to the important principles of radiation protection when necessary.
+
+ In this article, the authors described principles of radiation protection in nuclear medicine and useful references about medical radiation exposure management. Because scientific data about the biological effects of ionizing radiation are converted into recommendations by the International Commission on Radiation Protection (ICRP), the main references are regarding ICRP recommendations. In addition, the recent efforts of the MRSRC in optimizing nuclear medicine procedures will also be discussed. However, detailed procedure standards and work processes are not included in the context, which should be adapted according to many institutional and individual factors.
+
+ Principles of Radiation Protection in Nuclear Medicine
+
+ Medical Radiation Exposure
+
+ The ICRP Publication 60 [ 5 ] classifies radiation exposures into three categories: occupational, medical, and public. Medical exposures include not only those for medical diagnosis or treatment but also those exerted to individuals in the support and comfort of patients undergoing diagnosis or treatment. The definition of medical radiation exposure is more clearly defined in details by the ICRP Publication 105 [ 6 ] (Table 1 ).
+
+ Table 1.
+
+ The definition of medical radiation exposures (ICRP Publication 105 [ 6 ])
+
+ 
+ Exposure of individuals for diagnostic, interventional, and therapeutic purposes, including exposure of the embryo/fetus or infant during medical exposure of patients who are pregnant or breastfeeding. 
+
+ Exposures (other than occupational) incurred knowingly and willingly by individuals, such as family and close friends (or other comforters), helping either in hospital or at home in the support and comfort of patients undergoing diagnosis or treatment. 
+
+ Exposures incurred by volunteers as part of a program of biomedical research that provides no direct benefit to the volunteers. 
+
+ 
+
+ Open in a new tab 
+
+ 
+ ICRP , International Commission on Radiation Protection
+
+ It is inappropriate to apply dose limits—one of the three major principles of radiation protection—to medical radiation exposure. Because medical exposure is usually intended to directly benefit the exposed individual, further application of limits might be to the patient’s detriment. However, this does not necessarily mean that medical radiation should not be included as an objective of radiation protection. It is still subject to the other two principles, justification of a practice and optimization of protection. Accordingly, benefits should be sufficient to offset the detriment caused (justification), and radiation exposure should be as low as reasonably achievable (optimization) [ 5 ]. The concepts of the two principles, issues, and efforts to follow them are described below.
+
+ Justification of Nuclear Medicine Procedures
+
+ Medical radiation exposure can be justified when the benefit exceeds the harm. The ICRP Publication 73 [ 7 ] defines the justification of medical radiation exposure as follows: “No practice involving exposures to radiation should be adopted unless it produces at least sufficient benefit to the exposed individuals or to society to offset the radiation detriment it causes”. That is, selecting and performing nuclear medicine procedure should be subject to appropriate use criteria, and their appropriateness should be continuously reviewed.
+
+ Choosing Wisely ® , an initiative of the American Board of Internal Medicine, is a good example of justification issues in nuclear medicine procedures. It has recently announced a “Top 5” list of things that physicians and patients should question in nuclear imaging procedures [ 8 ]. According to the appropriateness of several nuclear imaging studies for specific indications, recommendations and discouragements were listed as follows: 1. Do not use PET/CT for cancer screening in healthy individuals. 2. Do not perform routine annual stress testing after coronary artery revascularization. 3. Do not use nuclear medicine thyroid scans to evaluate thyroid nodules in patients with normal thyroid gland function. 4. Avoid using a computed tomography (CT) angiogram to diagnose pulmonary embolism in young women with a normal chest radiograph; consider a radionuclide lung study (“V/Q study”) instead. 5. Do not use PET imaging in the evaluation of patients with dementia unless the patient has been assessed by a specialist in the field. In the view of radiation protection, the recent insurance debate on the use of F-18 FDG PET in Korea is another good example. Diagnostic accuracy and prognostic benefit from F-18 FDG PET can vary according to different clinical situations. So further justification of F-18 FDG PET should be done on an individual cancer basis, regarding various clinical situations.
+
+ Optimization of Radiation Protection in Nuclear Medicine Procedures
+
+ Optimization refers to as the principle that the radiation dose to the patients should be “as low as reasonably achievable (ALARA)”. The main efforts for optimization of radiation protection in nuclear medicine have been made in terms of the reduction of administered radiopharmaceutical activity. However, the balancing between maintaining efficacy and radiation protection is still quite difficult [ 7 ]. It results from that the benefits and potential harm from certain procedures using ionizing radiation can differ among countries, institutes, and/or patients. For example, the most appropriate administered dose of I-131 is still under controversy even after prospective randomized controlled trials demonstrated non-inferiority of low-dose I-131 ablation therapy [ 9 , 10 ]. It should be kept in mind that an “optimal” dose is not a fixed dose throughout the world. Therefore, to keep the rule of “ALARA”, economic and societal factors, as well as medical factors should be taken into account [ 6 ].
+
+ Particularly in nuclear medicine procedures, internal radiation is the most cumbersome issue for optimizing radiation protection. For quantification of internal radiation dose, the radiopharmaceutical pharmacokinetics and dosimetric calculation data are essential. SNMMI and the European Association of Nuclear Medicine have dosimetry task forces similar to those for procedure standards. Information about internal radiation exposure of patients in major nuclear imaging or therapeutic procedures can be obtained in their reports and guidelines [ 11 , 12 ]. Besides, very detailed information of the dosimetry of radiopharmaceuticals used in humans is described in ICRP Publications 80 [ 13 ] and 106 [ 14 ]. They describe radiopharmaceuticals and organs for dose calculation, biokinetic models for human organs, organ weighting factors, and the calculations of absorbed and effective doses. The mass and blood content of each human organ are given in detail and appropriate kinetic models are shown in schematic figures. Specific information for several organs, such as glomerular filtration rate in the kidneys and biliary excretion in the liver and bile tracts, are also presented using appropriate models. In addition to the biokinetic modeling, dose monitoring and safety issues for medical workers are also included, as are breast-feeding interruption periods in patients following imaging with specific radiopharmaceuticals. These kinds of information provide us with useful guidance in clinical practice. For example, water intake and voiding can be recommended for the renal-excreted radiopharmaceuticals, such as I-131 and F-18 FDG.
+
+ Many joint campaigns (i.e., Image Wisely ® and Image Gently ® ) regarding optimization issues are now available online. Image Wisely ® includes comprehensive recommendations on patient dose, radiation dosimetry, selection of radiopharmaceuticals, image acquisition, and reconstruction methods for each imaging modality. Image Gently ® specifically describes radiation protection issues in medical imaging studies for children and adolescents. Based on the association of low-level radiation in children or adolescents with cancer risk during adulthood [ 15 – 17 ], Image Gently ® mainly focuses on the exposure by CT, which contributes approximately two-thirds of the pediatric medical exposure [ 18 ]. It recommends CT voltage and current be tailored for each child (“One size does not fit all.”), while avoiding repetitive studies and scanning only the indicated area. Recommendations on nuclear imaging are also available, providing with the estimation of radiation exposure of adolescents and children in nuclear medicine.
+
+ Diagnostic Reference Level (DRL) as an Effort for Optimization of Radiation Protection in Nuclear Imaging
+
+ Despite the continuing efforts for optimization of radiation protection in nuclear imaging, the complexity and diversity of individual, physical/geometric, and biological factors make it more difficult to provide with a single, identical dose prescription guide to nuclear medicine professionals. As a result, no further instructions of tailoring individual radiation exposure in nuclear medicine have been provided. Optimization of radiation protection in nuclear medicine still depends on a dose prescription according to the patients’ body weight or fixed dose tables.
+
+ DRL can additionally guide radiation protection, by setting the highest limit of administered radiopharmaceutical activity. Originally, reference levels were described in ICRP Publication 60 in 1991 [ 5 ], as values of measured quantities above which a specified action or decision should be taken. The concept of DRL was specifically defined in ICRP Publication 73 [ 7 ], a particular form of reference level that applies to dose management in medical imaging. It is distinguished from dose limit or dose constraint (Table 2 ). A discrete percentile cutoff (75th percentile within a community or country) is usually used as a DRL in X-ray studies [ 20 ] to indicate relatively over-exposured cases. DRL should be continuously modified as the practices change, so it can be the most up-to-date parameter of optimization of radiation protection in nuclear medicine imaging.
+
+ Table 2.
+
+ Comparison among dose limit, diagnostic reference level, and dose constraint [ 19 ]
+
+ 
+ 
+ 
+ Diagnostic reference level 
+ Dose limit 
+ Dose constraint 
+
+ 
+ 
+ 
+ Objectives 
+ Avoid unnecessary radiation in an imaging procedure 
+ For screening (regulatory requirement) 
+ Limit the range of options in optimization of certain occupation/operation* 
+
+ 
+ Legal regulation 
+ Non-regulatory 
+ Regulatory 
+ Non-regulatory 
+
+ 
+ If exceeded 
+ Investigation of the reason 
+ Legal sanction 
+ Investigation of the reason 
+
+ 
+ Orientation 
+ Prospective 
+ Retroactive 
+ Prospective 
+
+ 
+ Source-oriented 
+ Individual-oriented 
+ Source-oriented 
+
+ 
+ Exposure situations 
+ Existing 
+ Planned 
+ Planned 
+
+ Emergency (controllable) 
+
+ 
+ Sources 
+ Single source 
+ Sum of all sources 
+ Single source 
+
+ 
+ Application to medical radiation exposure 
+ Yes 
+ No 
+ No** 
+
+ 
+ 
+
+ Open in a new tab 
+
+ 
+ * ICRP Publication 60 [ 5 ]
+
+ ** According to the statement “With regard to medical exposure of patients, it is not appropriate to apply dose limits or dose constraints, because such limits would often do more harm than good” in ICRP Publication 105 [ 6 ].
+
+ Specific Issues of Radiation Protection in Nuclear Medicine
+
+ Release of Patients after Radiopharmaceutical Therapy
+
+ The ICRP Publication 94 [ 21 ] has comments on the release of patients after I-131 ablation therapy, which is the most frequent radiopharmaceutical therapy in the world. It proposes a dose limit of 1 mSv/year for the public, and a dose constraint of 5 mSv/episode for relatives as acceptable limits. According to those values, legal restriction of patient isolation is applied at 33 mCi of I-131 and dose survey should be performed at 1-m distance and fulfill a dose rate < 70 uSv/hr in Korea. Moreover, it has recently become mandatory to provide appropriate instruction to patients who are treated with radioiodine and expected to deliver significant radiation to the public. However, the public radiation exposure from I-131 ablation therapy outpatient was reported to reach up to 6.5 mSv, which would exceed the public dose limit of 1 mSv/year [ 22 ]. So, the maximal activity of I-131 for outpatients is debatable. Besides, crowding of the patients after release from isolation ward can be a concentrated source of public radiation and environmental contamination. Especially in Korea, population density is quite high, which further limits the release of patients after I-131 ablation therapy. With these issues in hands, it should be remembered by nuclear medicine practitioners that the ICRP recommendations should be interpreted according to the environmental differences among countries. Although the maximal activity with which patients can be released is 1100 MBq for I-131 as standardized in the IAEA International Basic Safety Standards 1996 [ 23 ], the regulatory threshold for patient isolation—33 mCi in Korea—can be flexibly adapted to different levels when practically or socially needed.
+
+ Radiation Exposure of Pregnant Females and Fetus by Radiopharmaceuticals
+
+ The ICRP Publications 84 [ 24 ] and 88 [ 25 ] which were approved in 1999 and 2001, respectively, describe this issue in detail.
+
+ The radiation exposure of pregnant females and fetus can be considered in cases of two different radionuclides: those that do not cross the placenta and those that do. When a radionuclide that does not cross the placenta is administered to the mother, the radioactivity in maternal tissues acts only as an external source of irradiation to the fetus. So, the risk to the mother of not performing the examination is usually greater than the radiation risk to the fetus. Maternal hydration and frequent voiding can significantly reduce the fetal dose. On the other hand, in case of those cross the placenta such as I-131, the necessity or potential benefits by the procedures should be carefully weighed against the fetal risk of death or malformation by direct internal radiation to the fetus before the procedures.
+
+ In most cases, medical radiation exposure in diagnostic procedures does not increase the risk of fetal death, malformation or mental retardation. Therefore, fetal doses below 100 mGy should not be considered as a reason for terminating a pregnancy [ 24 ]. At fetal doses above 100 mGy, there can be fetal damage; its magnitude and type is a function of the dose and stage of pregnancy. Decreased intelligent quotient can occur as a consequence, especially when radiated within 8 to 25 weeks of the gestational age. The fetal risks of childhood cancer or leukemia are considered to be increased, but identical to those of children with radiation exposure [ 26 – 33 ]. There is no evidence to suggest that radiation exposure of parents’ gonads increases childhood cancer or malformation, although contraception is usually recommended [ 34 ].
+
+ DRL for Optimization of Nuclear Medicine Procedures in Korea
+
+ Many countries have already established DRL for more optimized radiation protection in nuclear medicine procedures [ 35 – 42 ]. In Korea, the first DRL values for nuclear medicine imaging studies performed in Korea were reported by MRSRC in 2015 [ 2 – 4 ]. Now nuclear imaging studies in Korea have gained a potential guidance of radiopharmaceutical dose prescription which was not available before. The first DRL values were induced by a comprehensive review of the dosing data from 155 domestic hospitals. Additionally, expert discussions were also included as previously recommended [ 35 ], to maintain reasonable dose levels with acceptable image quality.
+
+ However, a DRL should not be regarded as a regulatory restriction against the practitioner’s clinical decision. The administered activities are highly dependent on the procedures, so it is difficult to compare administered activities directly. Administered dose can highly vary among different regions, countries and indications, even when the sources used are identical [ 14 ]. Therefore, exceeding the DRL does not automatically mean that an examination is inadequately performed and meeting this level does not necessarily mean good practices [ 43 ]. DRL should be continuously reviewed and updated by sufficient discussion and agreement, especially in nuclear medicine. Continued collaborations among different institutions, societies, and governmental organizations are mandatory to optimize the nuclear medicine procedures in Korea.
+
+ Conclusion
+
+ Nuclear medicine is an essential part of medicine and will continue to grow in the future. Along with its advance, the important principles of radiation protection should also be firmly established in daily practice. The introduction of DRL can probably help the optimization of radiation protection in nuclear medicine. Eventually, the best and safest practices will be brought into clinical reality.
+
+ Acknowledgments
+
+ This work was supported by the Nuclear Safety Research Program through the Korea Foundation of Nuclear Safety (KOFONS), granted financial resource from the Nuclear Safety and Security Commission (NSSC), Republic of Korea (Grant No. 1305033).
+
+ Compliance with Ethical Standards
+
+ Conflict of Interest
+
+ Sang-Geon Cho and Jahae Kim declare that they have no conflict of interest.
+
+ Ho-Chun Song has received research grants from the Nuclear Safety Research Program through the Korea Radiation Safety Foundation (KORSAFe) and the Nuclear Safety and Security Commission (NSSC), Republic of Korea (Grant No. 1305033).
+
+ Ethical Statement
+
+ The study was approved by an institutional review board or equivalent and has been performed in accordance with the ethical standards laid down in the 1964 Declaration of Helsinki and its later amendments. The institutional review board waived the need to obtain informed consent.
+
+ References
+
+ 
+ 
+ 1. Choi YY, Jang SJ, Park SA, Kim SK, Song HC. KSNM Procedure Guidelines for 18 F-Fluoro-2-Deoxyglucose PET/CT in Cancer Patients. 2013. http://ksnm.or.kr/info/contents/KSNM_F-18_FDG_PET-CT__2013-12-02.pdf . Accessed 12 Sep. 2015. 
+
+ 
+ 2. Song HC. Diagnostic reference levels in nuclear medicine imaging. Asia Ocean J Nucl Med Biol. 2015;3(Suppl 1):S55. [ Google Scholar ]
+
+ 
+ 3. Song HC. Current global and Korean issues in safety of nuclear medicine procedures. Supplement for the 3rd International Symposium on the System of Radiological Protection (ICRP). 2015;S22. 
+
+ 
+ 4. Song HC. Diagnostic reference level in nuclear medicine. Supplement for the Annual Spring Meeting of the Korean Association for Radiation Protection. 2015:S47-61. 
+
+ 
+ 5. ICRP. ICRP Publication 60: 1990 Recommendations of the International Commission on Radiological Protection. Ann ICRP. 1991;21(1–3). [ PubMed ]
+
+ 
+ 6. ICRP. ICRP publication 105: radiological protection in medicine. Ann ICRP. 2007;37(6). [ DOI ] [ PubMed ]
+
+ 
+ 7. ICRP. ICRP publication 73: radiological protection and safety in medicine. Ann ICRP. 1996;26(2). [ PubMed ]
+
+ 
+ 8. Choosing Wisely. Five things physicians and patients should question. https://www.snmmi.org/ClinicalPractice/content.aspx?ItemNumber=9914 . Accessed 12 Sep. 2015 
+
+ 
+ 9. Mallick U, Harmer C, Yap B, Wadsley J, Clarke S, Moss L, et al. Ablation with low-dose radioiodine and thyrotropin Alfa in thyroid cancer. N Engl J Med. 2012;366:1674–1685. doi: 10.1056/NEJMoa1109589. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 10. Schlumberger M, Catargi B, Borget I, Deandreis D, Zerdoud S, Bridji B, et al. Strategies of radioiodine ablation in patients with low-risk thyroid cancer. N Engl J Med. 2012;366:1663–1673. doi: 10.1056/NEJMoa1108586. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 11. EANM. EANM practice guidelines. http://www.eanm.org/publications/guidelines/index.php?navId=37 . Accessed 12 Sep. 2015. 
+
+ 
+ 12. Oversight Committee for Guidance Document, SNMMI. SNMMI procedure standards. https://www.snmmi.org/ClinicalPractice/content.aspx?ItemNumber=6414 . Accessed 12 Sep. 2015. 
+
+ 
+ 13. ICRP. ICRP publication 80: radiation dose to patients from radiopharmaceuticals (addendum to ICRP publication 53). Ann ICRP. 1998;28(3). [ DOI ] [ PubMed ]
+
+ 
+ 14. ICRP. ICRP publication 106: radiation dose to patients from radiopharmaceuticals (addendum 3 to ICRP publication 53). Ann ICRP. 2007;38(1–2). [ DOI ] [ PubMed ]
+
+ 
+ 15. Jemal A, Siegel R, Xu J, Ward E. Cancer statistics, 2010. Cancer J Clin. 2010;60:277–300. doi: 10.3322/caac.20073. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 16. Pearce MS, Salotti JA, Little MP, McHugh K, Lee C, Kim KP, et al. Radiation exposure from CT scans in childhood and subsequent risk of leukaemia and brain tumours: a retrospective cohort study. Lancet. 2012;380:499–505. doi: 10.1016/S0140-6736(12)60815-0. [ DOI ] [ PMC free article ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 17. Pierce DA, Preston DL. Radiation-related cancer risks at low doses among atomic bomb survivors. Radiat Res. 2000;154:178–186. doi: 10.1667/0033-7587(2000)154[0178:RRCRAL]2.0.CO;2. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 18. Schauer DA, Linton OW. NCRP report no. 160, ionizing radiation exposure of the population of the united states, medical exposure-are we doing less with more, and is there a role for health physicists? Health Phys. 2009;97:1–5. doi: 10.1097/01.HP.0000356672.44380.b7. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 19. ICRP. ICRP publication 103. Ann ICRP. 2007;37(2–4). [ DOI ] [ PubMed ]
+
+ 
+ 20. National Electrical Manufacturers Association. Computed Tomography Dose Check. NEMA Standards Publication XR 25–2010. 
+
+ 
+ 21. ICRP. ICRP publication 94: release of patients after therapy with unsealed radionuclides. Ann ICRP. 2004;34(2). [ DOI ] [ PubMed ]
+
+ 
+ 22. Wellner U, Eschner W, Hillger HW, Schicha H. The exposure of relatives to patients of a nuclear medical ward after radioiodine therapy by inhalation of I-131 in their home. Nuklearmedizin. 1998;37:113–119. [ PubMed ] [ Google Scholar ]
+
+ 
+ 23. IAEA. Radiation Protection and Safety of Radiation Sources: International Basic Safety Standards. IAEA Safety Standards for protecting people and the environment. General Safety Requirements Part 3. 1996. 
+
+ 
+ 24. ICRP. ICRP publication 84: pregnancy and medical radiation. Ann ICRP. 2000;30(1). [ DOI ] [ PubMed ]
+
+ 
+ 25. ICRP. ICRP publication 88: doses to the embryo and fetus from intakes of radionuclides by the mother. Ann ICRP. 2001;31(1–3). [ DOI ] [ PubMed ]
+
+ 
+ 26. Boice JD, Jr, Miller RW. Childhood and adult cancer after intrauterine exposure to ionizing radiation. Teratology. 1999;59:227–233. doi: 10.1002/(SICI)1096-9926(199904)59:4<227::AID-TERA7>3.0.CO;2-E. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 27. Wakeford R. Childhood leukaemia following medical diagnostic exposure to ionizing radiation in utero or after birth. Radiat Prot Dosim. 2008;132:166–174. doi: 10.1093/rpd/ncn272. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 28. Brent RL. The effect of embryonic and fetal exposure to X-ray, microwaves, and ultrasound: counseling the pregnant and nonpregnant patient about these risks. Semin Oncol. 1989;16:347–368. [ PubMed ] [ Google Scholar ]
+
+ 
+ 29. Laurier D, Jacob S, Bernier MO, Leuraud K, Metz C, Samson E, et al. Epidemiological studies of leukaemia in children and young adults around nuclear facilities: a critical review. Radiat Prot Dosim. 2008;132:182–190. doi: 10.1093/rpd/ncn262. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 30. Chaparian A, Aghabagheri M. Fetal radiation doses and subsequent risks from X-ray examinations: should we be concerned? Iran J Reprod Med. 2013;11:899–904. [ PMC free article ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 31. Wakeford R, Little MP. Risk coefficients for childhood cancer after intrauterine irradiation: a review. Int J Radiat Biol. 2003;79:293–309. doi: 10.1080/0955300031000114729. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 32. Wakeford R, Darby SC, Murphy MF. Temporal trends in childhood leukaemia incidence following exposure to radioactive fallout from atmospheric nuclear weapons testing. Radiat Environ Biophys. 2010;49:213–227. doi: 10.1007/s00411-010-0266-4. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 33. Delongchamp RR, Mabuchi K, Yoshimoto Y, Preston DL. Cancer mortality among atomic bomb survivors exposed in utero or as young children. Radiat Res. 1997;147:385–395. doi: 10.2307/3579348. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 34. ICRP. ICRP publication 53: radiation dose to patients from radiopharmaceuticals. Ann ICRP. 1987;18(1). [ DOI ] [ PubMed ]
+
+ 
+ 35. Dose Datamed 2 (DDM2) Project report 2: diagnostic reference levels (DRLs) in Europe. 2010. http://ddmed.eu/_media/news:ddm2_project_report_part_2_final_rb_16052014.pdf . Accessed 12 Sep. 2015. 
+
+ 
+ 36. Vogiatzi S, Kipouros P, Chobis M. Establishment of dose reference levels for nuclear medicine in Greece. Radiat Prot Dosim. 2011;147:237–239. doi: 10.1093/rpd/ncr307. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 37. Roch P, Aubert B. French diagnostic reference levels in diagnostic radiology, computed tomography and nuclear medicine: 2004–2008 review. Radiat Prot Dosim. 2013;154:52–75. doi: 10.1093/rpd/ncs152. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 38. Etard C, Celier D, Roch P, Aubert B. National survey of patient doses from whole-body FDG PET-CT examinations in France in 2011. Radiat Prot Dosim. 2012;152:334–338. doi: 10.1093/rpd/ncs066. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 39. Korpela H, Bly R, Vassileva J, Ingilizova K, Stoyanova T, Kostadinova I, et al. Recently revised diagnostic reference levels in nuclear medicine in Bulgaria and in Finland. Radiat Prot Dosim. 2010;139:317–320. doi: 10.1093/rpd/ncq009. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 40. Brix G, Nosske D, Glatting G, Minkov V, Reske SN. A survey of PET activity in Germany during 1999. Eur J Nucl Med Mol Imaging. 2002;29:1091–1097. doi: 10.1007/s00259-002-0865-7. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 41. Hart D, Wall BF. UK nuclear medicine survey 2003–2004. Nucl Med Commun. 2005;26:937–946. doi: 10.1097/01.mnm.0000184939.28994.f9. [ DOI ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 42. Shannoun F, Blettner M, Schmidberger H, Zeeb H. Radiation protection in diagnostic radiology. Dtsch Arztebl Int. 2008;105:41–46. doi: 10.3238/arztebl.2008.0041. [ DOI ] [ PMC free article ] [ PubMed ] [ Google Scholar ]
+
+ 
+ 43. European Commission. Radiation protection 109: guidance on diagnostic reference levels (DRLs) for medical exposures. 1999. https://ec.europa.eu/energy/sites/ener/files/documents/109_en.pdf . Accessed 12 Sep. 2015. 
+
+ 
+
+ 
+ Articles from Nuclear Medicine and Molecular Imaging are provided here courtesy of Springer 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ ACTIONS
+
+ 
+ 
+ 
+ 
+ 
+ View on publisher site 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ PDF (263.3 KB) 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ Cite 
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ Collections 
+ 
+ 
+
+ 
+ 
+ 
+ Permalink 
+ 
+ 
+
+ 
+ 
+ PERMALINK
+
+ 
+ 
+ 
+ 
+ Copy 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ RESOURCES
+
+ 
+ 
+ 
+ 
+ Similar articles
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ Cited by other articles
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ Links to NCBI Databases
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Cite
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+ Copy 
+ 
+ 
+
+ 
+ 
+ 
+ Download .nbib 
+ .nbib 
+ 
+ 
+
+ 
+ 
+
+ 
+ Format: 
+ 
+ 
+ 
+ AMA
+ 
+ 
+ 
+ APA
+ 
+ 
+ 
+ MLA
+ 
+ 
+ 
+ NLM
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Add to Collections
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Create a new collection 
+ 
+
+ 
+ 
+ Add to an existing collection 
+ 
+
+ 
+
+ 
+ 
+ 
+ Name your collection
+ * 
+ 
+ 
+ 
+
+ 
+ 
+ Choose a collection
+ 
+ 
+ 
+ 
+ Unable to load your collection due to an error
+
+ Please try again 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ Add
+ 
+ 
+ Cancel
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ Follow NCBI
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ NCBI on X (formerly known as Twitter) 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ NCBI on Facebook 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ NCBI on LinkedIn 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ NCBI on GitHub 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ NCBI RSS feed 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ Connect with NLM
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ NLM on X (formerly known as Twitter) 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ NLM on Facebook 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ NLM on YouTube 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ National Library of Medicine
+ 
+ 8600 Rockville Pike
+ Bethesda, MD 20894 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Web Policies
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ FOIA
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ HHS Vulnerability Disclosure
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Help
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Accessibility
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Careers
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ NLM
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ NIH
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ HHS
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ USA.gov
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ Back to Top
