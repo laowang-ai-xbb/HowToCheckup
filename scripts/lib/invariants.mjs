@@ -867,6 +867,34 @@ export const INVARIANTS = [
       return null;
     },
   },
+  {
+    id: 'seo-machine-layer',
+    why: '老板 2026-11-24 拍板的 SEO/AIO 五件套：canonical、og:url/og:locale、JSON-LD（WebApplication + 6 条真实 FAQ）、noscript 兜底摘要、llms.txt。这些是给搜索引擎和 AI 读的"机器说明书"——用户看不见，所以坏了也没人发现，必须钉住。内容只许写产品事实：写假信息会被搜索引擎降权。',
+    check(f) {
+      const idx = f['index.html'] || '';
+      if (!/<link rel="canonical" href="__SITE_ORIGIN__\/"/.test(idx)) return '首页没有 canonical（或占位符被改动）';
+      if (!/property="og:locale" content="zh_CN"/.test(idx)) return 'og:locale 丢了';
+      const desc = (idx.match(/<meta\s+name="description"\s+content="([^"]*)"/) || [''])[1];
+      if (!/免费/.test(desc) || !/不收集隐私/.test(desc)) return 'description 没带「免费 / 不收集隐私」关键词';
+      const m = idx.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+      if (!m) return '首页没有 JSON-LD 结构化数据';
+      let ld;
+      try { ld = JSON.parse(m[1].split('__SITE_ORIGIN__').join('https://x.example')); }
+      catch (e) { return `JSON-LD 不是合法 JSON（结构化数据会整体失效）：${e.message.slice(0, 60)}`; }
+      const types = (ld['@graph'] || []).map((n) => n['@type']);
+      if (!types.includes('WebApplication')) return 'JSON-LD 丢了 WebApplication（免费、健康类声明）';
+      if (!types.includes('FAQPage')) return 'JSON-LD 丢了 FAQPage';
+      const qs = (ld['@graph'] || []).flatMap((n) => n.mainEntity || []);
+      if (qs.length < 5) return `FAQ 只剩 ${qs.length} 条问答（应有 6 条）`;
+      if (!qs.some((q) => /代替医生|医疗建议/.test((q.acceptedAnswer || {}).text || ''))) return 'FAQ 丢了「不能代替医生」那条（免责必须在场）';
+      if (!/<noscript>[\s\S]*长命百岁体检项目指南[\s\S]*国家权威指南[\s\S]*<\/noscript>/.test(idx)) return 'noscript 兜底摘要丢了（不开 JS 的爬虫只能爬到空白）';
+      if (!/需要开启 JavaScript/.test(idx)) return 'noscript 里「开启 JavaScript」的提示丢了';
+      let llms = '';
+      try { llms = readFileSync('./public/llms.txt', 'utf8'); } catch { return 'public/llms.txt 不存在（构建不会凭空生出来）'; }
+      if (!/免费/.test(llms) || !/不是医疗建议/.test(llms) || !/\/e\.html/.test(llms)) return 'llms.txt 缺关键事实（免费 / 不是医疗建议 / 依据页路径）';
+      return null;
+    },
+  },
 ];
 
 /** 跑一遍全部不变量，返回 [{id, ok, msg}] */

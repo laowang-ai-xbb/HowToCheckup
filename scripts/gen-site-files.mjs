@@ -86,6 +86,9 @@ if (existsSync(indexPath)) {
       `  <meta property="og:url" content="${origin}/" />\n  </head>`,
     );
   }
+  // canonical / JSON-LD 里的 __SITE_ORIGIN__ 占位符按真实域名替换。
+  // 首页源码里不能写死域名：域名变了这里不改，canonical 就指向旧域名，权重全喂给幽灵页。
+  html = html.split('__SITE_ORIGIN__').join(origin);
   if (html !== before) writeFileSync(indexPath, html, 'utf8');
 }
 

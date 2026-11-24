@@ -1320,7 +1320,51 @@ try {
   }
 
   // ---- 3.6 旧链接与残缺链接 ----
-  // 去年/上一版分享出去的 /?p=xxx 必须跳到结果页，否则那批链接会把首页顶进索引
+  /* ---- SEO/AIO 机器层（老板 2026-11-24 拍板五项全做）----
+   * 这些都在"源代码层"，用户看不见，坏了也没人发现 —— 所以必须在真浏览器里验：
+   * JSON-LD 要真的能被 JSON.parse（写错一个逗号整段结构化数据就静默失效），
+   * canonical 的占位符要被构建替换成真域名，noscript 兜底要对开 JS 的用户不可见。 */
+  {
+    await goto(BASE + '/');
+    await waitFor(`!!document.querySelector('#ageHome')`, '首页（SEO 验收）');
+    const seo = await evaluate(`(() => {
+      const c = document.querySelector('link[rel=canonical]');
+      const lds = [...document.querySelectorAll('script[type="application/ld+json"]')];
+      const ldText = lds.map(s => s.textContent).join('');
+      let types = [], nQ = 0, ldErr = '';
+      try {
+        const ld = JSON.parse(ldText);
+        types = (ld['@graph'] || []).map(n => n['@type']);
+        nQ = (ld['@graph'] || []).flatMap(n => n.mainEntity || []).length;
+      } catch (e) { ldErr = String(e).slice(0, 80); }
+      return {
+        canon: c ? c.getAttribute('href') : '',
+        desc: (document.querySelector('meta[name=description]') || {}).content || '',
+        ogLocale: (document.querySelector('meta[property="og:locale"]') || {}).content || '',
+        types, nQ, ldErr, ldText,
+        noscript: (document.querySelector('noscript') || {}).textContent || '',
+        bodyText: document.body.innerText,
+      };
+    })()`);
+    check('canonical 在且占位符已被真实域名替换',
+      /^https?:\/\/[^/]+\/$/.test(seo.canon || '') && !/__SITE_ORIGIN__/.test(seo.canon || ''), seo.canon);
+    check('description 带上「免费 / 不收集隐私」搜索词',
+      /免费/.test(seo.desc) && /不收集隐私/.test(seo.desc), seo.desc.slice(0, 46));
+    check('JSON-LD 是合法 JSON 且含 WebApplication + FAQPage',
+      seo.types.includes('WebApplication') && seo.types.includes('FAQPage') && !seo.ldErr,
+      seo.ldErr || seo.types.join(' / '));
+    check('FAQ 有 6 条问答且「不能代替医生」在场',
+      seo.nQ >= 6 && /代替医生/.test(seo.ldText), '问答 ' + seo.nQ + ' 条');
+    check('og:locale 在（转发卡片语言声明）', seo.ogLocale === 'zh_CN', seo.ogLocale);
+    check('noscript 兜底摘要写出了产品事实（给不开 JS 的爬虫读）',
+      /长命百岁体检项目指南/.test(seo.noscript) && /国家权威指南/.test(seo.noscript) && /需要开启 JavaScript/.test(seo.noscript));
+    check('noscript 兜底对正常用户不可见（页面视觉零变化）',
+      !seo.bodyText.includes('请在浏览器设置里允许'));
+    const llms = await evaluate(`fetch(BASE_PLACEHOLDER + '/llms.txt').then(r => r.ok ? r.text() : '').catch(() => '')`.replace('BASE_PLACEHOLDER', JSON.stringify(BASE)));
+    check('llms.txt 已上线且写了免费/免责/依据页', /免费/.test(llms) && /不是医疗建议/.test(llms) && /e\.html/.test(llms), 'llms.txt ' + llms.length + ' 字');
+  }
+
+  // 去年/上一版分享出去的 /?p= 必须跳到结果页，否则那批链接会把首页顶进索引
   await goto(BASE + '/?p=' + 'eyJhZ2UiOjUyfQ');
   await waitFor(`/\\/r\\.html$/.test(location.pathname)`, '旧链接跳转', 5000);
   // 原来这里写的是 check(名字, true)：永远是绿的，只证明"这一行执行到了"。

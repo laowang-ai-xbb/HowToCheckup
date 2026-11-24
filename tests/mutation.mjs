@@ -383,6 +383,13 @@ const MUTATIONS = [
     to: 'const fresh = (rule.catalogIds || []).slice();',
     desc: '「再过几年」不再滤老面孔，便潜血又挂回预告里',
   },
+  {
+    inv: 'seo-machine-layer',
+    file: 'index.html',
+    from: '"@type": "WebApplication"',
+    to: '"@type": "WebSite"',
+    desc: 'JSON-LD 里的软件声明被换掉，免费/健康类身份丢失',
+  },
 ];
 
 let pass = 0;

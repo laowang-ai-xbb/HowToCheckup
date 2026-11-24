@@ -56,9 +56,9 @@ npm test         # 数据校验 + 单测 + 不变量 + 变异测试 + 真浏览�
 | 检查链 | 作用 | 规模 |
 |---|---|---|
 | 数据校验 | 规则、证据、选项的字段完整性与引用有效性 | 全量 |
-| 不变量检查 | 跨文件约束：默认值不得等于选项值、文案与链接不得漂移、署名与头像尺寸一致 | 49 条 |
-| 变异测试 | 故意改坏源码，证明每条不变量真的会报警（防止"永远通过"的假检查） | 52 条 |
-| 真浏览器验收 | Chrome 无头模式按 iPhone 尺寸跑完整流程，含截图与破版检测 | 206 项 |
+| 不变量检查 | 跨文件约束：默认值不得等于选项值、文案与链接不得漂移、署名与头像尺寸一致 | 50 条 |
+| 变异测试 | 故意改坏源码，证明每条不变量真的会报警（防止"永远通过"的假检查） | 53 条 |
+| 真浏览器验收 | Chrome 无头模式按 iPhone 尺寸跑完整流程，含截图与破版检测 | 214 项 |
 
 桌面端（≥900px）：
 
@@ -75,7 +75,7 @@ npm test         # 数据校验 + 单测 + 不变量 + 变异测试 + 真浏览�
 - Pure static front end, vanilla JavaScript (no framework), first paint < 100 KB, works in WeChat's built-in browser and Chrome 61+.
 - No backend, no database, no cookies, no analytics. The profile lives only in the URL hash.
 - 43 screening rules as JSON config, so guideline updates are data edits, not code changes.
-- Test system: 49 cross-file invariants, 52 mutation tests proving the guards actually fire, and 206 real-browser checks (iPhone-size headless Chrome).
+- Test system: 50 cross-file invariants, 53 mutation tests proving the guards actually fire, and 214 real-browser checks (iPhone-size headless Chrome).
 ## 目录
 
 | 路径 | 是什么 |
