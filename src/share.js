@@ -135,6 +135,81 @@ export const buildShareUrl = (profile) => {
   return url.toString();
 };
 
+/* ---------------- 结果快照（v=2&s=，默认分享方式）----------------
+ * 老板 2026-11-24 定的方向：默认分享"结果快照"，不再把原始病史答案塞进链接。
+ *
+ * 为什么不是简单地删掉 familyHistory / pastHistory / hpStatus 再分享：
+ *   那几个字段直接决定清单里有没有「肠镜提前」「乳腺提前」「胃镜从几岁开始」。
+ *   删掉再让对方重算，他看到的是一份"少了好几项"的清单 —— 和原主人的不一样，
+ *   对一个"分享我算出来的清单"的功能，这是硬伤。
+ *
+ * 所以快照存的是**已经算好的清单本身**：可见规则 ID + 年龄/性别 + 生成日期。
+ *   ① 不含任何原始问卷答案（家族史、既往史、幽门螺杆菌、吸烟年限……一概不带）；
+ *   ② 接收方直接按规则 ID 渲染这份清单，不重跑引擎 —— 看到的和原主人一致；
+ *   ③ 带生成日期，页面提示"规则更新后以原页为准"，避免旧快照和最新指南打架；
+ *   ④ 老 '#p=' 链接一字不改继续兼容，历史分享不会失效。
+ *
+ * 快照只存 ID 不存规则内容：规则正文（verdict/依据/频次）永远从 rules.json 现取，
+ * 这样某条依据被修正后，老快照点开看到的是更正后的原文，而不是当初的错字。
+ */
+export const SNAPSHOT_VERSION = 2;
+
+/** 把当前展示的清单压成快照串。ids 是 {A:[],B:[],C:[]} 的可见规则 ID */
+export const encodeSnapshot = ({ age, gender }, ids, date = new Date().toISOString().slice(0, 10)) => {
+  const slim = {
+    v: SNAPSHOT_VERSION,
+    age: Number(age),
+    gender: gender === 'female' ? 'female' : 'male',
+    date: String(date).slice(0, 10),
+    A: (ids?.A || []).map(String),
+    B: (ids?.B || []).map(String),
+    C: (ids?.C || []).map(String),
+  };
+  return b64url(JSON.stringify(slim));
+};
+
+/** 从 hash/search 里解出快照；不是 v=2 或字段不合法一律返回 null（当坏链接处理） */
+export const decodeSnapshot = (input = '') => {
+  const raw = String(input).replace(/^[?#]/, '');
+  if (!raw) return null;
+  const q = new URLSearchParams(raw);
+  // 支持两种写法：#v=2&s=<code>  和  #s=<code>&v=2
+  if (q.get('v') !== String(SNAPSHOT_VERSION)) return null;
+  const code = q.get('s');
+  if (!code) return null;
+  try {
+    const o = JSON.parse(unb64url(code));
+    if (o.v !== SNAPSHOT_VERSION) return null;
+    const age = Number(o.age);
+    if (!Number.isInteger(age) || age < 18 || age > 149) return null;
+    if (!['male', 'female'].includes(o.gender)) return null;
+    const arr = (x) => Array.isArray(x) ? x.filter((i) => typeof i === 'string' && i.length < 80).slice(0, 120) : [];
+    return {
+      v: SNAPSHOT_VERSION, age, gender: o.gender,
+      date: /^\d{4}-\d{2}-\d{2}$/.test(o.date) ? o.date : '',
+      A: arr(o.A), B: arr(o.B), C: arr(o.C),
+    };
+  } catch {
+    return null;
+  }
+};
+
+/** 默认分享链接：指向结果页的结果快照，不含原始病史 */
+export const buildSnapshotUrl = (snapCode, base = (typeof location !== 'undefined' ? location.href : 'http://localhost/')) => {
+  const url = new URL('r.html', base);
+  url.search = '';
+  url.hash = `v=${SNAPSHOT_VERSION}&s=${snapCode}`;
+  return url.toString();
+};
+
+/** 依据页链接的快照版：把同一份快照带过去，并按规则 ID 定位锚点 */
+export const buildSnapshotEvidenceUrl = (snapCode, anchor = '', base = (typeof location !== 'undefined' ? location.href : 'http://localhost/')) => {
+  const url = new URL('e.html', base);
+  url.search = '';
+  url.hash = `v=${SNAPSHOT_VERSION}&s=${snapCode}` + (anchor ? `&a=${anchor}` : '');
+  return url.toString();
+};
+
 /** 复制：优先 Clipboard API，失败回退到 execCommand */
 export const copyText = async (text) => {
   try {

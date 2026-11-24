@@ -126,6 +126,57 @@ const body = (extra = '') =>
   check('没有新标题时安静', newTitles(titles, titles).length === 0);
 }
 
+/* ---------- 7. 坏页识别：HTTP 200 也可能是 Page Not Found（2026-11-24） ---------- */
+{
+  const { isBadPage } = await import('../scripts/lib/source-fetch.mjs');
+  check('CDC 那种 200 + Page Not Found 被判坏页', isBadPage('Page Not Found | CDC\nWe could not find the page you requested.'));
+  check('404 标题被判坏页', isBadPage('404 Not Found\nThe requested URL was not found.'));
+  check('访问验证页被判坏页', isBadPage('访问验证\n请完成验证后继续访问本站内容。'));
+  check('正常短公告不被误杀', !isBadPage('关于发布2025年版体检指引的通知'));
+  check('正文里提到 404 的正常指南不被误杀',
+    !isBadPage('筛查指南（2025年版）\n本章节讨论罕见病的检出率，正文很长很长，其中一句提到 404 这个编号并不代表错误页面。'.repeat(3)));
+}
+
+/* ---------- 8. 自动运营决策层：机器只降不升、不碰判定（2026-11-24） ---------- */
+{
+  const { decide, SAFE_STATUS } = await import('../scripts/lib/auto-decide.mjs');
+
+  // 引用失效 + 数字变化 → 都要降级，且只写白名单字段
+  const r1 = {
+    checkedAt: '2026-11-24T10:00:00Z',
+    quoteBroken: [{ ruleId: 'r-a', url: 'http://x', quote: '旧句' }],
+    changed: [{ url: 'http://y', usedBy: ['r-b'], numsAdded: ['50'] }],
+    broken: [{ url: 'http://z', usedBy: ['r-c'], error: 'WAF' }],
+    catalogWatch: { newGuidelines: [{ source: '卫健委', title: '新指南', url: 'http://w' }], broken: [] },
+  };
+  const { actions, summary } = decide(r1);
+  check('决策产出降级/坏源/线索三类动作',
+    summary.downgrade === 2 && summary.broken === 1 && summary.radar === 1, JSON.stringify(summary));
+  const dg = actions.find((a) => a.type === 'DOWNGRADE_EVIDENCE');
+  check('降级目标状态只能是 stale（绝不升级）',
+    dg.fields.status === 'stale' && SAFE_STATUS.includes(dg.fields.status), dg.fields.status);
+  check('降级不写判定字段',
+    !('verdict' in dg.fields) && !('when' in dg.fields) && !('quotes' in dg.fields) && !('frequency' in dg.fields),
+    Object.keys(dg.fields).join(','));
+  check('降级 stamp 用报告日期', dg.fields.checkedAt === '2026-11-24', dg.fields.checkedAt);
+
+  // 幂等：同一报告跑两遍，动作完全一致
+  const again = decide(r1).actions;
+  check('决策幂等（同报告两次结果相同）', JSON.stringify(actions) === JSON.stringify(again));
+
+  // 空报告 / 无变化 → no-op，不产生动作
+  const noop = decide({ quoteBroken: [], changed: [], broken: [], catalogWatch: { newGuidelines: [] } });
+  check('无变化时 no-op', noop.summary.noop && noop.actions.length === 0, JSON.stringify(noop.summary));
+  check('坏报告不崩、安全 no-op', decide(null).actions.length === 0);
+
+  // 目录坏页也算坏源，但只记不删依据
+  const r2 = { quoteBroken: [], changed: [], broken: [], catalogWatch: { broken: [{ source: 'CDC', url: 'http://c', error: '404' }] } };
+  const d2 = decide(r2);
+  check('目录坏页被记为坏源', d2.actions.some((a) => a.type === 'MARK_BROKEN' && a.source === 'CDC'));
+  check('坏源动作不含删除依据字段',
+    d2.actions.every((a) => !('remove' in a) && !('delete' in a)));
+}
+
 console.log(`\n${pass}/${pass + fails.length} 通过`);
 if (fails.length) {
   console.log('失败项：\n' + fails.map((f) => `  · ${f}`).join('\n'));

@@ -116,12 +116,18 @@ const catalog = { sources: 0, newGuidelines: [], broken: [], baselineCreated: fa
           }
         }
       } catch (e) {
-        catalog.broken.push({ source: src.org, url: src.url, error: String(e.message || e).slice(0, 160) });
+        // 2026-11-24 根因修复：失败的源**不写进 next**。
+        // 旧写法把空快照也塞进基线，等于把"这次没抓到"冻结成"这个栏目就是没有标题"，
+        // 等站点恢复后会一次性冒出几十条"新指南"。现在失败就沿用旧基线，不覆盖。
+        if (base[src.id]) next[src.id] = base[src.id];
+        const errText = String(e.message || e).slice(0, 160);
+        catalog.broken.push({ source: src.org, url: src.url, error: errText });
       }
       process.stdout.write('o');
     }
-    if (initWatchBaseline || !existsSync(BASE_FILE) || catalog.baselineCreated
-      || Object.keys(base).length < watch.sources.length) {
+    // 只在有成功抓到的源时才写基线；全失败时一个字都不写，避免把空壳固化。
+    if (Object.keys(next).length > 0 && (initWatchBaseline || !existsSync(BASE_FILE)
+      || catalog.baselineCreated || Object.keys(base).length < watch.sources.length)) {
       mkdirSync(dirname(BASE_FILE), { recursive: true });
       writeFileSync(BASE_FILE, JSON.stringify(next, null, 2) + '\n', 'utf8');
     }

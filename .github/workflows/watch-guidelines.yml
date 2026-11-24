@@ -15,7 +15,8 @@ on:
   workflow_dispatch: # 也可以在 Actions 页面手动点一下
 
 permissions:
-  contents: read
+  # 巡检结论要能自动降级并提交通道；无变化时不产生任何提交。
+  contents: write
   issues: write
 
 concurrency:
@@ -111,11 +112,13 @@ jobs:
             echo '```'
             echo ''
             echo '---'
-            echo '处理步骤：'
-            echo '1. 先看「引用失效」那一段 —— 我们引的原句找不到了，说明指南正文改写过，结论可能已经错了；'
-            echo '2. 再看「有变化」里带数字的新句子 —— 年龄、间隔、频次一变，verdict 要跟着改；'
-            echo '3. 确认是真实更新后，`node scripts/snapshot-sources.mjs --force` 重抓快照，再跑 `npm run validate` 看引用是否还命中；'
-            echo '4. 纯网页改版（加了推荐位、时间戳）不用动数据，在快照里重洗一遍即可。'
+            echo '机器已经自动处理的：'
+            echo '1. 引用失效 / 关键数字变化 → 相关依据自动降为「待核实」，不自动改结论数字（避免机器猜错年龄/间隔）；'
+            echo '2. 抓不到的源、目录新标题 → 记进线索队列，不直接改规则。'
+            echo ''
+            echo '需要你看一眼的：'
+            echo '3. 如果确认是真实更新，核对新版原文后补引文，再把依据改回 verified；'
+            echo '4. 自动降级方向只会「少推荐、不会多推荐」，判断错了也不会把人往有害的检查上推。'
           } > /tmp/issue-body.md
 
           if [ -n "$existing" ]; then
@@ -123,3 +126,26 @@ jobs:
           else
             gh issue create --title "$title" --body-file /tmp/issue-body.md
           fi
+
+      # 自动执行：巡检结论变程序动作，不需要人点确认。
+      # 只做保守降级 + 记录线索；跑 test:logic 全绿才提交，红了自动回滚。
+      - name: 自动执行巡检结论
+        shell: bash
+        env:
+          CHROME: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          node scripts/auto-apply.mjs --report=reports/updates.json --commit
+
+      # 浏览器验收单独一步：自动降级不碰渲染代码，这里只做兜底报告，不阻塞上面的提交。
+      - name: 浏览器验收（兜底）
+        if: always()
+        shell: bash
+        env:
+          CHROME: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          npm run build >/dev/null 2>&1
+          npx vite preview --port 4173 --strictPort >/dev/null 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
+          NO_BUILD=1 npm run check:ui || echo '::warning::浏览器验收未通过，请查看日志'

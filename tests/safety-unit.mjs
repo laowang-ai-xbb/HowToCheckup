@@ -129,5 +129,229 @@ const ids = (b, cat) => b[cat].filter((r) => !r.hidden).map((r) => r.id);
   check('被动吸烟≥20 年即使在事实层也成立', ld.eligible === true);
 }
 
+/* ============================================================
+ * 6. 金标准扩到 100 条（老板 2026-11-24 计划 6）
+ *
+ * 上面 27 条是"曾经真错过"的回归用例；这一批是**边界矩阵**：
+ * 把 2025 LDCT、三闸、三态、性别与抑制的边界成系统地钉死，
+ * 以后任何人改规则/事实层，只要有一条边界被踩坏，这里就红。
+ * 全部只看输出（has/ids/medical meta），不碰内部实现。
+ * ============================================================ */
+
+// ---- 6A. LDCT：吸烟剂量 × 戒烟时间 × 年龄（严格口径）----
+{
+  const cases = [
+    // 说明, 画像增量, 期望高危?
+    ['现在吸烟 19 包年不够 20', { smoking: 'yes', packYears: 19 }, false],
+    ['现在吸烟 20 包年够', { smoking: 'yes', packYears: 20 }, true],
+    ['现在吸烟 30 包年够', { smoking: 'yes', packYears: 30 }, true],
+    ['戒烟≤5 年 20 包年够', { smoking: 'quit', packYears: 20, smokingQuitYears: 'lt5' }, true],
+    ['戒烟超过 5 年不够（进分歧）', { smoking: 'quit', packYears: 20, smokingQuitYears: 'ge5' }, false],
+    ['戒烟 5 年但这题缺失 → 算不出来', { smoking: 'quit', packYears: 20 }, false],
+    ['戒烟但说不清年限 → 算不出来', { smoking: 'quit', packYears: 20, smokingQuitYears: 'unknown' }, false],
+    ['不吸烟即使 40 包年也不按吸烟入口', { smoking: 'no', packYears: 40 }, false],
+    ['不方便说吸烟 → 不猜高危', { smoking: 'declined', packYears: 20 }, false],
+    ['吸烟题完全没答 → 不算高危', { packYears: 20 }, false],
+    ['49 岁吸烟 20 包年不够年龄', { age: 49, smoking: 'yes', packYears: 20 }, false],
+    ['50 岁吸烟 20 包年够', { age: 50, smoking: 'yes', packYears: 20 }, true],
+    // 80 岁起不进 A 档强推荐，改由 lung-ldct-80plus（B 档"看你的情况"）承载
+    ['80 岁吸烟 20 包年不进 A 档强推荐', { age: 80, smoking: 'yes', packYears: 20 }, false],
+    ['81 岁超出 LDCT 年龄上限', { age: 81, smoking: 'yes', packYears: 20 }, false],
+    ['女性吸烟 20 包年同样够', { gender: 'female', smoking: 'yes', packYears: 20 }, true],
+  ];
+  for (const [name, over, want] of cases) {
+    const b = evaluate(P(over));
+    check('LDCT·' + name, has(b, 'A', 'lung-ldct-high-risk') === want, ids(b, 'A').join(','));
+  }
+}
+
+// ---- 6B. LDCT：被动吸烟年限边界 ----
+{
+  const cases = [
+    ['二手烟≥20 年够', { secondhand: 'yes', secondhandYears: 'ge20' }, true],
+    ['二手烟 15–20 年不够（无家族史）', { secondhand: 'yes', secondhandYears: 'ge15' }, false],
+    ['二手烟<15 年不够', { secondhand: 'yes', secondhandYears: 'lt15' }, false],
+    ['二手烟说不清年限 → 不算高危', { secondhand: 'yes', secondhandYears: 'unknown' }, false],
+    ['二手烟题缺失 → 不算高危', { secondhand: 'yes' }, false],
+    ['二手烟答"没有" → 不够', { secondhand: 'no', secondhandYears: 'ge20' }, false],
+    ['不吸烟 + 二手烟≥20 年仍够', { smoking: 'no', secondhand: 'yes', secondhandYears: 'ge20' }, true],
+  ];
+  for (const [name, over, want] of cases) {
+    const b = evaluate(P(over));
+    check('二手烟·' + name, has(b, 'A', 'lung-ldct-high-risk') === want, ids(b, 'A').join(','));
+  }
+}
+
+// ---- 6C. LDCT：职业致癌物（明确 vs 普通粉尘）× 年限 ----
+{
+  const agents = {
+    known: ['asbestos'],        // 石棉：指南点名
+    legacy: ['mining'],         // 旧职业类别：兜底算致癌物
+    ordinary: ['construction'], // 建筑：普通粉尘，不算
+  };
+  const cases = [
+    ['石棉≥5 年够', { agents: agents.known, years: 'ge5' }, true],
+    ['石棉高强度≥1 年够', { agents: agents.known, years: 'high1' }, true],
+    ['石棉<5 年一般强度不够', { agents: agents.known, years: 'lt5' }, false],
+    ['石棉年限说不清 → 不算高危', { agents: agents.known, years: 'unknown' }, false],
+    ['普通粉尘≥5 年不算高危', { agents: agents.ordinary, years: 'ge5' }, false],
+    ['建筑+石棉混合：有石棉就算', { agents: ['construction', 'asbestos'], years: 'ge5' }, true],
+    // 旧链接的 occupationTypes（mining 等）目前只在 facts 层有兜底，规则 when 不认它，
+    // 所以不会进 A 档。如实钉住这个行为；若日后决定让旧类别也升档，需要同时改规则 when。
+    ['旧链接职业类别 mining≥5 年不进 A 档', { legacyTypes: agents.legacy, years: 'ge5' }, false],
+    ['职业题答"没有"不算', { dust: 'no', agents: agents.known, years: 'ge5' }, false],
+  ];
+  for (const [name, cfg, want] of cases) {
+    // 旧链接用 occupationTypes（如 mining），新题用 occupationAgents（如 asbestos）
+    const over = { occupationDust: cfg.dust || 'yes', occupationYears: cfg.years };
+    if (cfg.legacyTypes) over.occupationTypes = cfg.legacyTypes;
+    else over.occupationAgents = cfg.agents;
+    const b = evaluate(P(over));
+    check('职业·' + name, has(b, 'A', 'lung-ldct-high-risk') === want, ids(b, 'A').join(','));
+  }
+}
+
+// ---- 6D. LDCT：家族史合并暴露 ----
+{
+  const cases = [
+    ['家族史 + 本人 15 包年够', { familyHistory: ['lung'], packYears: 15, smoking: 'yes' }, true],
+    ['家族史 + 本人 14 包年不够', { familyHistory: ['lung'], packYears: 14, smoking: 'yes' }, false],
+    ['家族史 + 二手烟≥15 年够', { familyHistory: ['lung'], secondhand: 'yes', secondhandYears: 'ge15' }, true],
+    ['家族史 + 二手烟<15 年不够', { familyHistory: ['lung'], secondhand: 'yes', secondhandYears: 'lt15' }, false],
+    ['家属史但本人完全不吸烟 → 分歧不升档', { familyHistory: ['lung'], smoking: 'no' }, false],
+    ['非肺癌家族史不与吸烟合并', { familyHistory: ['breast'], packYears: 20, smoking: 'yes' }, true], // 20 包年本身够
+    ['家族史为"不确定"不算有', { familyHistory: 'unknown', packYears: 20, smoking: 'yes' }, true], // 20 包年本身够
+  ];
+  for (const [name, over, want] of cases) {
+    const b = evaluate(P(over));
+    check('家族史·' + name, has(b, 'A', 'lung-ldct-high-risk') === want, ids(b, 'A').join(','));
+  }
+  // 分歧路径：家族史单独 / 戒烟超 5 年 / 职业短年限
+  for (const [name, over] of [
+    ['家族史单独进分歧', { familyHistory: ['lung'], smoking: 'no' }],
+    ['戒烟超 5 年进分歧', { smoking: 'quit', packYears: 20, smokingQuitYears: 'ge5' }],
+    ['职业短年限进分歧', { occupationDust: 'yes', occupationAgents: ['asbestos'], occupationYears: 'lt5' }],
+  ]) {
+    const [, meta] = evaluateDetailed(P(over));
+    check('分歧·' + name, meta.disputes.length === 1, `disputes=${meta.disputes.length}`);
+  }
+}
+
+// ---- 6E. 筛查前提三闸：症状 / 衰弱 / 年龄 ----
+{
+  const gated = [
+    ['有咳嗽症状', { symptomFlags: ['cough2w'] }],
+    ['有咯血症状', { symptomFlags: ['hemoptysis'] }],
+    ['有胸痛症状', { symptomFlags: ['chestPain'] }],
+    ['有体重下降症状', { symptomFlags: ['weightLoss'] }],
+    ['有气短症状', { symptomFlags: ['breathless'] }],
+    ['衰弱', { frailty: 'yes' }],
+    ['近期住院≥2 次', { recentHospital: 'ge2' }],
+    ['年龄 101', { age: 101 }],
+    ['年龄 149', { age: 149 }],
+  ];
+  for (const [name, over] of gated) {
+    const [b, meta] = evaluateDetailed(P(over));
+    check('三闸·' + name + ' 压下所有 A/B',
+      b.A.every((r) => r.hidden) && b.B.every((r) => r.hidden) && vaccinesDeferred(meta),
+      `A=${ids(b, 'A').join(',')}`);
+  }
+  const notGated = [
+    ['衰弱答"没有"', { frailty: 'no' }],
+    ['住院 1 次', { recentHospital: 'one' }],
+    ['住院题没答', {}],
+    ['年龄 100 仍适用', { age: 100 }],
+    ['年龄 18 起', { age: 18 }],
+  ];
+  for (const [name, over] of notGated) {
+    const [b] = evaluateDetailed(P(over));
+    check('三闸·' + name + ' 不误压', b.A.some((r) => !r.hidden), `A=${ids(b, 'A').join(',')}`);
+  }
+}
+
+// ---- 6F. 三态与幂等：unknown / declined / 空值 不能被当成"没有" ----
+{
+  const tri = [
+    ['吸烟 declined', { smoking: 'declined' }],
+    ['吸烟 unknown', { smoking: 'unknown' }],
+    ['二手烟 declined 无年限', { secondhand: 'declined' }],
+    ['职业 declined 无年限', { occupationDust: 'declined' }],
+    ['幽门螺杆菌 unknown', { hpStatus: 'unknown' }],
+    ['家族史 unknown', { familyHistory: 'unknown' }],
+    ['既往史 unknown', { pastHistory: 'unknown' }],
+  ];
+  for (const [name, over] of tri) {
+    const b = evaluate(P(over));
+    check('三态·' + name + ' 不冒充高危',
+      !has(b, 'A', 'lung-ldct-high-risk'), ids(b, 'A').join(','));
+  }
+  // 幂等：同一画像连算 5 次，A/B/C 全一致
+  {
+    const p = P({ smoking: 'quit', packYears: 20, smokingQuitYears: 'ge5', familyHistory: ['lung'] });
+    const sig = () => JSON.stringify(evaluate(p));
+    const first = sig();
+    check('幂等·同一画像连算 5 次结果完全一致', [2, 3, 4, 5].every(() => sig() === first));
+  }
+  // 临床状态标签：A/B confirmed、C baseline、被 LDCT 压下的为 indeterminate
+  {
+    const b1 = evaluate(P({ smoking: 'yes', packYears: 20 }));
+    check('标签·高危吸烟 A 全 confirmed',
+      b1.A.filter((r) => !r.hidden).every((r) => r.clinicalStatus === 'confirmed'));
+    const [b2] = evaluateDetailed(P({ smoking: 'quit', packYears: 20, smokingQuitYears: 'unknown' }));
+    check('标签·LDCT 算不出来不冒充 confirmed',
+      b2.A.filter((r) => r.id === 'lung-ldct-high-risk').every((r) => r.clinicalStatus === 'indeterminate' || r.hidden));
+  }
+}
+
+// ---- 6G. 性别 / 抑制 / 基础项 ----
+{
+  const sexCases = [
+    ['男性不出卵巢家族史', { gender: 'male', familyHistory: ['ovarian'] }, 'B', 'ovarian-family-history', false],
+    ['女性出卵巢家族史', { gender: 'female', familyHistory: ['ovarian'] }, 'B', 'ovarian-family-history', true],
+    ['男性出 PSA', { gender: 'male', age: 55 }, 'B', 'psa-50-69', true],
+    ['女性不出 PSA', { gender: 'female', age: 55 }, 'B', 'psa-50-69', false],
+    ['男性不出宫颈筛查', { gender: 'male', age: 40 }, 'B', 'cervical-screening', false],
+  ];
+  for (const [name, over, cat, id, want] of sexCases) {
+    const b = evaluate(P(over));
+    check('性别·' + name, has(b, cat, id) === want, `${cat}:${ids(b, cat).join(',')}`);
+  }
+  // C 档优先抑制：合成冲突（A 说做 PET-CT，C 说不做）
+  const synth = (a, c) => applySafety(P(), { A: [a], B: [], C: [c] });
+  const mk = (id, cat, item) => ({ id, category: cat, catalogIds: [item], shownIds: [item] });
+  {
+    const [b, meta] = synth(mk('x-a', 'A', 'pet-ct'), mk('pet-c', 'C', 'pet-ct'));
+    check('抑制·C 档赢，A 档同项目隐藏', b.A[0].hidden === true && !has(b, 'A', 'x-a'));
+    check('抑制·留痕', meta.suppressed.some((s) => /不推荐|冲突/.test(s.reason)));
+  }
+  // 基础套餐人人有
+  check('基础项·成年男性有 base-package', has(evaluate(P({ age: 30 })), 'A', 'base-package'));
+  check('基础项·成年女性有 base-package', has(evaluate(P({ age: 30, gender: 'female' })), 'A', 'base-package'));
+}
+
+// ---- 6H. 换新版依据后：4 条证据的引文仍逐字命中快照（计划 1 回归）----
+{
+  const { readFileSync } = await import('node:fs');
+  const { squash } = await import('../scripts/lib/source-fetch.mjs');
+  const idx = JSON.parse(readFileSync(new URL('../data/snapshots/_index.json', import.meta.url), 'utf8'));
+  const rulesDoc = JSON.parse(readFileSync(new URL('../data/rules.json', import.meta.url), 'utf8'));
+  const targets = ['liver-cancer-screening', 'diabetes-followup', 'dm-family-hba1c', 'cvd-family-carotid'];
+  for (const id of targets) {
+    const rule = rulesDoc.rules.find((r) => r.id === id);
+    const evs = (rule?.evidence || []).filter((e) => e.status === 'verified' && /2024|medlive|xhyxzz/.test(e.url + e.point));
+    let ok = evs.length > 0;
+    let detail = 'no 2024 evidence';
+    for (const ev of evs) {
+      const rec = idx[ev.url];
+      if (!rec?.file) { ok = false; detail = 'no snapshot'; break; }
+      const text = squash(readFileSync(new URL('../' + rec.file, import.meta.url), 'utf8'));
+      for (const q of ev.quotes || (ev.quote ? [ev.quote] : [])) {
+        if (!text.includes(squash(q))) { ok = false; detail = 'quote miss: ' + q.slice(0, 24); break; }
+      }
+    }
+    check('新依据·' + id + ' 引文逐字命中 2024 版原文', ok, detail);
+  }
+}
+
 console.log(`\n${pass}/${pass + fail} 通过`);
 if (fail) process.exit(1);

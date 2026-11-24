@@ -6,11 +6,11 @@ import './styles.css';
 /* 结果页与依据页的排版件（老板 2026-11-22 定的那版「结论卡」）。
    这套版式先在设计稿里定稿，再搬进产品；结果页与依据页共用同一份样式文件，改一处要两边一起看。 */
 import './v13.css';
-import { emptyProfile, evaluate, evaluateDetailed, upcoming, ruleLabel, vaccinesFor, vaccineMeta, mutexNotes } from './engine.js';
+import { emptyProfile, evaluate, evaluateDetailed, upcoming, ruleLabel, vaccinesFor, vaccineMeta, mutexNotes, rules as allRules } from './engine.js';
 import { gateMessage, vaccinesDeferred } from '../scripts/lib/safety.mjs';
 import { questions, activeQuestions, SHAPE_OPTIONS } from './questions.js';
 import { bmiOf, bodyLevel, cutsFor, bodyOf, BODY_EVIDENCE } from './body.js';
-import { decodeProfile, buildShareUrl, copyText, encodeProfile } from './share.js';
+import { decodeProfile, buildShareUrl, copyText, encodeProfile, decodeSnapshot, encodeSnapshot, buildSnapshotUrl, buildSnapshotEvidenceUrl, SNAPSHOT_VERSION } from './share.js';
 import { readEnv, detectEnv, copyFor } from './env.js';
 import { referrals, REFERRAL_NOTE, CGA_EVIDENCE } from './referral.js';
 import { eggFor } from './egg.js';
@@ -72,6 +72,11 @@ const state = {
   // 当前这份清单的打印稿数据。结果页渲染时算好，点「打印」直接用，
   // 不在点击时重跑一遍引擎 —— 那会多一份判定逻辑，迟早和屏幕上的清单打架。
   printData: null,
+  // 结果快照（v=2&s=，默认分享方式）：收到的人不含原始病史，直接按规则 ID 看同一份清单。
+  // 一旦设置，renderResult 走"按 ID 还原"分支，不重跑引擎、不显示补答入口。
+  snapshot: null,
+  // 快照的原始 base64 code：依据页链接要原样带过去（避免重复编码产生差异）
+  snapshotRaw: '',
 };
 
 const esc = (s = '') =>
@@ -97,10 +102,10 @@ const lsFromUrl = () => {
 
 const writeLsToUrl = () => {
   const url = new URL(location.href);
-  // 结果页的 hash 里还背着清单参数，重写时必须原样带上，否则一按大字清单就没了
-  const code = new URLSearchParams((location.hash || '').replace(/^#/, '')).get('p');
-  const parts = [];
-  if (code) parts.push('p=' + code);
+  // 结果页的 hash 里还背着清单参数，重写时必须原样带上，否则一按大字清单就没了。
+  // 快照链接是 v=2&s=...，画像链接是 p=...，两种都要保住原顺序和值。
+  const raw = (location.hash || '').replace(/^#/, '');
+  const parts = raw.split('&').filter((x) => x && !x.startsWith('ls='));
   if (state.bigText) parts.push('ls=big');
   url.hash = parts.join('&');
   history.replaceState(null, '', url.toString());
@@ -121,10 +126,21 @@ document.documentElement.dataset.v = fp.id;
  */
 const isResultPage = /\/r\.html$/.test(location.pathname);
 const rawParam = location.hash || location.search;
-const restored = decodeProfile(rawParam);
-const hasPayload = /[#?&]p=/.test(rawParam);
+/* 快照优先：#v=2&s=... 是脱敏结果，只带规则 ID；老 #p= 是画像，继续重算。
+ * 两者不会同时出现（buildShareUrl 二选一），这里先认快照再认画像。 */
+const snap = decodeSnapshot(rawParam);
+const restored = snap ? null : decodeProfile(rawParam);
+const hasPayload = /[#?&]p=/.test(rawParam) || /[#?&]s=/.test(rawParam);
 
-if (restored) {
+if (snap) {
+  state.snapshot = snap;
+  state.snapshotRaw = new URLSearchParams(String(rawParam).replace(/^[?#]/, '')).get('s') || '';
+  // 快照里只有年龄/性别，足够渲染页头那句"N 岁·男/女"和疫苗；其余字段留空。
+  state.profile.age = snap.age;
+  state.profile.gender = snap.gender;
+  state.view = 'result';
+  state.fromShare = true;
+} else if (restored) {
   Object.assign(state.profile, restored);
   state.view = 'result';
   state.fromShare = true;
@@ -1114,9 +1130,11 @@ const SHAPE_SAY = {
   xl: '你选的是「要买大两三码」这一档。基础套餐里的腹部超声、空腹血糖、血脂别省。',
 };
 
-/* 依据页的链接：同一份画像带过去，到了那一页就是同一个人在看的依据。
- * a= 是锚点（ruleId / base-all / vax-all / cga-all / body-all），落地直接滚到那一条。 */
+/* 依据页的链接：同一份清单带过去，到了那一页看到的是同一批依据。
+ * a= 是锚点（ruleId / base-all / vax-all / cga-all / body-all），落地直接滚到那一条。
+ * 普通模式带画像（#p=）；快照模式带脱敏快照（#v=2&s=...）—— 依据页两种都能读。 */
 const evPageHref = (id) => {
+  if (state.snapshot) return buildSnapshotEvidenceUrl(state.snapshotRaw, id || '');
   const u = new URL('e.html', location.href);
   u.search = '';
   u.hash = 'p=' + encodeProfile(state.profile) + (id ? `&a=${id}` : '');
@@ -1263,7 +1281,25 @@ const renderResult = () => {
   const p = state.profile;
   /* 安全后处理：C 档先抑制、LDCT 按 2025 版重判、三道筛查前提闸。
    * upcoming() 用同一份命中集，避免页面上出现"将来会加"与"现在不做"自相矛盾。 */
-  const [raw, safety] = evaluateDetailed(p);
+  /* 快照模式（v=2&s=）：接收方没有原始画像，也不重跑引擎。
+   * 按快照里的规则 ID 从 rules.json 取回规则对象，还原出和原主人一致的清单。
+   * 规则正文（verdict/依据/频次）一律现取，因此依据被修正后老快照也会显示更正后的版本。 */
+  let raw, safety;
+  if (state.snapshot) {
+    const byId = new Map(allRules.map((r) => [r.id, r]));
+    const restore = (ids) => ids.map((id) => byId.get(id)).filter(Boolean).map((r) => {
+      const c = { ...r, shownIds: r.catalogIds ? [...r.catalogIds] : [], hidden: false, clinicalStatus: 'confirmed' };
+      return c;
+    });
+    raw = { A: restore(state.snapshot.A), B: restore(state.snapshot.B), C: restore(state.snapshot.C) };
+    safety = {
+      version: SNAPSHOT_VERSION, gate: {},
+      indeterminate: [], disputes: [], suppressed: [], facts: null,
+      snapshotDate: state.snapshot.date,
+    };
+  } else {
+    [raw, safety] = evaluateDetailed(p);
+  }
   /* 被上游认领完项目的规则不渲染（同一项不许出现两次）。
    * 判定本身没变：规则还是一条条命中过，只是它的项目已经在上游卡片里说过了。 */
   const b = {
@@ -1272,7 +1308,9 @@ const renderResult = () => {
     C: raw.C.filter((r) => !r.hidden),
   };
   MUTEX = mutexNotes(b);
-  const soon = upcoming(p, raw);
+  // 快照模式下不预测"再过几年"：那需要完整画像往后推年龄重算，
+  // 而快照只有年龄/性别和已定稿的清单，硬推会给出和原主人不一致的项目。
+  const soon = state.snapshot ? [] : upcoming(p, raw);
 
   /* 「不知道」不等于「没有」。
    *
@@ -1314,7 +1352,9 @@ const renderResult = () => {
     /* 多选那两题没有「不方便说」，只有"都没有 / 不确定"两种，所以只认 unknown */
     p.familyHistory === 'unknown' && gap(true, 'familyHistory', '家族史', '有的话，肠镜和乳腺的起始年龄要提前 5–10 年'),
     p.pastHistory === 'unknown' && gap(true, 'pastHistory', '既往病史', '乙肝、糖尿病这些确诊病，查的是并发症，不是再筛一遍'),
-  ].filter(Boolean);
+  /* 快照模式没有任何原始答案，就没法判断"哪一题没答"。
+   * 硬显示补答入口等于替原主人认一句"他没答"，是撒谎，直接不显示。 */
+  ].filter(Boolean).filter(() => !state.snapshot);
 
   /* ---- 清单的三段，以及"标准套餐"那一条 ----
    * base-package 不是"一项检查"，它是一次基础套餐（二十来个子项）。
@@ -1345,7 +1385,9 @@ const renderResult = () => {
 
   // 筛查前提不满足时，疫苗同样不能"到年龄就打"地照发：接种门诊要先看当下身体状况
   const vacs = vaccinesDeferred(safety) ? [] : vaccinesFor(p);
-  const refs = referrals(p);
+  // 转诊卡、体型提示都是"针对原主人具体情况"的派生内容，快照里没有那些原始答案，
+  // 硬算会给出和原主人不一致、甚至凭空多出来的卡片。快照模式一律不显示。
+  const refs = state.snapshot ? [] : referrals(p);
   const gateText = gateMessage(safety);
   const safetyHTML = `
     ${gateText ? `<div class="safety-gate" role="status">${esc(gateText)}</div>` : ''}
@@ -1409,12 +1451,13 @@ const renderResult = () => {
           ? '<p class="preg-note">如果已经怀孕或正在做辅助生殖，请按产科医生安排，不要用这份常规清单。</p>'
           : ''}
       <button class="ls ls-result" data-act="ls" aria-pressed="${state.bigText}">${state.bigText ? '标准字' : '大字'}</button>
-      ${state.fromShare ? '<p class="shared-tip">这是别人分享给你的清单。<button class="linkish" data-act="restart">测份自己的 ›</button></p>' : ''}
+      ${state.snapshot ? `<p class="snapshot-tip" role="status">这是别人分享的<b>结果快照</b>${state.snapshot.date ? `（生成于 ${esc(state.snapshot.date)}）` : ''}：清单按当时的答案定稿，不含对方的病史。规则日后若有更新，以<a href="./index.html">重新测一份</a>为准。<button class="linkish" data-act="restart">测份自己的 ›</button></p>` : ''}
+      ${state.fromShare && !state.snapshot ? '<p class="shared-tip">这是别人分享给你的清单。<button class="linkish" data-act="restart">测份自己的 ›</button></p>' : ''}
       ${gapsTopHTML(gaps, {
         open: state.gapPanelOpen,
         editor: state.gapKey ? gapEditorHTML(state.gapKey) : '',
       })}
-      ${eggBandHTML()}
+      ${!state.snapshot ? eggBandHTML() : ''}
     </header>
 
     ${tocHTML(SECS)}
@@ -1437,11 +1480,11 @@ const renderResult = () => {
       </section>` : ''}
 
       ${baseHTML({ ids: baseIds, baseRule, claimed, scaling: scalingRule }, ctx)}
-      ${riskNoteHTML('oil', p)}
+      ${!state.snapshot ? riskNoteHTML('oil', p) : ''}
       ${vacHTML(vacs, ctx)}
       ${refHTML(refs, ctx)}
-      ${bodyCardHTML()}
-      ${riskNoteHTML('ad', p)}
+      ${!state.snapshot ? bodyCardHTML() : ''}
+      ${!state.snapshot ? riskNoteHTML('ad', p) : ''}
       ${foldHTML(b.C.length, b.C.map((r) => atomHTML(r, 0, false, ctx)).join(''), unlistedHTML())}
       ${soonHTML(soon, ctx)}
 
@@ -1454,6 +1497,14 @@ const renderResult = () => {
              与其让他到处找，不如直接告诉他替代路径。 */ ''}
         ${UI.showPrint ? '' : '<p class="print-tip">想打印：点上面的「存成一张图」，拿去打印店或单位打印机。</p>'}
       </div>
+      ${!state.snapshot ? `
+      <details class="full-share">
+        <summary>需要原样保存这次的完整问卷答案？（含敏感信息，一般不推荐）</summary>
+        <div>
+          <p>默认分享的是脱敏结果快照，不含你的病史答案。下面这条完整链接会把家族史、既往病史等原始答案也编码进去，只有确实需要复现同一份答案时才用；发出去等于把健康信息告诉对方，请自行取舍。</p>
+          <code class="full-share-code">${esc(buildShareUrl(p))}</code>
+        </div>
+      </details>` : ''}
     </div>
   </div>
 
@@ -1538,6 +1589,20 @@ const shareLines = () => {
   };
 };
 
+/** 默认分享链接：结果快照，不含任何原始病史答案。
+ *  普通模式：用当前清单的可见规则 ID 现编一份快照；
+ *  快照模式：直接沿用收到的快照 code（没有画像可编，也不该重新判定）。 */
+const buildDefaultShareUrl = () => {
+  if (state.snapshot) return buildSnapshotUrl(state.snapshotRaw);
+  const b = evaluate(state.profile);
+  const ids = {
+    A: b.A.filter((r) => !r.hidden).map((r) => r.id),
+    B: b.B.filter((r) => !r.hidden).map((r) => r.id),
+    C: b.C.filter((r) => !r.hidden).map((r) => r.id),
+  };
+  return buildSnapshotUrl(encodeSnapshot(state.profile, ids));
+};
+
 const buildShareText = () => {
   const p = state.profile;
   const { a, b, c } = shareLines();
@@ -1546,7 +1611,7 @@ const buildShareText = () => {
   if (a.length) parts.push(`建议做 ${a.length} 项：`, ...a.map(line), '');
   if (b.length) parts.push(`你来定 ${b.length} 项：`, ...b.map(line), '');
   if (c.length) parts.push(`建议不做 ${c.length} 项：`, ...c.map((it) => `· ${it.label}`), '');
-  parts.push('', `自己测一份：${buildShareUrl(p)}`);
+  parts.push('', `看看这份清单：${buildDefaultShareUrl()}`);
   parts.push('（依据公开指南生成，不是医疗建议）');
   return parts.join('\n');
 };

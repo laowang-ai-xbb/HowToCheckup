@@ -16,8 +16,8 @@
  */
 import './styles.css';
 import './v13.css';
-import { evaluate, itemNames, catalogById, upcoming } from './engine.js';
-import { decodeProfile, copyText } from './share.js';
+import { evaluate, itemNames, catalogById, upcoming, rules as allRules } from './engine.js';
+import { decodeProfile, decodeSnapshot, copyText } from './share.js';
 import { vaccinesFor } from './engine.js';
 import { referrals, CGA_EVIDENCE } from './referral.js';
 import { bodyOf, BODY_EVIDENCE } from './body.js';
@@ -43,11 +43,16 @@ const toast = (msg) => {
   setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2200);
 };
 
-const profile = decodeProfile(location.hash || location.search);
+const rawParam = location.hash || location.search;
+const snap = decodeSnapshot(rawParam);
+const profile = snap ? null : decodeProfile(rawParam);
 const anchor = new URLSearchParams(String(location.hash).replace(/^#/, '')).get('a');
+/* 快照模式：把清单里的规则 ID 交给 render 用，不重跑引擎、不需要画像 */
+const snapRules = snap ? [...snap.A, ...snap.B, ...snap.C]
+  .map((id) => allRules.find((r) => r.id === id)).filter(Boolean) : null;
 
-/* 链接里的 p 被截断/改坏时，不要假装"没有依据" —— 说清楚发生了什么 */
-if (!profile) {
+/* 链接里的 p / s 被截断或改坏时，不要假装"没有依据" —— 说清楚发生了什么 */
+if (!profile && !snap) {
   app.innerHTML = `
     <main class="page v13">
       <header class="rhead">
@@ -61,24 +66,37 @@ if (!profile) {
 }
 
 function render() {
-  const raw = evaluate(profile);
-  const A = raw.A.filter((r) => !r.hidden);
-  const B = raw.B.filter((r) => !r.hidden);
-  const C = raw.C.filter((r) => !r.hidden);
+  /* 快照模式：规则来自清单里固化的 ID，不重跑引擎、不需要画像。
+   * 依据正文现从 rules.json 取，所以依据被修正后老快照也能看到更正的版本。 */
+  let A, B, C, soon, vax, refs, body, raw;
+  if (snap) {
+    A = [...snap.A].map((id) => allRules.find((r) => r.id === id)).filter(Boolean);
+    B = [...snap.B].map((id) => allRules.find((r) => r.id === id)).filter(Boolean);
+    C = [...snap.C].map((id) => allRules.find((r) => r.id === id)).filter(Boolean);
+    raw = { A, B, C };
+    soon = []; // 没有完整画像，不预测"再过几年"
+    vax = [];
+    refs = [];
+    body = null;
+  } else {
+    raw = evaluate(profile);
+    A = raw.A.filter((r) => !r.hidden);
+    B = raw.B.filter((r) => !r.hidden);
+    C = raw.C.filter((r) => !r.hidden);
+    /* 结果页的「再过几年要加上」把规则年龄往后推重新判，这些规则当前不在 A/B/C 里。
+       依据页得给它们留落点，否则结果页那张「依据 N 条」表里的链接会跳到空处。 */
+    soon = upcoming(profile, raw);
+    vax = vaccinesFor(profile);
+    refs = referrals(profile);
+    body = bodyOf(profile);
+  }
   const baseRules = A.filter((r) => /^base-package/.test(r.id));
   const baseIds = baseRules.flatMap((r) => r.catalogIds || []);
   const baseRule = baseRules.find((r) => r.id === 'base-package') || baseRules[0];
   const A_REST = A.filter((r) => !baseRules.includes(r));
   const list = [...A_REST, ...B, ...C];
-  /* 结果页的「再过几年要加上」把规则年龄往后推重新判，这些规则当前不在 A/B/C 里。
-     依据页得给它们留落点，否则结果页那张「依据 N 条」表里的链接会跳到空处。 */
-  const soon = upcoming(profile, raw);
   const total = list.reduce((n, r) => n + evCount(r), 0)
     + soon.reduce((n, { rule }) => n + evCount(rule), 0);
-
-  const vax = vaccinesFor(profile);
-  const refs = referrals(profile);
-  const body = bodyOf(profile);
 
   /* 一张卡 = 一条依据 */
   const card = (e) => {
@@ -142,7 +160,7 @@ function render() {
     ${baseIds.length ? '<a href="#base-all">每年都做的标准项</a>' : ''}
     ${vax.length ? '<a href="#vax-all">疫苗</a>' : ''}
     ${refs.length ? '<a href="#cga-all">老年综合评估</a>' : ''}
-    ${body.known || body.mode === 'shape' ? '<a href="#body-all">体型（BMI）</a>' : ''}
+    ${body && (body.known || body.mode === 'shape') ? '<a href="#body-all">体型（BMI）</a>' : ''}
     ${soon.length ? '<a href="#soon-all">再过几年要加上</a>' : ''}`;
 
   app.innerHTML = `
@@ -251,9 +269,16 @@ function wire() {
      两个入口万一各写一遍，"带不带 a=" 这种细节迟早分叉。 */
   const goBack = () => {
     const raw = (location.hash || location.search).replace(/^[?#]/, '');
-    const code = new URLSearchParams(raw).get('p');
+    const q = new URLSearchParams(raw);
     const url = new URL('r.html', location.href);
-    if (code) url.hash = 'p=' + code;
+    // 快照模式把 v=2&s= 一起带回去（还有 a= 锚点要去掉）；画像模式带 p=。
+    const code = q.get('s');
+    if (q.get('v') && code) {
+      url.hash = `v=${q.get('v')}&s=${code}`;
+    } else {
+      const pcode = q.get('p');
+      if (pcode) url.hash = 'p=' + pcode;
+    }
     location.href = url.toString();
   };
 

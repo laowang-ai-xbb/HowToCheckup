@@ -130,10 +130,34 @@ const fetchOnce = async (url) => {
     }
   }
   const text = htmlToText(buf.toString('utf8'));
+  /* 坏页识别（2026-11-24）：HTTP 200 不等于"抓到了正文"。
+   * 踩过的坑：CDC/ACIP 旧地址返回 200 + "Page Not Found | CDC"，被当成正常页写进基线，
+   * 于是"引用失效"和"目录新标题"全部失真。这里统一在抓取层拦下三类伪成功：
+   *   ① 验证页 / 反爬壳；② 明确的 404/Not Found 标题；③ 正文过短（多半是空壳或下载页）。
+   * 拦下来的源进 broken，不写基线 —— 否则恢复后会误报一大堆"新标题"。 */
   if (text.length < 400 && /recaptcha|checking your browser|访问验证|人机验证/i.test(text)) {
     throw new Error('被反爬拦截（返回验证页，非正文）');
   }
+  if (isBadPage(text)) {
+    throw new Error('抓到的是坏页（404/访问验证/正文过短），不是正文');
+  }
   return { text, contentType: ct || 'text/html' };
+};
+
+/**
+ * 判断一段 HTML 正文是不是"伪成功"的坏页。
+ * 只认明确的失败信号，不误杀短但有效的页面（如一个只有一句的公告）：
+ * 标题里出现 Page Not Found / 404 / 访问验证，或正文极短且带失败关键词。
+ */
+export const isBadPage = (text = '') => {
+  const t = String(text).trim();
+  // 只看开头一小段（标题通常在最前），避免正文里讨论"404"被误判
+  const head = t.slice(0, 400);
+  if (/^\s*(page\s*not\s*found|404\b|error\s*404|not\s*found\b)/i.test(head)) return true;
+  if (/\b(page not found|404 error|access denied|forbidden)\b/i.test(head)) return true;
+  if (/访问验证|人机验证|请输入验证码|验证后方可访问/.test(head)) return true;
+  if (t.length < 120 && /(not found|404|验证|访问受限|禁止访问)/i.test(t)) return true;
+  return false;
 };
 
 /**

@@ -313,6 +313,29 @@ h1 em { font-style: normal; color: var(--teal); }
   margin: 14px 0 0;
   color: #37524f;
 }
+/* 结果快照提示（v=2&s=）：一眼看出这是定稿清单、不含对方病史、规则更新以重测为准 */
+.snapshot-tip {
+  font-size: 13px;
+  background: var(--teal-soft);
+  border: 1px solid var(--teal);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 14px 0 0;
+  color: #37524f;
+  line-height: 1.65;
+}
+.snapshot-tip a { color: var(--teal); }
+.snapshot-tip .linkish { margin-left: 6px; }
+/* 完整问卷链接：默认收起，明确标"含敏感信息不推荐"，只在确实要复现答案时展开 */
+.full-share {
+  margin: 12px 0 0; font-size: 13px; color: var(--ink-3);
+}
+.full-share summary { cursor: pointer; padding: 6px 0; }
+.full-share > div { padding: 8px 0 2px; line-height: 1.6; }
+.full-share-code {
+  display: block; word-break: break-all; margin-top: 6px; padding: 8px 10px;
+  background: var(--paper-2, #f6f5f1); border-radius: 8px; font-size: 11px; color: var(--ink-2);
+}
 
 .group { margin-top: 34px; }
 .ghead { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }

@@ -499,20 +499,14 @@ try {
   /* 等这一份 52 岁画像真的渲染出来，不能只等 .actions：
    * 从上一页 hash 切过来时旧结果页节点可能还在，拿到手会是别人的清单。 */
   await waitFor(`!!document.querySelector('.actions') && /52 岁/.test((document.querySelector('.rwho') || {}).innerText || '')`, '结果页（52 岁画像）');
-  /* 留住这一份清单的分享码：下面新增的回补/腰围两轮会把页面导航走，
-     后面「分享链接能还原同一份清单」要拿它回到同一份画像。 */
+  /* 留住这一份画像的 p= 码：下面的回补/腰围两轮会把页面导航走，后面要回到同一份画像。
+     默认分享按钮产出脱敏快照（v=2&s=）；完整画像链接收在结果页的「完整问卷答案」折叠里。 */
   const firstShareCode = await evaluate(`(() => {
-    const orig = navigator.clipboard;
-    let captured = '';
-    Object.defineProperty(navigator, 'clipboard', { value: { writeText: async (t) => { captured = t; } }, configurable: true });
-    document.querySelector('[data-act=share]').click();
-    return new Promise(r => setTimeout(() => {
-      navigator.clipboard = orig;
-      const m = captured.match(/#p=([^\\s]+)/);
-      r(m ? m[1] : '');
-    }, 250));
+    const el = document.querySelector('.full-share-code');
+    const m = (el ? el.textContent : '').match(/#p=([^\\s]+)/);
+    return m ? m[1] : '';
   })()`);
-  check('能从结果页拿到本份清单的分享码', firstShareCode.length > 20, firstShareCode);
+  check('能从结果页拿到本份画像码', firstShareCode.length > 20, firstShareCode.slice(0, 40));
   const result = await evaluate(`(() => {
     const q = (s) => [...document.querySelectorAll(s)];
     return {
@@ -810,26 +804,45 @@ try {
     document.querySelector('[data-act=share]').click();
     return new Promise(r => setTimeout(() => { navigator.clipboard = orig; r(captured); }, 300));
   })()`);
-  check('分享文本含链接', /https?:\/\/\S+#p=/.test(shareUrl || ''), (shareUrl || '').slice(-80));
-  const link = (shareUrl.match(/https?:\/\/\S+#p=\S+/) || [])[0];
-  check('分享链接指向结果页入口 r.html', /\/r\.html#p=/.test(link || ''), (link || '').slice(0, 90));
+  check('分享文本含链接', /https?:\/\/\S+#v=2&s=/.test(shareUrl || ''), (shareUrl || '').slice(-80));
+  const link = (shareUrl.match(/https?:\/\/\S+#v=2&s=\S+/) || [])[0];
+  check('分享链接指向结果页入口 r.html', /\/r\.html#v=2&s=/.test(link || ''), (link || '').slice(0, 90));
   // 隐私承诺的技术前提：# 之后的内容不发给服务器、不进 access log。
   // 一旦有人把它改回 ?p=，年龄和家族史就会落到 CDN 日志里，所以这条必须钉住。
-  check('分享链接用 # 携带参数（不发往服务器）', !/\?p=/.test(link || ''), (link || '').slice(0, 90));
+  check('分享链接用 # 携带参数（不发往服务器）', !/\?/.test(link || ''), (link || '').slice(0, 90));
+  // 计划2 核心：默认分享是脱敏结果快照，链接里只有规则 ID，没有原始病史答案。
+  // 把 s= 之后那段 base64 解出来，确认不含 familyHistory/pastHistory/hpStatus 等字段。
+  {
+    const code = (link || '').split('s=')[1] || '';
+    let decoded = '';
+    try { decoded = decodeURIComponent(escape(atob(code.replace(/-/g, '+').replace(/_/g, '/')))); } catch { decoded = ''; }
+    check('快照不含原始病史字段',
+      decoded && !/familyHistory|pastHistory|hpStatus|smokingQuitYears|occupationAgents/.test(decoded)
+        && /"A"|"B"|"C"/.test(decoded),
+      decoded.slice(0, 120));
+  }
 
   if (link) {
+    // 上一条测试已停在 r.html#p=...；同路径只换 hash，浏览器不会重载、main.js 也不会重读参数。
+    // 先回首页再进快照链接，强制一次真实加载。
+    await goto(BASE + '/');
     await goto(link);
-    await waitFor(`!!document.querySelector('.actions')`, '分享结果页');
+    await waitFor(`!!document.querySelector('.snapshot-tip')`, '快照结果页');
     const shared = await evaluate(`(() => ({
       who: document.querySelector('.rwho').innerText,
       a: [...document.querySelectorAll('#must .atom .an')].map(h => h.innerText).length,
-      tip: (document.querySelector('.shared-tip') || {}).innerText || '',
+      tip: (document.querySelector('.snapshot-tip') || {}).innerText || '',
     }))()`);
-    check('分享链接能还原同一份清单', shared.a === result.a.length && /52 岁/.test(shared.who), JSON.stringify(shared));
-    // R12：这句是给"别人发来的清单"看的，措辞要落到"自己测一份"，不能是"改成我的"
-    check('分享来的清单页首说「测份自己的」',
-      /这是别人分享给你的清单/.test(shared.tip) && /测份自己的/.test(shared.tip) && !/改成我自己的/.test(shared.tip),
-      shared.tip.replace(/\s+/g, ' ').slice(0, 60));
+    check('快照链接能还原同一份清单', shared.a === result.a.length && /52 岁/.test(shared.who), JSON.stringify(shared));
+    check('快照页首说明是结果快照且以重测为准',
+      /结果快照/.test(shared.tip) && /测份自己的/.test(shared.tip) && /生成于/.test(shared.tip),
+      shared.tip.replace(/\s+/g, ' ').slice(0, 90));
+    // 快照页不应出现依赖原始病史的补答入口/彩蛋——它们会凭空多出来
+    const snapLeak = await evaluate(`(() => ({
+      gaps: !!document.querySelector('.gaps'),
+      body: !!document.querySelector('#body-card'),
+    }))()`);
+    check('快照页不显示补答入口与体型卡', !snapLeak.gaps && !snapLeak.body, JSON.stringify(snapLeak));
   }
 
   // ---- 3.5 换一份人群画像再验一遍排版 ----

@@ -389,5 +389,27 @@
     "usedBy": [
       "where:国家疾控局、国家卫生健康"
     ]
+  },
+  "https://xhyxzz.pumch.cn/en/article/pdf/preview/10.12290/xhyxzz.2024-0304.pdf": {
+    "file": "data/snapshots/7407d9db3d.txt",
+    "fetchedAt": "2026-11-24",
+    "sha256": "6d918828bcf50e1fd3de83cca6fa710f165b7bf2c5d79094690085dbd6761e08",
+    "chars": 63273,
+    "contentType": "application/pdf",
+    "usedBy": [
+      "liver-cancer-screening"
+    ]
+  },
+  "https://upload.medlive.cn/medlive/20241231/2024.pdf": {
+    "file": "data/snapshots/c90a2a33c5.txt",
+    "fetchedAt": "2026-11-24",
+    "sha256": "f93eaf68d34b97823e8dc502c382c16b7cc9a6f60ee366a5285ef1772c86c37d",
+    "chars": 421448,
+    "contentType": "application/pdf",
+    "usedBy": [
+      "diabetes-followup",
+      "diabetes-family-history",
+      "cvd-family-carotid"
+    ]
   }
 }
