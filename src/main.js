@@ -603,6 +603,7 @@ const renderQuiz = () => {
     <h2 class="qtitle" id="qtitle" tabindex="-1">${esc(q.title)}</h2>
     ${q.hint ? `<p class="qhint">${esc(q.kind === 'body' && state.profile.bodyMode === 'shape' ? BODY_SHAPE_HINT : q.hint)}</p>` : ''}
     ${body}
+    <div class="peek" id="peek" aria-hidden="true"><div class="peek-in"><div class="peek-chev">↓</div><div class="peek-t" id="peek-t"></div></div></div>
     ${/* 老板 2026-11-20 拍板：「这题跳过」全站删掉。
          它和「不确定」在结果页走的是同一条路（都记 unknown），两个按钮通向同一个结果，
          用户会在按钮前停下来想"跳过和不确定差在哪"，答案是没差。
@@ -646,7 +647,41 @@ const renderQuiz = () => {
     // 焦点移到题面：读屏用户换题后能听到"第几题、问什么"，而不是停在原来的位置
     document.getElementById('qtitle').focus({ preventScroll: true });
   }
+  setupOverflowGuide();
 };
+
+/* ---- 溢出引导（G1 · 老板 2026-11-24 拍板）----
+ * 仅当「选项 + 下一步」一屏放不下时才出现：底部渐隐遮罩 + 跳动的下滑箭头。
+ * 老板附加条件就是闸门：内容放得下绝不出现，不许退化成每题都有的装饰。
+ * 量法：最后一个可点的按钮底部超出视口 8px 以上才算溢出（差一点点不算）。
+ * 用户一开始往下滑就淡出（全局 scroll 监听只负责藏、不负责显——
+ * 显的时机只交给每题渲染后的测量，否则"放得下的题"会被误点亮）。
+ * 「减少动态效果」用户箭头不跳动（CSS media query 管），文字提示保留。 */
+const measureOverflowGuide = () => {
+  const peek = document.getElementById('peek');
+  if (!peek) return;
+  const tip = document.getElementById('peek-t');
+  const btns = [...app.querySelectorAll('button')]
+    .filter((b) => !b.closest('.qmeta') && b.offsetParent !== null);
+  const last = btns[btns.length - 1];
+  const overflow = last ? last.getBoundingClientRect().bottom > window.innerHeight + 8 : false;
+  if (!overflow) { peek.classList.add('off'); return; }
+  const n = [...app.querySelectorAll('.opt')].filter((o) => o.getBoundingClientRect().top > window.innerHeight).length;
+  const hasNext = !!app.querySelector('[data-act="multi-next"], [data-act="age-next"], [data-act="body-next"], [data-act="review-next"]');
+  tip.textContent = n > 0 && hasNext
+    ? `往下滑 · 下面还有 ${n} 个选项和「下一步」`
+    : (n > 0 ? `往下滑 · 下面还有 ${n} 个选项` : '往下滑 · 「下一步」在下面');
+  peek.classList.remove('off');
+};
+const setupOverflowGuide = () => measureOverflowGuide();
+
+window.addEventListener('scroll', () => {
+  const peek = document.getElementById('peek');
+  if (!peek || peek.classList.contains('off')) return;
+  const nearBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80;
+  if (window.scrollY > 60 || nearBottom) peek.classList.add('off');
+}, { passive: true });
+window.addEventListener('resize', () => measureOverflowGuide(), { passive: true });
 
 /** 年龄分段：为什么要分四段，见 renderQuiz 里的 AGE_MSG */
 const ageTier = (v) => {

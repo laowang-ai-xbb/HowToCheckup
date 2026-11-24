@@ -390,6 +390,13 @@ const MUTATIONS = [
     to: '"@type": "WebSite"',
     desc: 'JSON-LD 里的软件声明被换掉，免费/健康类身份丢失',
   },
+  {
+    inv: 'quiz-overflow-guide',
+    file: 'src/main.js',
+    from: 'bottom > window.innerHeight + 8 : false;',
+    to: 'bottom > -1 : true;',
+    desc: '溢出闸门被拆，放得下的题也会弹出引导（违背老板附加条件）',
+  },
 ];
 
 let pass = 0;

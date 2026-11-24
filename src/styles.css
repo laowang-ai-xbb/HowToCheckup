@@ -895,6 +895,34 @@ summary:active, .linkish:active, .skip:active, .back:active { opacity: .55; }
 }
 .eggband-go { flex: none; font-size: 13px; color: #8a6a12; }
 
+/* ---------- 问卷溢出引导（G1 · 老板 2026-11-24 拍板）----------
+ * 仅当「选项 + 下一步」一屏放不下时出现（JS 量过才显示，闸门在 main.js）。
+ * position: fixed 锚视口底边——demo 第一版用 absolute 锚进了滚动内容，
+ * 遮罩跑到页面最底下，等于没有。pointer-events: none 不挡下面的按钮。
+ * 渐变色取自 --paper 的 rgba，和页面底色无缝。 */
+.peek {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+  height: 118px; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(247, 244, 238, 0) 0%, rgba(247, 244, 238, .96) 80%);
+  transition: opacity .3s ease;
+}
+.peek.off { opacity: 0; }
+.peek-in {
+  position: absolute; left: 50%; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%); text-align: center;
+}
+.peek-chev {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--teal); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  margin: 0 auto 4px; box-shadow: 0 3px 10px rgba(15, 118, 110, .35);
+  animation: peekdown 1.4s ease-in-out infinite;
+}
+@keyframes peekdown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+.peek-t { font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) {
+  .peek-chev { animation: none; }
+}
+
 .veil {
   position: fixed; inset: 0; z-index: 200;
   background: #fbf7ee;
@@ -998,7 +1026,7 @@ html[data-ls="big"] .rsum { font-size: 18px; }
    打出来一条依据都没有 —— 所以这里强制展开，并把按钮隐藏。 */
 @media print {
   .actions, .toast, .shared-tip, .skip, .back, .progress, .pword, .qmeta,
-  .ls, .sheet, .finger, .dots, .totop, .veil, .eggband { display: none !important; }
+  .ls, .sheet, .finger, .dots, .totop, .veil, .eggband, .peek { display: none !important; }
   details { display: block; }
   details > summary { display: none; }
   .detail { padding-top: 0; }

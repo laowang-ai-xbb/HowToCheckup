@@ -895,6 +895,29 @@ export const INVARIANTS = [
       return null;
     },
   },
+  {
+    id: 'quiz-overflow-guide',
+    why: '老板 2026-11-24 走查：家族史/既往病史这类选项多的题一屏放不下，「下一步」在屏幕外，老人以为卡死会直接关页面。G1 方案：底部渐隐＋下滑箭头。老板附加条件是闸门——**仅在内容溢出时出现**（最后一个按钮底部超出视口 8px 以上），放得下的题绝不出现；滚动只负责藏不负责显（显的时机只交给每题渲染后的测量），demo 第一版两处 bug（遮罩锚进滚动内容、类名漏前缀）都写进了注释。',
+    check(f) {
+      const main = (f['src/main.js'] || '').replace(/\r\n/g, '\n');
+      const css = (f['src/styles.css'] || '').replace(/\r\n/g, '\n');
+      if (!/id="peek" aria-hidden="true"/.test(main)) return '问卷模板里没有溢出引导件';
+      if (!/const measureOverflowGuide = \(\) => \{/.test(main)) return 'measureOverflowGuide 丢了';
+      /* 老板附加条件：只在溢出时出现。这个判断是闸门，被拆掉引导会变成每题都有的装饰 */
+      if (!/last\.getBoundingClientRect\(\)\.bottom > window\.innerHeight \+ 8 : false;/.test(main)) return '溢出闸门被改了（引导会在放得下的题上也出现）';
+      if (!/peek\.classList\.add\('off'\); return;/.test(main)) return '放得下时没有把引导藏起来';
+      if (!/往下滑 · 下面还有/.test(main)) return '引导文案丢了（剩余数量）';
+      if (!/「下一步」在下面/.test(main)) return '引导文案丢了（只有下一步溢出的场景）';
+      /* 滚动监听只许藏不许显：显只能由测量触发，否则放得下的题会被误点亮 */
+      if (!/if \(!peek \|\| peek\.classList\.contains\('off'\)\) return;/.test(main)) return '滚动监听没有防误显闸（会把放得下的题也点亮）';
+      if (!/window\.addEventListener\('resize', \(\) => measureOverflowGuide\(\)/.test(main)) return 'resize 没有重测（转屏/放大字后闸门会失准）';
+      if (!/position: fixed/.test(css.match(/\.peek \{[^}]*\}/) || [''])) return '.peek 没有 fixed（会随内容滚走，遮罩等于没有）';
+      if (!/pointer-events: none/.test(css.match(/\.peek \{[^}]*\}/) || [''])) return '.peek 没挡事件也要写明 pointer-events: none';
+      if (!/@media \(prefers-reduced-motion: reduce\) \{\s*\.peek-chev \{ animation: none; \}/.test(css)) return '「减少动态效果」用户箭头还在跳';
+      if (!/\.totop, \.veil, \.eggband, \.peek \{ display: none !important; \}/.test(css)) return '打印稿里没有隐藏引导';
+      return null;
+    },
+  },
 ];
 
 /** 跑一遍全部不变量，返回 [{id, ok, msg}] */

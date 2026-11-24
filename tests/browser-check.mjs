@@ -410,6 +410,39 @@ try {
       const hasDementia = await evaluate(`[...document.querySelectorAll('.opt')].some(b => /阿尔茨海默/.test(b.innerText))`);
       check('既往症里有「阿尔茨海默病」这个选项', hasDementia);
     }
+    /* G1 溢出引导（老板 2026-11-24 拍板）：既往病史 10 项一屏放不下才出现。
+     * 三件事在真浏览器里各验一遍：出现且文案带数量 / 一划就淡出 / 放得下的题绝不出现。 */
+    if (await evaluate(`/你自己确诊过/.test((document.querySelector('.qtitle')||{}).innerText||'')`)) {
+      const peekOn = await evaluate(`(() => {
+        const p = document.getElementById('peek');
+        return { exists: !!p, off: p ? p.classList.contains('off') : null,
+                 text: (document.getElementById('peek-t')||{}).textContent || '',
+                 fixed: p ? getComputedStyle(p).position : '', pe: p ? getComputedStyle(p).pointerEvents : '' };
+      })()`);
+      check('溢出题出现下滑引导（G1），文案带剩余数量和下一步',
+        peekOn.exists && peekOn.fixed === 'fixed' && peekOn.pe === 'none' && !peekOn.off
+        && /往下滑/.test(peekOn.text) && /下一步/.test(peekOn.text), JSON.stringify(peekOn));
+      await evaluate(`window.scrollTo(0, 400)`);
+      await sleep(180);
+      check('一开始往下滑引导就淡出', await evaluate(`document.getElementById('peek').classList.contains('off')`));
+      await evaluate(`window.scrollTo(0, 0)`);
+      await sleep(180);
+      // 下一题（幽门螺杆菌，3 个选项）放得下：引导必须不出现 —— 老板附加条件就是这条闸门
+      // 注意既往病史是多选题，点选项不跳题，必须按「下一步」走
+      await evaluate(`(() => { const b = document.querySelector('[data-act=multi-next]'); if (b) b.click(); })()`);
+      await sleep(260);
+      await waitFor(`/幽门螺杆菌/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '幽门螺杆菌题');
+      const peekNext = await evaluate(`(() => {
+        const p = document.getElementById('peek');
+        const els = [...document.querySelectorAll('.opt, .none-row .btn, [data-act=multi-next], [data-act=age-next]')];
+        const last = els[els.length - 1];
+        return { off: p ? p.classList.contains('off') : 'no-peek',
+                 overflow: last ? last.getBoundingClientRect().bottom > innerHeight + 8 : null,
+                 title: (document.querySelector('.qtitle')||{}).innerText || '' };
+      })()`);
+      check('内容放得下的题不出现引导（老板附加条件）',
+        peekNext.off === true && peekNext.overflow === false, JSON.stringify(peekNext).slice(0, 130));
+    }
     /* 老板 2026-11-23 抓到的：「幽门螺杆菌查过吗」一进来「没查过，或不记得」就是选中态。
      * 根因是 emptyProfile 的默认值和这个选项的取值撞了（都是 'unknown'），
      * 而单选题的选中态是拿画像值直接和选项值比的。这里守"进来时一个都没被点亮" ——
