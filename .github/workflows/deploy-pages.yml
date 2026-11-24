@@ -1,0 +1,55 @@
+name: 部署到 GitHub Pages
+
+# 为什么不用 "Deploy from a branch"：仓库根目录是源代码（开发版 index.html），
+# 真正要部署的是构建产物 dist/ —— 而 dist 不进仓库（构建产物不该提交）。
+# 所以让 Actions 在每次推送后自己构建、自己发布。Pages 的 Source 要选 "GitHub Actions"。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Actions 页面可以手动点
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: 构建
+        env:
+          # 站点部署在这个子路径下，sitemap / og:url 要用真实域名，不能用占位符
+          SITE_ORIGIN: https://laowang-ai-xbb.github.io/HowToCheckup
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
