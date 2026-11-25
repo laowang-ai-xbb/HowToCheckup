@@ -90,10 +90,14 @@ export const atomHTML = (rule, idx, key, ctx) => {
     ${ctx.disputeFor && ctx.disputeFor(rule.id) ? `<p class="tip atom-dispute"><b>指南结论有分歧：</b>${esc(ctx.disputeFor(rule.id))}</p>` : ''}
     ${/* 依据较旧提示（计划 5）：48 个月+仅单条依据才出现，同款 .tip 形态、琥珀色左线。 */ ''}
     ${staleHint(rule) ? `<p class="tip atom-stale"><b>这条依据可能旧了：</b>${esc(staleHint(rule))}</p>` : ''}
+    ${/* 3.3bis 边界透明化（demo）：贴在指南界线附近时，卡内一句安静提醒。灰左线 = 信息说明，不是警告。 */ ''}
+    ${ctx.boundaryFor && ctx.boundaryFor(rule.id) ? `<p class="tip atom-boundary"><b>界线提示：</b>${esc(ctx.boundaryFor(rule.id))}</p>` : ''}
     ${soft ? `<p class="tip">${FREQ_BASIS[rule.frequency.basis] || ''}${rule.frequency.basisNote ? '：' + esc(rule.frequency.basisNote) : ''}</p>` : ''}
     ${(rule.redFlags || []).length ? `<p class="tip"><b>出现这些情况要去看医生：</b>${rule.redFlags.map(esc).join('、')}</p>` : ''}
     ${tellDoctorHTML(rule)}
     ${ruleEvBox(rule, ctx)}
+    ${/* 3.3bis 模型指路卡（demo）：卡片尾部固定说明，灰左线信息条。文案由条款卡 modelReferral 数据提供。 */ ''}
+    ${rule.clause?.modelReferral ? `<p class="tip atom-model"><b>关于风险模型：</b>${esc(rule.clause.modelReferral.text)}</p>` : ''}
   </article>`;
 };
 
@@ -263,6 +267,8 @@ export const baseHTML = ({ ids, baseRule, claimed, scaling }, ctx) => {
     ${gs.map((g) => `<div class="bgrp"><h3>${esc(g.t)}<span>${g.ids.length}</span></h3><div class="chips">${g.ids.map(chip).join('')}</div></div>`).join('')}
     ${other.length ? `<div class="bgrp"><h3>其他<span>${other.length}</span></h3><div class="chips">${other.map(chip).join('')}</div></div>` : ''}
     ${dup ? '<p class="tip">带虚线的几项在上面专项里已经说过 —— 同一项只说一次。</p>' : ''}
+    ${/* 3.3bis 边界透明化：基础卡不在 atomHTML 循环里（独立合并渲染），界线提示单独投放 */
+      ctx.boundaryFor && baseRule && ctx.boundaryFor(baseRule.id) ? `<p class="tip atom-boundary"><b>界线提示：</b>${esc(ctx.boundaryFor(baseRule.id))}</p>` : ''}
     ${evBoxHTML(rows, { href: ctx.href('base-all'), hint: '为什么"人人每年都查"', allText: '在依据页看这份目录的原文 ›' })}
     ${scalingHTML(scaling, ctx)}
   </section>`;

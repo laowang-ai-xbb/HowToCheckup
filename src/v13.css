@@ -658,6 +658,19 @@
   }
   .atom-stale b { color: var(--ink-2); font-weight: 600; }
 
+  /* 卡内"界线提示 / 风险模型说明"（3.3bis demo）：同 .tip 形态，灰左线 ——
+     纯信息说明，不是警告，比分歧/过期再轻一档，保持整卡安静。 */
+  .atom-boundary {
+    border-left: 2px solid var(--ink-3);
+    padding-left: 8px;
+  }
+  .atom-boundary b { color: var(--ink-2); font-weight: 600; }
+  .atom-model {
+    border-left: 2px solid var(--ink-3);
+    padding-left: 8px;
+  }
+  .atom-model b { color: var(--ink-2); font-weight: 600; }
+
   /* ---- hover 只给真指针设备 ----
    * 触摸屏上 :hover 会"粘住"：手指抬起后那行底色还留着，用户以为还是选中的。
    * 这套样式原来只服务 demo（有人在电脑上看），现在产品也在用，所以按不变量

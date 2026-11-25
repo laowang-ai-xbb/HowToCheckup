@@ -1,0 +1,65 @@
+{
+  "note": "12.7 人群对账豁免登记：每条豁免必须写理由；对账自然通过后本表会被告警点名清理。",
+  "ack": {
+    "lung-ldct-high-risk": {
+      "missing": [
+        "年龄边界 79"
+      ],
+      "reason": "A 档写到 79 岁、80+ 进 80plus 是产品分流（老板 2026-11-23 拍板）；指南原文区间是 50–80，79 这个分流线不是指南数字，不写入人群描述。"
+    },
+    "stomach-gastroscopy-high-risk": {
+      "missing": [
+        "年龄边界 74"
+      ],
+      "reason": "指南区间 45–74，引文只含起点 45；上限 74 由 75plus 衔接规则承接，不在人群描述里复述。"
+    },
+    "stomach-gastroscopy-average-risk": {
+      "missing": [
+        "年龄边界 74"
+      ],
+      "reason": "同上：一般风险条以「不符合高风险定义」界定，74 上限由衔接规则承接。"
+    },
+    "breast-cancer-screening-high-risk": {
+      "missing": [
+        "年龄边界 74"
+      ],
+      "reason": "高危筛查区间上限 74 来自指南推荐区间，引文只含起点数字；74 由 75plus 衔接规则承接。"
+    },
+    "lung-ldct-80plus": {
+      "missing": [
+        "条件「packYears」",
+        "条件「smoking」",
+        "条件「smokingQuitYears」",
+        "条件「secondhandYears」",
+        "条件「occupationYears」",
+        "条件「occupationAgents」",
+        "条件「familyHistory」"
+      ],
+      "reason": "80plus 是高危规则的年龄延续条：高危条件与 lung-ldct-high-risk 完全一致并引用同一条款，population 不逐项复述（逐项复述会造成两处口径维护）。"
+    },
+    "stomach-gastroscopy-75plus": {
+      "missing": [
+        "年龄边界 75"
+      ],
+      "reason": "75plus 为衔接条：指南原文只定义到 74（45–74），75 以上无条款可引，数字 75 写进 population 无法回读原文；本条由衔接语义承接（同 leanNote 说明）。"
+    },
+    "aaa-screening-75plus": {
+      "missing": [
+        "年龄边界 76"
+      ],
+      "reason": "76 = USPSTF 区间 65–75 的上界+1（产品分流线），引文原文只有 65–75；数字 76 写进 population 无法回读原文。"
+    },
+    "psa-family-45": {
+      "missing": [
+        "年龄边界 49"
+      ],
+      "reason": "49 = 45–49 与 50–69 一般筛查规则的分流线（产品分工），指南原文只写 ≥45；49 无法回读原文。"
+    },
+    "cvd-family-carotid": {
+      "missing": [
+        "年龄边界 40"
+      ],
+      "reason": "40 岁取自早发 CVD 家族史的通行定义起点（manualCheck.ages 已说明），本条唯一证据（糖尿病指南）引文无该数字。"
+    }
+  }
+}

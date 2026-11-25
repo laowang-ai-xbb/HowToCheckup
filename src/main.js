@@ -1421,6 +1421,8 @@ const renderResult = () => {
     refNote: REFERRAL_NOTE,
     vaccineWarn: vaccineMeta.severeWarn,
     disputeFor: disputeTextFor,
+    /* 3.3bis 边界透明化：引擎算好的『贴线提示』，按规则卡投放 */
+    boundaryFor: (ruleId) => (safety.boundaries || []).find((b) => b.ruleId === ruleId)?.text || '',
   };
 
   /* 目录按清单实况生成：没有疫苗就不出现「疫苗」那一格。

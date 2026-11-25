@@ -860,6 +860,48 @@ try {
     check('顶部不再有分歧模块', !disp.top, JSON.stringify(disp));
   }
 
+  // ---- 3.25 3.3bis demo：界线提示在卡内 + 模型指路卡在卡尾 ----
+  {
+    // 贴线提示只能挂连续输入字段（age）。包年/戒烟年数在问卷里是档位标记（20/10/0、lt5/ge5），
+    // 档位输入没有"贴线"档 —— 曾经挂过 packYears:19 的 demo，链接一走 sanitizeProfile 就被
+    // 洗成无值（19 不是合法档位），引擎当 0 包年照样出 C 档卡，但界线提示永远不触发。
+    // 39 岁男：贴着 40 岁线 → 基础项目区出现"界线提示"（baseHTML 独立渲染分支）
+    const p1 = Buffer.from(JSON.stringify({
+      age: 39, gender: 'male',
+    })).toString('base64url');
+    // 上一段测试停在 r.html#p=...：同路径仅换 hash 不会重载页面，必须先回首页再进
+    await goto(BASE + '/');
+    await goto(`${BASE}/r.html#p=${p1}`);
+    await waitFor(`!!document.querySelector('.actions')`, '贴线画像结果页');
+    await sleep(200);
+    const b = await evaluate(`(() => ({
+      hints: [...document.querySelectorAll('.atom-boundary')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 90)),
+    }))()`);
+    check('贴线用户在卡内看到「界线提示」（39 岁→40 岁基础项目线）', b.hints.length >= 1 && /接近 40 岁.*基础项目/.test(b.hints.join('')), JSON.stringify(b));
+    // 74 岁男：贴着 75 岁线 → 肠癌筛查卡里出现"界线提示"（atomHTML 常规分支）
+    const p3 = Buffer.from(JSON.stringify({ age: 74, gender: 'male' })).toString('base64url');
+    await goto(BASE + '/');
+    await goto(`${BASE}/r.html#p=${p3}`);
+    await waitFor(`!!document.querySelector('.actions')`, '74 岁结果页');
+    await sleep(200);
+    const c = await evaluate(`(() => ({
+      hints: [...document.querySelectorAll('.atom-boundary')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 90)),
+    }))()`);
+    check('贴线用户在卡内看到「界线提示」（74 岁→75 岁肠癌线）', c.hints.length >= 1 && /接近 75 岁.*医生/.test(c.hints.join('')), JSON.stringify(c));
+    // 40 岁女、糖尿病家族史 → 糖化卡尾部出现模型指路说明
+    const p2 = Buffer.from(JSON.stringify({
+      age: 40, gender: 'female', familyHistory: ['diabetes'],
+    })).toString('base64url');
+    await goto(BASE + '/');
+    await goto(`${BASE}/r.html#p=${p2}`);
+    await waitFor(`!!document.querySelector('.actions')`, '糖化画像结果页');
+    await sleep(200);
+    const mo = await evaluate(`(() => ({
+      notes: [...document.querySelectorAll('.atom-model')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 90)),
+    }))()`);
+    check('糖化卡尾部有「关于风险模型」说明', mo.notes.length >= 1 && /风险评分表.*不估算个人风险数值/.test(mo.notes.join('')), JSON.stringify(mo));
+  }
+
   // ---- 3.5 换一份人群画像再验一遍排版 ----
   // 只测"52 岁吸烟男"会漏掉女性专属的条目（乳腺/宫颈），那里文字最长、最容易破版
   {

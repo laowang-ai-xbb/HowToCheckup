@@ -152,6 +152,25 @@ export const applySafety = (profile, raw, opts = {}) => {
     });
   }
 
+  // ---- 3.3bis 边界透明化（demo）：条款卡 clause.boundary 声明的"指南界线" ----
+  // 用户贴在界线附近但没过线（below）/ 刚过线不久（above）时，在他真正看到的那张卡里说一句。
+  // 只引用指南已写明的线（near 数字必须有引文支撑，validate 把关），不发明阈值。
+  meta.boundaries = [];
+  for (const k of ['A', 'B', 'C']) {
+    for (const r of buckets[k]) {
+      if (r.hidden) continue;
+      for (const b of r.clause?.boundary || []) {
+        const v = Number(profile?.[b.field]);
+        const near = Number(b.near);
+        if (!Number.isFinite(v) || !Number.isFinite(near)) continue;
+        const hit = b.side === 'above'
+          ? (v > near && v <= near + 2)
+          : (v >= near - 2 && v < near);
+        if (hit) meta.boundaries.push({ ruleId: r.id, text: b.text });
+      }
+    }
+  }
+
   // ---- 三态标签：confirmed / indeterminate / baseline ----
   for (const k of ['A', 'B']) {
     for (const r of buckets[k]) {

@@ -601,11 +601,101 @@ for (const r of rulesFile.rules) {
       || typeof c.dispute.text !== 'string' || !c.dispute.text.trim())
       err(`[${tag}] clause.dispute 必须是非空 { key, text }`);
   }
+  // 3.3bis 边界透明化（可选）：boundary 必须是结构化数组，界线数字必须有引文支撑（不发明阈值）
+  if (c.boundary !== undefined) {
+    if (!Array.isArray(c.boundary) || !c.boundary.length)
+      err(`[${tag}] clause.boundary 必须是非空数组`);
+    else {
+      // hay 含 org/point：文案里的年份（如「2025 版」）出自证据出处名，界线数字出自原文 —— 两处都算有据
+      const bQuotes = normalizeText((r.evidence || []).flatMap((e) => [e.org || '', e.point || '', ...(e.quotes || (e.quote ? [e.quote] : []))]).join(' '));
+      const SCHEMA_FIELDS = new Set(Object.keys(inputs.fields));
+      for (const b of c.boundary) {
+        if (!b || !SCHEMA_FIELDS.has(b.field)) { err(`[${tag}] clause.boundary.field「${b?.field}」不是问卷字段`); continue; }
+        if (!Number.isFinite(Number(b.near))) err(`[${tag}] clause.boundary.near 必须是数字`);
+        if (!['below', 'above'].includes(b.side)) err(`[${tag}] clause.boundary.side 必须是 below/above`);
+        if (!b.text || !b.text.trim()) err(`[${tag}] clause.boundary.text 不能为空`);
+        for (const num of String(b.text).match(/\d+/g) || []) {
+          if (!bQuotes.includes(num)) err(`[${tag}] clause.boundary 文案里的数字 ${num} 在本规则引文里没有出处（界线必须是指南原文写明的）`);
+        }
+      }
+    }
+  }
+  // 3.3bis 模型指路卡（可选）：tool 必须能在证据出处文本里找到（防编造模型名）
+  if (c.modelReferral !== undefined) {
+    const mr = c.modelReferral;
+    if (!mr || typeof mr.tool !== 'string' || !mr.tool.trim() || typeof mr.text !== 'string' || !mr.text.trim())
+      err(`[${tag}] clause.modelReferral 必须是非空 { tool, text }`);
+    else {
+      const hay = normalizeText((r.evidence || []).map((e) => `${e.org} ${e.point || ''}`).join(' ')
+        + ' ' + normalizeText((r.evidence || []).flatMap((e) => e.quotes || (e.quote ? [e.quote] : [])).join(' ')));
+      if (!hay.includes(normalizeText(mr.tool)))
+        err(`[${tag}] clause.modelReferral.tool「${mr.tool}」在证据出处文本里找不到（模型名不能凭空写）`);
+    }
+  }
   // 语义复核闭环：没有 supported 记录就提醒（不阻塞——先让闭环跑起来）
   const review = semanticReview[r.id];
   if (!review || review.verdict !== 'supported')
     warn(`[${tag}] 条款卡还没有语义复核记录（data/semantic-review.json），请跑 npm run review:semantic`);
 }
+
+/* ---------------- 12.7 人群对账（3.3bis「A 落地收尾」）----------------
+   条款卡 population.include 是给人看的人群描述，when 是机器判定条件。
+   两者必须说的是同一批人——不一致就是「字段填了但和原文不符」的变体。
+   机器只查可机械判定的三件事：性别、年龄边界、关键条件词。
+   说不清的（指南原文没给数字、衔接条等）登记进 data/population-audit.json，每条豁免必须写理由；
+   豁免失效（对账已自然通过）也会点名，防止登记表变成免检通道。 */
+const popAudit = (() => { try { return load('data/population-audit.json'); } catch { return { ack: {} }; } })();
+const FIELD_KEYWORD = {
+  smoking: ['吸烟'], packYears: ['包年'], smokingQuitYears: ['戒烟'],
+  secondhand: ['被动吸烟', '二手烟'], secondhandYears: ['被动吸烟', '二手烟'],
+  alcohol: ['饮酒'],
+  occupationDust: ['职业', '粉尘'], occupationAgents: ['职业', '致癌物'], occupationTypes: ['职业', '致癌物'], occupationYears: ['职业'],
+  familyHistory: ['家族史', '亲属', '家属'], pastHistory: ['病史', '确诊', '既往', '诊断', '感染', '硬化', '结节'],
+  hpStatus: ['幽门螺杆菌'], pregnant: ['孕'], frailty: ['衰弱'],
+  symptomFlags: ['症状'], recentHospital: ['住院'],
+  fallHistory: ['跌倒', '摔倒'], gaitDifficulty: ['步态', '行动'], memoryConcern: ['记忆', '认知'],
+};
+const whenFieldsOf = (when, acc = []) => {
+  for (const [k, v] of Object.entries(when || {})) {
+    if (k === 'any' || k === 'all') (v || []).forEach((w) => whenFieldsOf(w, acc));
+    else if (k === 'none' || k === 'ageMin' || k === 'ageMax' || k === 'gender') continue;
+    else acc.push(k);
+  }
+  return acc;
+};
+const ageBoundsOf = (when, acc = []) => {
+  for (const [k, v] of Object.entries(when || {})) {
+    if (k === 'ageMin' || k === 'ageMax') acc.push([k, v]);
+    else if (k === 'any' || k === 'all') (v || []).forEach((w) => ageBoundsOf(w, acc));
+  }
+  return acc;
+};
+let popChecked = 0;
+for (const r of rulesFile.rules) {
+  const c = r.clause;
+  if (!c || !Array.isArray(c.population?.include)) continue;
+  popChecked += 1;
+  const incJoin = c.population.include.join(' ');
+  const text = normalizeText(incJoin);
+  const missing = [];
+  if (r.when.gender === 'female' && !text.includes('女')) missing.push('性别（女）');
+  if (r.when.gender === 'male' && !text.includes('男')) missing.push('性别（男）');
+  // 18 / 100 是界面年龄下限/上限，不是任何指南给的线（与 1.x 年龄检查同一口径），不参与对账
+  const UI_AGE = [inputs.fields.age?.min ?? 18, inputs.fields.age?.max ?? 100];
+  for (const [, v] of ageBoundsOf(r.when)) {
+    if (UI_AGE.includes(v)) continue;
+    if (!new RegExp(`(^|[^0-9])${v}(?![0-9])`).test(incJoin)) missing.push(`年龄边界 ${v}`);
+  }
+  for (const f of [...new Set(whenFieldsOf(r.when))]) {
+    const kws = FIELD_KEYWORD[f];
+    if (kws && !kws.some((w) => text.includes(w))) missing.push(`条件「${f}」`);
+  }
+  const ack = popAudit.ack?.[r.id];
+  const unack = missing.filter((m) => !(ack?.missing || []).includes(m));
+  if (unack.length) warn(`[${r.id}] 条款卡人群与判定条件对不上：${unack.join('、')} —— 改 population 文字，或在 data/population-audit.json 登记理由`);
+  if (ack && missing.length === 0) warn(`[${r.id}] population-audit 里的豁免已不再需要（对账自然通过），请清理登记表`);
+}
+console.log(`人群对账：${popChecked} 张条款卡核对性别/年龄边界/条件词（豁免登记 ${Object.keys(popAudit.ack || {}).length} 条）`);
 
 /* ---------------- 12.6 依据时效（老板 2026-11-24 定：48 个月 + 仅单条依据）----------------
    行业通行复审周期 2–5 年（WHO 手册 / NICE 3 年），48 个月取其中位偏保守。
