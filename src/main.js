@@ -1230,7 +1230,6 @@ const riskNoteHTML = (kind, p) => {
     <details class="risknote" data-note="oil">
       <summary>你长期接触油烟，需特别注意</summary>
       <div class="rnbody">
-        <p>你「经常炒菜、长期接触油烟」。这是一个需要认真对待的风险。</p>
         <ol>
           <li><b>有症状或合并高危，立即去呼吸内科 / 胸外科评估</b>：咳血、胸痛、持续咳嗽，或有吸烟、二手烟、肺癌家族史时，让医生判断是否做 CT。</li>
           <li><b>抽油烟机早开晚关</b>：开火前开，关火后再跑 5–10 分钟。</li>
