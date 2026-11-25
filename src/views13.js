@@ -32,6 +32,16 @@ export const leanOf = (rule) =>
 
 const X_LINK = ' target="_blank" rel="noopener noreferrer"';
 
+/* 决策类型标签（老板 2026-11-25 定的 P1-6）：说清这张卡"是什么性质的事"——
+ * 预防＝平时保养/基线；筛查＝没病时找病；复查＝已经确诊后定期看变化。
+ * 它和 A/B/C（做不做）正交，不参与判定，只贴在标题后面。尺寸照抄全站 .badge，
+ * 只换语义色，不另造一套字号（否则一页里两种标签长得不像一家人）。 */
+const DT_LABEL = { prevent: '预防', screen: '筛查', follow: '复查' };
+const decisionTag = (rule) => {
+  const t = rule.decisionType && DT_LABEL[rule.decisionType];
+  return t ? `<span class="dtag dt-${rule.decisionType}">${t}</span>` : '';
+};
+
 /* ---------------- 依据：折叠成四列表 ----------------
  * 不展开时只占一行；展开回答"谁说的 / 哪份文件 / 证据强度 / 去哪看原文"。
  * 原文摘录不放在这里 —— 那是依据页的活。
@@ -77,9 +87,12 @@ export const atomHTML = (rule, idx, key, ctx) => {
   const soft = rule.frequency.basis && rule.frequency.basis !== 'guideline';
   return `
   <article class="atom${key ? ' key' : ''}">
-    <div class="an">${key ? `<span class="kn">${idx}</span>` : ''}${esc(title)}</div>
+    <div class="an">${key ? `<span class="kn">${idx}</span>` : ''}${esc(title)}${decisionTag(rule)}</div>
     ${many ? `<p class="ids">${names.map(esc).join('、')}</p>` : ''}
     <p class="aw">${esc(rule.verdict)}</p>
+    ${rule.whyYou ? `<p class="whyYou"><b>为什么列给你：</b>${esc(rule.whyYou)}</p>` : ''}
+    ${rule.decisionType === 'follow' ? '<p class="tip"><b>这是复查：</b>不是查一次就完，按医生定的间隔定期做。</p>' : ''}
+    ${ctx.flagOnCard ? ctx.flagOnCard(rule).map((label) => `<p class="tip redtip"><b>你刚才勾过这条：${esc(label)} → 请尽快去医院看医生。</b></p>`).join('') : ''}
     <div class="am">
       <span class="af">${esc(rule.frequency.text)}</span>
       ${mutex}
@@ -324,6 +337,20 @@ export const foldHTML = (count, inner, extra = '') => !inner && !extra ? '' : `
       ${extra}
     </details>
   </section>`;
+
+/* ---------------- 页尾：决策类型标签的解释（折叠） ----------------
+ * 老板 2026-11-25：标签要在结果页底部有解释，折叠展示，不占地方。
+ * 折叠件照抄 legendHTML 的样式（同一个 footer 里两种折叠件长得一样才和谐）。 */
+export const decisionLegendHTML = () => `
+  <details class="legend dlegend">
+    <summary>卡片上的「预防 / 筛查 / 复查」是什么意思</summary>
+    <dl>
+      <div><dt><span class="dtag dt-prevent">预防</span></dt><dd>平时保养或一生一次的基线检查，没病也该做，比如基础体检、洁牙。</dd></div>
+      <div><dt><span class="dtag dt-screen">筛查</span></dt><dd>还没生病时找早期线索。发现了能早处理，没发现也不代表万事大吉。</dd></div>
+      <div><dt><span class="dtag dt-follow">复查</span></dt><dd>已经确诊某种病，按医生定的间隔定期查，看有没有变化。不是查一次就完。</dd></div>
+    </dl>
+    <p class="dlegend-n">这个标签只说"这是哪类事"，不影响该不该做——该不该做看它所在的那一档。</p>
+  </details>`;
 
 /* ---------------- 页尾：依据分类标准 ---------------- */
 export const legendHTML = () => `

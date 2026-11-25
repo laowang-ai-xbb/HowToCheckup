@@ -44,12 +44,13 @@
     },
     "rule": {
       "type": "object",
-      "required": ["id", "name", "category", "catalogIds", "topics", "when", "verdict", "reason", "whatItFinds", "frequency", "evidence"],
+      "required": ["id", "name", "category", "decisionType", "catalogIds", "topics", "when", "verdict", "reason", "whatItFinds", "frequency", "evidence"],
       "properties": {
         "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
         "name": { "type": "string" },
         "displayName": { "type": "string", "description": "对外展示短名：去掉括号里的解释，卡片标题/分享文字/分享图/打印稿统一用它" },
         "category": { "enum": ["A", "B", "C"] },
+        "decisionType": { "enum": ["prevent", "screen", "follow"], "description": "决策类型：预防/筛查/复查。与 A/B/C 正交，只做卡片标签，不参与判定" },
         "catalogIds": { "type": "array", "items": { "type": "string" }, "minItems": 0 },
         "topics": {
           "type": "array",
@@ -70,7 +71,9 @@
           "additionalProperties": true
         },
         "verdict": { "type": "string" },
-        "reason": { "type": "string" },
+        "reason": { "type": "string", "description": "依据页正文：这条检查是怎么回事（通用道理，非命中原因）。数字由 check:reason-source 校验有出处" },
+        "whyYou": { "type": "string", "description": "结果页命中原因：只复述用户自己填的画像，一句话，不需要外部证据" },
+        "askDoctor": { "type": "string", "description": "打印稿「问医生的问题清单」问句模板：只生成开放式问句，不生成诊断结论" },
         "whatItFinds": { "type": "string", "description": "能发现什么/不能发现什么，一句大白话" },
         "frequency": {
           "type": "object",

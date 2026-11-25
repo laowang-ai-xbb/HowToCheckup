@@ -20,6 +20,7 @@
 
 import { readFileSync } from 'node:fs';
 import { questions } from '../src/questions.js';
+import { mindCopies } from '../src/mind.js';
 
 const rules = JSON.parse(readFileSync('data/rules.json', 'utf8')).rules;
 
@@ -42,6 +43,9 @@ const add = (where, text, audit = false) => {
   if (typeof text === 'string' && text.trim()) copies.push({ where, text, audit });
 };
 
+// 心情小问卷（P3）：敏感模块的文案更要过守卫
+for (const c of mindCopies()) add('心情小问卷', c);
+
 for (const q of questions) {
   add(`题「${q.key}」题干`, q.title);
   add(`题「${q.key}」提示`, q.hint);
@@ -52,7 +56,9 @@ for (const q of questions) {
 for (const r of rules) {
   add(`规则「${r.id}」结论`, r.verdict);
   add(`规则「${r.id}」理由`, r.reason);
+  if (r.whyYou) add(`规则「${r.id}」为什么列给你`, r.whyYou);
   add(`规则「${r.id}」能查出什么`, r.whatItFinds);
+  if (r.askDoctor) add(`规则「${r.id}」问医生`, r.askDoctor);
   add(`规则「${r.id}」频率`, r.frequency?.text);
   (r.redFlags || []).forEach((x, i) => add(`规则「${r.id}」红旗${i + 1}`, x));
   (r.tellDoctor || []).forEach((x, i) => add(`规则「${r.id}」先说一声${i + 1}`, x));

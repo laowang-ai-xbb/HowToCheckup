@@ -65,6 +65,33 @@ export const questions = [
     ],
   },
   {
+    /* 红旗症状（P0-1，老板 2026-11-25 定稿）：一道安全检查，插在性别之后。
+     * 为什么前置：真有急诊症状的人，多答一题都是在耽误——放最后等于让人先花三分钟填完
+     * 再告诉他"你该先去医院"，那三分钟本就不该花。
+     * 为什么不改 A/B/C：这是安全分流，不是筛查判定。勾了只是弹提示/加横幅，
+     * 清单照出、分档照旧——工具没有资格替医生下诊断。
+     * tone=emergency 的三项当场弹 120；tone=clinic 的五项结果页挂横幅。
+     * "说不清"走 unknownLabel（存 'unknown'）：拿不准的人有台阶，不触发任何警告，
+     * 但卡片上原有的通用红旗提示照常显示——不知道不等于没有。 */
+    key: 'redFlags',
+    kind: 'multi',
+    title: '这些情况，最近有没有？',
+    optional: true,
+    noneLabel: '这些都没有',
+    unknownLabel: '说不清',
+    redFlag: true,
+    options: [
+      { v: 'stroke', l: '突然脸歪、一边胳膊没劲或说话不清', tone: 'emergency' },
+      { v: 'chest', l: '胸口像压了块石头，超过 15 分钟', tone: 'emergency' },
+      { v: 'hemoptysis', l: '咳出一大口鲜血', tone: 'emergency' },
+      { v: 'bloodInStool', l: '大便带血、发黑，或排便习惯变了超两周', tone: 'clinic' },
+      { v: 'cough', l: '咳嗽超两周不好，或声音一直哑', tone: 'clinic' },
+      { v: 'weightLoss', l: '没刻意减肥，体重却掉了 5% 以上', tone: 'clinic' },
+      { v: 'bloodInUrine', l: '尿里带血；女性非经期或同房后出血', tone: 'clinic' },
+      { v: 'lump', l: '不痛的肿块越来越大，或吃东西哽噎', tone: 'clinic' },
+    ],
+  },
+  {
     key: 'smoking',
     kind: 'single',
     title: '你吸烟吗？',

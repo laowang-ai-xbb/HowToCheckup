@@ -10,7 +10,7 @@
  */
 import { activeQuestions, questions } from '../src/questions.js';
 import { referrals } from '../src/referral.js';
-import { emptyProfile } from '../src/engine.js';
+import { emptyProfile, redFlagHits } from '../src/engine.js';
 import { readFileSync } from 'node:fs';
 
 const SENSORY = ['fallHistory', 'gaitDifficulty', 'memoryConcern'];
@@ -37,7 +37,8 @@ check('80 岁仍然问', SENSORY.every((k) => keysAt(80).has(k)));
 
 // 题量基准：首页不再显示「还剩 N 题」（老板第 10 条要求隐藏），但题量本身仍是设计基准，
 // 60 岁以上多出的三题会直接影响答题时长，所以这两条留着守住。
-check('59 岁不含年龄共 11 题', keysAt(59).size - 1 === 11, String(keysAt(59).size - 1));
+// P0-1 加了红旗症状一题（插在性别之后）：11 → 12 题。
+check('59 岁不含年龄共 12 题', keysAt(59).size - 1 === 12, String(keysAt(59).size - 1));
 check('60 岁起多 3 题', keysAt(60).size - keysAt(59).size === 3, String(keysAt(60).size - keysAt(59).size));
 
 /* 既往检查史（P0-2/P1-10）：和幽门螺杆菌那题一起构成"以前查过什么"。
@@ -99,6 +100,33 @@ for (const q of questions) {
   }
 }
 check('每个选项都能过一遍分享链接（白名单不许漏项）', roundTripBad.length === 0, roundTripBad.join(' / '));
+
+/* 红旗症状（P0-1）：安全分流，不改 A/B/C。钉住四条边界，防误改：
+ *   ① 题目在、是可选多选、8 项、有"都没有/说不清"两个出口；
+ *   ② 急诊三项、门诊五项分组正确；
+ *   ③ "说不清"不触发任何警告（不知道不等于没有）；
+ *   ④ 65+ 老 weightLoss 题答 ge5 → 门诊体重条命中，且不重复。 */
+check('红旗症状这道题在所有年龄都问', keysAt(30).has('redFlags') && keysAt(70).has('redFlags'));
+const rfQ = questions.find((q) => q.key === 'redFlags');
+check('红旗是可选多选、8 个症状', !!rfQ && rfQ.kind === 'multi' && rfQ.optional === true && rfQ.options.length === 8);
+check('红旗有「这些都没有」和「说不清」两个出口',
+  !!rfQ && rfQ.noneLabel === '这些都没有' && rfQ.unknownLabel === '说不清');
+check('红旗 3 急诊 + 5 门诊',
+  rfQ && rfQ.options.filter((o) => o.tone === 'emergency').length === 3
+  && rfQ.options.filter((o) => o.tone === 'clinic').length === 5);
+const p1 = { ...emptyProfile(), redFlags: ['stroke', 'bloodInStool'] };
+const h1 = redFlagHits(p1);
+check('急诊+门诊分别命中', h1.emergency.length === 1 && h1.clinic.length === 1);
+check('「说不清」不触发任何警告',
+  redFlagHits({ ...emptyProfile(), redFlags: 'unknown' }).emergency.length === 0
+  && redFlagHits({ ...emptyProfile(), redFlags: 'unknown' }).clinic.length === 0);
+const hLink = redFlagHits({ ...emptyProfile(), age: 70, weightLoss: 'ge5', redFlags: ['weightLoss'] });
+check('掉体重联动只出一条，不重复', hLink.clinic.filter((x) => x.v === 'weightLoss').length === 1);
+// 症状属隐私，绝不进分享链接白名单——直接看链接里编码了哪些字段。
+const { encodeProfile } = await import('../src/share.js');
+const code = encodeProfile(p1);
+const raw = JSON.parse(Buffer.from(code.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8'));
+check('症状不进分享链接（隐私）', !('redFlags' in raw), Object.keys(raw).join(','));
 
 console.log(`\n${pass}/${pass + fail} 通过`);
 if (fail) process.exit(1);

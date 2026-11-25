@@ -1,0 +1,39 @@
+name: 文案守卫（PR 检查）
+
+# 为什么单独一个 workflow、而不是塞进 deploy-pages：
+#   文案守卫拦的是"读不懂 / 有内部词 / 术语没解释 / 多选写了不渲染的 sub"这类问题，
+#   它偶尔会误报（新词不在词表里）。放在部署链上，一次误报就会挡住全站发布——
+#   文案小问题不该让整站发不出去。所以只在 PR 上跑：误报最多挡住那个 PR，
+#   主分支的正常发布不受影响。
+#
+# 触发时机：任何 PR 打开、同步新提交、或重新打开时跑一遍。
+# push 到 main 不跑（已由 PR 把关；紧急直推由各人自觉 npm test）。
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  copy-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: 文案体检
+        # 只跑"用户看得见的文案"这两道守卫，不跑全量 test：
+        #   · check:copy        内部词 / 术语没解释 / 错别字 / 多选死数据
+        #   · check:reason-source 依据页正文里的数字必须有证据出处
+        # 职责单一，不叠结构、变异、浏览器那些检查——那些在各自的流程里。
+        run: |
+          npm run check:copy
+          npm run check:reason-source

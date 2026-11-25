@@ -110,13 +110,38 @@ function render() {
     const label = leanOf(rule);
     return label ? `<div class="evlean"><span class="apick">${label}</span><span>${esc(rule.leanNote || '')}</span></div>` : '';
   };
+  /**
+   * 「这条检查是怎么回事」正文（老板 2026-11-25 定稿）：
+   * 以前标题叫「它为什么在你清单里」，可这段讲的是指南/共识的通用道理（给医生看的判定标准），
+   * 不是"因为你填了什么所以命中你"——名实不符，用户看不懂。改名后按句拆成圆点：
+   * 前 3 句直接显示，超过 3 句折进 details，避免胃镜那条 259 字把整页撑成论文。
+   * 为什么不用手写序号：项目早有规矩，圆点列宁愿不编号，也不手写①②③（维护会错序）。
+   * 这段文字里的数字由 scripts/check-reason-source.mjs 对着证据快照校验，改错数字会被拦。
+   */
+  const whyBlock = (why) => {
+    if (!why) return '';
+    // 按句号 / 分号断句，保留句末标点；换行压掉，避免来源文本里的软换行拆碎句子
+    const sentences = String(why).replace(/\s+/g, '')
+      .split(/(?<=[。；!?！？])/).map((s) => s.trim()).filter(Boolean);
+    if (sentences.length <= 3) {
+      return `<div class="evr evwhy"><b>这条检查是怎么回事：</b><ul class="evwhy-l">${sentences
+        .map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>`;
+    }
+    const head = sentences.slice(0, 3);
+    const rest = sentences.slice(3);
+    return `<div class="evr evwhy"><b>这条检查是怎么回事：</b><ul class="evwhy-l">${head
+      .map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
+      <details class="evwhy-more"><summary>展开剩下 ${rest.length} 句 ›</summary>
+        <ul class="evwhy-l">${rest.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
+      </details></div>`;
+  };
   const sec = (id, title, verdict, why, inner, findings, where, lean = '') => `
     <section class="evsec" id="${id}">
       <h2>${esc(title)}</h2>
       ${verdict ? `<p class="evv">${esc(verdict)}</p>` : ''}
       ${lean}
       ${where || ''}
-      ${why ? `<p class="evr"><b>它为什么在你清单里：</b>${esc(why)}</p>` : ''}
+      ${whyBlock(why)}
       ${findings ? `<p class="evr"><b>能查出什么：</b>${esc(findings)}</p>` : ''}
       ${inner}
     </section>`;

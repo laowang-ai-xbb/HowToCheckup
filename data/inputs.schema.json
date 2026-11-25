@@ -286,6 +286,19 @@
       },
       "note": "只做提示，不改变任何档位判定。"
     },
+    "redFlags": {
+      "type": "array",
+      "items": ["stroke", "chest", "hemoptysis", "bloodInStool", "cough", "weightLoss", "bloodInUrine", "lump"],
+      "sentinelValues": ["unknown"],
+      "required": false,
+      "label": "红旗症状（安全分流）",
+      "informationalOnly": true,
+      "intentionalNoRule": {
+        "values": ["stroke", "chest", "hemoptysis", "bloodInStool", "cough", "weightLoss", "bloodInUrine", "lump"],
+        "reason": "红旗症状是安全分流，不是筛查判定（P0-1）：勾急诊项当场弹 120、勾门诊项在结果页挂横幅并给对应卡片加提示，但不改变任何 A/B/C 分档——工具没有资格替医生下诊断。判定在 src/engine.js 的 redFlagHits，展示在 src/main.js。『说不清』记 unknown，不触发任何警告。"
+      },
+      "note": "症状属最敏感隐私，刻意不放进分享链接白名单（src/share.js 的 KEEP），收到链接的人看不到这些标记。"
+    },
     "fallHistory": {
       "type": "enum",
       "values": [

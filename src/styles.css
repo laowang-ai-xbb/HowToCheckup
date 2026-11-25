@@ -455,6 +455,22 @@ details[open] summary::after { content: " －"; }
 .tag-cond { color: #8a4b12; background: var(--amber-soft); }
 .tag-against { color: #7a2f2f; background: #f7e6e6; }
 .tag-insufficient { color: #4a4a4a; background: #ececec; }
+/* 决策类型标签：和上面共用同一套尺寸（.dtag 也套 .badge 的字号/圆角/内边距），
+ * 只是语义不同——预防/筛查/复查。放在卡片标题后，说清"这是哪类事"。 */
+.dtag {
+  display: inline-block; font-size: 11.5px; line-height: 1.6;
+  border-radius: 5px; padding: 1px 7px; margin-left: 6px; vertical-align: 1px;
+  white-space: nowrap; font-weight: 400;
+}
+.dt-prevent { color: #0b5d56; background: var(--teal-soft); }
+.dt-screen  { color: #8a4b12; background: var(--amber-soft); }
+.dt-follow  { color: #6b3a86; background: #f0e9f6; }
+/* 结果页底部「标签是什么意思」折叠件：照抄 .legend 的观感，不另造样式 */
+.dlegend dl { margin: 8px 0 0; }
+.dlegend dl > div { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; }
+.dlegend dt { flex: none; min-width: 3.5em; }
+.dlegend dd { margin: 0; color: var(--ink-2); line-height: 1.6; }
+.dlegend .dlegend-n { color: var(--ink-3); margin-top: 6px; line-height: 1.6; }
 .ev-point { margin: 4px 0 3px; color: var(--ink-2); }
 .ev-link { color: var(--teal); font-size: 13px; text-decoration: none; }
 
@@ -1081,3 +1097,85 @@ html[data-ls="big"] .rsum { font-size: 18px; }
   color: var(--teal); background: none; border: 0; padding: 0;
   text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
 }
+
+/* ---------------- 红旗症状（P0-1） ----------------
+ * 安全分流只用三种已有语义色（红=急诊、琥珀=门诊、青绿=正常交互），不新造调色板。
+ * 颜色只是示意，判定只看选项值，见 engine.redFlagHits。 */
+.opts.redflags .opt.tone-emergency { border-left: 4px solid #a32d2d; }
+.opts.redflags .opt.tone-clinic { border-left: 4px solid #d9974a; }
+.opts.redflags .opt.on.tone-emergency { background: #fcebeb; border-color: #a32d2d; }
+.opts.redflags .opt.on.tone-clinic { background: #fdf3e4; border-color: #d9974a; }
+
+/* 急诊全屏弹层：盖住整屏，逼人看见 120；但"继续填"永远在，不强迫。 */
+.emergency-mask {
+  position: fixed; inset: 0; z-index: 9999; background: rgba(27,26,23,.62);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.emergency-sheet {
+  background: var(--card); border-radius: 18px; padding: 26px 22px 22px;
+  max-width: 420px; width: 100%; box-shadow: 0 18px 60px rgba(0,0,0,.3);
+  border-top: 5px solid #a32d2d;
+}
+.emergency-sheet h2 { font-size: 24px; line-height: 1.35; color: #a32d2d; margin: 0 0 14px; }
+.emg-why { font-size: 15px; line-height: 1.75; color: var(--ink); margin: 0 0 22px; }
+.emg-actions { display: flex; flex-direction: column; gap: 10px; }
+.emg-call {
+  display: block; text-align: center; background: #a32d2d; color: #fff;
+  border-radius: 12px; padding: 14px; font-size: 17px; font-weight: 600;
+  text-decoration: none;
+}
+.emg-later {
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px; font-size: 14px; color: var(--ink-2); cursor: pointer;
+}
+
+/* 结果页门诊横幅：常驻顶部，橙框浅底，和清单同一套圆角字号。 */
+.flag-banner {
+  background: var(--amber-soft); border: 1px solid #d9974a; border-radius: 12px;
+  padding: 12px 14px; margin: 12px 0 4px;
+}
+.flag-banner b { font-size: 14.5px; color: var(--amber); line-height: 1.5; }
+.flag-banner p { font-size: 12.5px; color: var(--ink-2); line-height: 1.65; margin: 6px 0 0; }
+.flag-banner .flag-acts { display: flex; gap: 10px; align-items: center; }
+.flag-banner.folded p:not(.flag-acts) { display: none; }
+.flag-qtext { font-size: 12.5px; color: var(--teal); line-height: 1.6; }
+
+/* ---------------- 心情小问卷 P3 ----------------
+ * 结果页末尾的一张可选卡；安全边界见 src/mind.js。用青绿系，不引入恐吓色。 */
+.mind { margin: 22px 0 8px; }
+.mind-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.mind-k { font-size: 12px; letter-spacing: .04em; color: var(--teal); margin: 0 0 6px; }
+.mind-lead { font-size: 13.5px; color: var(--ink-2); line-height: 1.7; margin: 0 0 12px; }
+.mind-open { background: var(--teal-soft); color: var(--teal); border: 1px solid #cfe6e2;
+  border-radius: 10px; padding: 10px 14px; font-size: 14px; cursor: pointer; }
+.mind-body { margin-top: 14px; }
+.mind-qn { font-size: 12px; color: var(--ink-3); margin: 0 0 6px; }
+.mind-qt { font-size: 17px; line-height: 1.5; margin: 0 0 8px; color: var(--ink); }
+.mind-qh { font-size: 12.5px; color: var(--ink-2); line-height: 1.7; margin: 0 0 14px; }
+.mind-opts { display: grid; gap: 9px; }
+.mind-opt { text-align: left; background: var(--card); border: 1.5px solid var(--line); border-radius: 11px;
+  padding: 11px 13px; font-size: 14px; color: var(--ink); cursor: pointer; }
+.mind-opt:active { border-color: var(--teal); background: var(--teal-soft); }
+.mind-out { border-top: 1px dashed var(--line); padding-top: 14px; font-size: 13.5px; color: var(--ink-2); line-height: 1.75; }
+.mind-out p { margin: 0 0 8px; }
+.mind-out-lead { font-size: 15px; color: var(--ink); font-weight: 600; }
+.mind-out a { color: var(--teal); font-weight: 600; }
+.mind-out .mind-fine { font-size: 12px; color: var(--ink-3); }
+.mind-paused { font-size: 13px; color: var(--ink-3); }
+/* 全屏求助层：主句最大最重，电话是视觉重点，关闭按钮常驻右上角 */
+.mind-crisis { position: fixed; inset: 0; z-index: 10000; background: rgba(27,26,23,.72);
+  display: flex; align-items: center; justify-content: center; padding: 20px; }
+.mind-crisis-card { position: relative; background: var(--card); border-radius: 18px;
+  padding: 30px 22px 24px; max-width: 440px; width: 100%; box-shadow: 0 18px 60px rgba(0,0,0,.3);
+  border-top: 5px solid var(--teal); text-align: center; }
+.mind-close { position: absolute; right: 12px; top: 10px; width: 34px; height: 34px;
+  background: none; border: 0; font-size: 26px; line-height: 1; color: var(--ink-3); cursor: pointer; }
+.mind-crisis-main { font-size: 21px; line-height: 1.55; color: var(--ink); font-weight: 600; margin: 0 0 6px; }
+.mind-crisis-sub { font-size: 14px; color: var(--ink-2); margin: 0 0 16px; }
+.mind-tels { display: grid; gap: 9px; }
+.mind-tel { display: block; text-decoration: none; border: 1.5px solid var(--line); border-radius: 12px;
+  padding: 11px; font-size: 17px; font-weight: 700; color: var(--ink); }
+.mind-tel span { display: block; font-size: 12px; font-weight: 400; color: var(--ink-3); margin-top: 2px; }
+.mind-tel.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+.mind-tel.primary span { color: var(--teal-soft); }
+.mind-sign { font-size: 12.5px; color: var(--ink-3); margin: 18px 0 0; }

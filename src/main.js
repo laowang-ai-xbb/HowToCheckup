@@ -6,7 +6,7 @@ import './styles.css';
 /* 结果页与依据页的排版件（老板 2026-11-22 定的那版「结论卡」）。
    这套版式先在设计稿里定稿，再搬进产品；结果页与依据页共用同一份样式文件，改一处要两边一起看。 */
 import './v13.css';
-import { emptyProfile, evaluate, upcoming, ruleLabel, vaccinesFor, vaccineMeta, mutexNotes } from './engine.js';
+import { emptyProfile, evaluate, upcoming, ruleLabel, vaccinesFor, vaccineMeta, mutexNotes, redFlagHits, RED_FLAG_LABEL } from './engine.js';
 import { questions, activeQuestions, SHAPE_OPTIONS } from './questions.js';
 import { bmiOf, bodyLevel, cutsFor, bodyOf, BODY_EVIDENCE } from './body.js';
 import { decodeProfile, buildShareUrl, copyText, encodeProfile } from './share.js';
@@ -17,10 +17,11 @@ import { signBarHTML, signLineResultHTML } from './author.js';
 import fp from '../data/fingerprint.json' with { type: 'json' };
 import { renderShareCard } from './share-image.js';
 import { makePrintData, printSheet } from './print-sheet.js';
+import { mindCardHTML, mountMind } from './mind.js';
 import { revealAboveKeyboard, keyboardLikelyOpen } from './keyboard.js';
 import { evRows, evCount } from './evfmt.js';
 import {
-  atomHTML, tocHTML, baseHTML, vacHTML, refHTML, foldHTML, legendHTML,
+  atomHTML, tocHTML, baseHTML, vacHTML, refHTML, foldHTML, legendHTML, decisionLegendHTML,
   gapsTopHTML, soonHTML, evBoxHTML,
 } from './views13.js';
 
@@ -574,9 +575,12 @@ const renderQuiz = () => {
   } else {
     const dunno = cur === 'unknown';
     const arr = Array.isArray(cur) ? cur : [];
-    body = `<div class="opts two-col">` + q.options.map((o, i) => {
+    body = `<div class="opts two-col${q.redFlag ? ' redflags' : ''}">` + q.options.map((o, i) => {
       const on = arr.includes(o.v) ? ' on' : '';
-      return `<button class="opt${on}" data-act="toggle" data-i="${i}" aria-pressed="${on ? 'true' : 'false'}">
+      // 红旗题用颜色区分急诊/门诊三级——仅为视觉示意，真机上同款样式，
+      // 颜色不改变任何判定（判定只看 v 属哪组，见 engine.redFlagHits）。
+      const tone = q.redFlag && o.tone ? ` tone-${o.tone}` : '';
+      return `<button class="opt${on}${tone}" data-act="toggle" data-i="${i}" aria-pressed="${on ? 'true' : 'false'}">
         <span class="tick"></span><span class="opt-l">${esc(o.l)}</span>
       </button>`;
     }).join('') + `</div>
@@ -616,6 +620,17 @@ const renderQuiz = () => {
             这两种回看时才确实缺一个"不改答案也能往下"的出口。 */ state.step < state.maxStep && !(
         q.kind === 'age' || q.kind === 'multi' || (q.kind === 'body' && state.profile.bodyMode !== 'shape')
       ) ? `<button class="btn primary big rev-next" data-act="review-next">下一步</button>` : ''}
+    ${state.showEmergency ? `
+    <div class="emergency-mask" role="alertdialog" aria-modal="true" aria-labelledby="emg-title">
+      <div class="emergency-sheet">
+        <h2 id="emg-title">先别填了，现在就打 120</h2>
+        <p class="emg-why">时间就是生命。立即打120，并告知你的亲友。别自己开车去医院。</p>
+        <div class="emg-actions">
+          <a class="emg-call" href="tel:120" data-act="emergency-call">拨打 120</a>
+          <button class="emg-later" type="button" data-act="emergency-continue">我知道了，继续填问卷</button>
+        </div>
+      </div>
+    </div>` : ''}
   </main>`;
 
   // 换题时回到页首：手机屏矮，上题的长选项会让人以为新题从半截开始。
@@ -1387,12 +1402,24 @@ const renderResult = () => {
     vacs,
     refs,
   });
+  /* 门诊红旗横幅 / 卡片提示（P0-1）：只列"尽快看医生"的门诊项。
+   * 急诊项不在这里出——它已在问卷当场全屏弹过 120，放到结果页当横幅反而弱化了。
+   * "说不清"不产生任何命中；掉体重和老 weightLoss 题命中时已由引擎合并去重。 */
+  const flagHits = redFlagHits(p);
+  // 卡片级红旗提示：只给明确一一对应的规则（redFlagKeys），且用户确实勾了那个症状。
+  // 其余门诊项由顶部横幅统一说，卡片不硬关联，避免误导。
+  const hitVSet = new Set(flagHits.emergency.concat(flagHits.clinic).map((x) => x.v));
+  const flagOnCard = (rule) => (rule.redFlagKeys || [])
+    .filter((v) => hitVSet.has(v))
+    .map((v) => RED_FLAG_LABEL[v]);
+
   const ctx = {
     href: evPageHref,
     mutex: MUTEX,
     cgaEvidence: CGA_EVIDENCE,
     refNote: REFERRAL_NOTE,
     vaccineWarn: vaccineMeta.severeWarn,
+    flagOnCard,
   };
 
   /* 目录按清单实况生成：没有疫苗就不出现「疫苗」那一格。
@@ -1414,12 +1441,21 @@ const renderResult = () => {
     ? '标了序号的三件最不能省，排在必做最前面'
     : A_REST.length ? '带序号的这几件最不能省，排在必做最前面' : '';
 
+  const flagBanner = flagHits.clinic.length
+    ? `<div class="flag-banner" role="alert">
+        <b>这 ${flagHits.clinic.length} 项需尽快看医生：${flagHits.clinic.map((x) => esc(x.label)).join('、')}</b>
+        <p>这不是"体检"该解决的问题，请尽快去医院，让医生当面判断。并告知你的亲友。</p>
+        <p class="flag-acts"><button class="linkish" type="button" data-act="flag-fold">收起</button><span>·</span><button class="linkish" type="button" data-act="flag-q">看要问医生的话 ›</button></p>
+       </div>`
+    : '';
+
   app.innerHTML = `
   <main class="screen result v13">
   <div class="doc">
     <header class="rhead">
       <div class="rwho">${p.age} 岁 · ${p.gender === 'female' ? '女' : '男'}${body.bmi ? ` · BMI ${body.bmi.toFixed(1)}` : ''}</div>
       <h1>今年该查什么</h1>
+      ${flagBanner}
       ${/* 页首不放"共 N 项：必做 X、你来定 Y、不做 Z"（老板 R10 删的）：
            那串数字跟下面目录格子里的数字是同一件事，摆两遍等于没摆。
            只留这句"序号是什么意思"，因为它是唯一不重复的信息。 */ ''}
@@ -1477,10 +1513,13 @@ const renderResult = () => {
     </div>
   </div>
 
+  ${mindCardHTML()}
+
   <button class="totop" data-act="totop" aria-label="回到顶部">↑<span class="totop-t">回到顶部</span></button>
 
   <footer class="disclaim">
     <p><b>这不是医疗建议。</b>清单依据公开指南自动生成，不能替代医生面诊。已确诊疾病、正在服药、或近期有不适的人，请直接找医生。</p>
+    ${decisionLegendHTML()}
     ${legendHTML()}
     ${creditsHTML()}
     <!-- 页尾再放一个：读到最底下想回去的时候，浮动那颗容易被忽略（PC 尤其），
@@ -1491,6 +1530,7 @@ const renderResult = () => {
   </main>`;
   lastStep = -1;
   window.scrollTo(0, 0);
+  mountMind(app);
   paintToc();
   syncTocHeight();
 
@@ -1751,7 +1791,24 @@ app.addEventListener('click', async (ev) => {
       state.profile[q.key] = 'unknown';
     }
     state.touched.add(q.key);
+    // 红旗题：勾了急诊项，先在原题当场弹全屏 120 提示，再让人决定继续与否。
+    // 只弹一次（showEmergency 由弹层的"继续填"清掉），不会每次重绘都弹。
+    if (q.redFlag) {
+      const hits = redFlagHits(state.profile);
+      if (hits.emergency.length && !state.showEmergency) {
+        state.showEmergency = true;
+        render();
+        return;
+      }
+    }
     next();
+    return;
+  }
+  if (act === 'emergency-continue') { state.showEmergency = false; next(); return; }
+  if (act === 'flag-fold') { app.querySelector('.flag-banner')?.classList.toggle('folded'); return; }
+  if (act === 'flag-q') {
+    const el = app.querySelector('.flag-banner .flag-acts');
+    if (el) el.insertAdjacentHTML('afterend', '<p class="flag-qtext">医生只有几分钟，可以先问：我这个情况要不要马上处理？需要做哪些检查？</p>');
     return;
   }
   if (act === 'restart') {
