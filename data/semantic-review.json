@@ -70,5 +70,191 @@
     "reviewedAt": "2026-11-25",
     "by": "ai-session",
     "note": "「对一般人群均应进行HBsAg筛查」为原句；version 2022 与《慢性乙型肝炎防治指南（2022年版）》出处一致。"
+  },
+  "base-package": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "oral-scaling": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "stomach-gastroscopy-average-risk": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "hp-test-once": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "chest-xray-routine": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "thyroid-us-screening": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "tumor-markers-panel": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "pet-ct-screening": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "psa-70plus": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "psa-50-69": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "base-package-male": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "base-package-female": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "carotid-us-screening": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "echo-routine": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "head-ct-routine": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "tsh-screening": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "pregnancy-guard": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "ovarian-family-history": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "diabetes-followup": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "hypertension-followup": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "cvd-followup": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "cancer-survivor-followup": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "thyroid-followup": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "colorectal-screening-75plus": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "stomach-gastroscopy-75plus": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "breast-cancer-75plus": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "cervical-cancer-65plus": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "aaa-screening-75plus": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "psa-family-45": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "dm-family-hba1c": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "cvd-family-carotid": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
   }
 }

@@ -1102,6 +1102,9 @@ const showEgg = () => {
       <p class="veil-wish">${esc(egg.wish)}</p>
       <p class="veil-sign">—— ${esc(egg.sign)}</p>
       <button class="veil-btn" data-egg="go" type="button">看看我的清单 ›</button>
+      ${/* 老板 2026-11-25 第 3 条：加一个明确的关闭。点屏幕任意处/3 秒自动关的行为保留，
+           但"关闭"必须有看得见的具体按钮 —— 对不熟悉"点哪都行"暗示的用户，可见出口才安心。 */ ''}
+      <button class="veil-btn veil-btn-ghost" data-egg="close" type="button">关闭</button>
     </div>`;
   // 点屏幕任何地方都算"跳过"：他急着看清单，不该被迫去找那个按钮
   wrap.addEventListener('click', closeEgg);
@@ -1449,9 +1452,11 @@ const renderResult = () => {
            那串数字跟下面目录格子里的数字是同一件事，摆两遍等于没摆。
            只留这句"序号是什么意思"，因为它是唯一不重复的信息。 */ ''}
       ${sumHint ? `<p class="sum-hint">${sumHint}</p>` : ''}
-      ${/* 50+ 女性不再常规问备孕题；但绝经前/辅助生殖仍可能怀孕，所以留一句兜底，
-           既不拿不合场景的问题打扰 78 岁老人，也不假装 50 岁以后绝对不会怀孕。 */
-        p.gender === 'female' && Number(p.age) >= 50
+      ${/* 50–54 岁女性保留一句怀孕兜底：绝经前/辅助生殖在这个窗口仍有一线可能。
+           55 岁及以上不再显示（老板 2026-11-25：高龄看到这句只会怀疑产品有 bug，
+           自然怀孕与辅助生殖在 55+ 已可忽略）—— 比起"写一句话不冒犯所有人"，
+           按生理窗口收窄显示范围才是根治。 */
+        p.gender === 'female' && Number(p.age) >= 50 && Number(p.age) < 55
           ? '<p class="preg-note">如果已经怀孕或正在做辅助生殖，请按产科医生安排，不要用这份常规清单。</p>'
           : ''}
       <button class="ls ls-result" data-act="ls" aria-pressed="${state.bigText}">${state.bigText ? '标准字' : '大字'}</button>

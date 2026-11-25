@@ -32,10 +32,11 @@ export const newTitles = (current = [], baseline = null) => {
   return (current || []).filter((t) => !old.has(t));
 };
 
-/** 把一份目录快照压成可入库的最小结构 */
+/** 把一份目录快照压成可入库的最小结构（chars 供截断检测：正文骤缩 = 疑似被抓坏） */
 export const snapshotOf = (id, url, text, keywords) => ({
   id,
   url,
   checkedAt: new Date().toISOString(),
+  chars: (text || '').length,
   titles: extractTitles(text, keywords),
 });

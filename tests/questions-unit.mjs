@@ -100,5 +100,22 @@ for (const q of questions) {
 }
 check('每个选项都能过一遍分享链接（白名单不许漏项）', roundTripBad.length === 0, roundTripBad.join(' / '));
 
+/* encode 侧守护（2026-11-25 根因修复）：cookingOilFume 曾被 KEEP 手工白名单漏掉，
+ * 结果页油烟提醒"有时出现有时消失"。decode 侧由 questions 自动生成没有这个问题，
+ * 所以 round-trip 测试抓不到 —— 只有核对"编码白名单"才能堵住。
+ * 语义已翻转：默认全带，剔除必须登记进 EXCLUDE_FROM_LINK 并写理由。 */
+{
+  const { LINK_KEEP, LINK_EXCLUDE } = await import('../src/share.js');
+  const keep = new Set(LINK_KEEP);
+  const excl = new Set(Object.keys(LINK_EXCLUDE || {}));
+  const missing = questions
+    .filter((q) => q.kind !== 'body' && q.kind !== 'age')
+    .filter((q) => !keep.has(q.key) && !excl.has(q.key))
+    .map((q) => q.key);
+  check('问卷每个字段都被链接白名单覆盖（KEEP ∪ EXCLUDE，不许漏）', missing.length === 0, missing.join(','));
+  const unregistered = Object.keys(LINK_EXCLUDE || {}).filter((k) => !questions.some((q) => q.key === k));
+  check('EXCLUDE 登记的字段必须真实存在于问卷（防手滑删题后留下幽灵登记）', unregistered.length === 0, unregistered.join(','));
+}
+
 console.log(`\n${pass}/${pass + fail} 通过`);
 if (fail) process.exit(1);

@@ -8,10 +8,12 @@
   "where": "2026 年 11 月 10 日，Anthropic 上市路演视频",
   "wish": "祝你早日康复，身体健康。",
   "wishFamily": "祝你家人早日康复，身体健康。",
+  "wishBoth": "祝你和你的家人身体健康。",
+  "signBoth": "一个想让你长命百岁的人",
   "sign": "一个想你长命百岁的人",
   "trigger": ["cancer", "dementia", "cvd"],
   "familyTrigger": ["colorectal", "stomach", "lung", "liver", "breast", "ovarian", "prostate", "thyroid", "dementia", "prematureCvd"],
-  "_family_note": "2026-11-23 老板第 2 条：家族史里选了癌症 / 阿尔茨海默病 / 心脏病的人，也给他看这个彩蛋，但祝福要分人称 —— 病在家人身上，说「祝你早日康复」是错的。familyTrigger 用的是问卷 familyHistory 的真实取值：癌症在家族史里是分部位的八项（没有笼统的 cancer），心脏病对应 prematureCvd（心梗、脑卒中），阿尔茨海默病对应 dementia。既往症和家族史同时命中时按既往症走（自己病过，说的就是自己）。",
+  "_family_note": "2026-11-23 老板第 2 条：家族史里选了癌症 / 阿尔茨海默病 / 心脏病的人，也给他看这个彩蛋，但祝福要分人称 —— 病在家人身上，说「祝你早日康复」是错的。familyTrigger 用的是问卷 familyHistory 的真实取值：癌症在家族史里是分部位的八项（没有笼统的 cancer），心脏病对应 prematureCvd（心梗、脑卒中），阿尔茨海默病对应 dementia。2026-11-25 老板第 2 条更新：既往症和家族史**都**选了病的，祝福改为 wishBoth（祝你和你的家人身体健康）—— 病人和家属都是你牵挂的人，只祝一边都是错话。",
   "_source_note": "2026-11-21 核对结果：这句原话出自 2026-11-10 发布的上市路演视频（约 40 分钟处），他点名的四类病是 cancer / Alzheimer's / heart disease / mental illness，原话是「These will be relics of the past in, I think, less than a decade.」。它**不是**《Machines of Loving Grace》里的句子 —— 那篇 2024 年 10 月的长文说法保守得多：只提出「压缩的 21 世纪」（把 50–100 年的生物学进展压进 5–10 年），癌症写的是「消除大多数」，阿尔茨海默病写的是「预防」，心脏病归在「改善其他疾病」，且反复声明是「educated guesses」。所以出处只能写路演视频，写论文就是编出处。",
   "sources": [
     {

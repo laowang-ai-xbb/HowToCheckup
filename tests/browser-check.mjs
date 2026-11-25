@@ -1554,8 +1554,8 @@ try {
     check('家族史命中时彩蛋照给，但祝福是「祝你家人早日康复」',
       /祝你家人早日康复/.test(famWish || ''), famWish);
     const bothWish = await openVeil({ age: 52, gender: 'male', smoking: 'no', pastHistory: ['cancer'], familyHistory: ['lung'] }, '既往症+家族史彩蛋整屏');
-    check('既往症和家族史同时命中时说自己（不是「祝你家人」）',
-      /祝你早日康复/.test(bothWish || '') && !/家人/.test(bothWish || ''), bothWish);
+    check('既往症和家族史同时命中时祝福是差异化版本「祝你和你的家人身体健康」（老板 2026-11-25 定）',
+      /祝你和你的家人身体健康/.test(bothWish || ''), bothWish);
     const noneWish = await (async () => {
       const p = Buffer.from(JSON.stringify({ age: 52, gender: 'male', smoking: 'no', familyHistory: ['diabetes'] })).toString('base64url');
       await goto(BASE + '/r.html?p=' + p);

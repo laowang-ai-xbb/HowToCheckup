@@ -949,6 +949,11 @@ summary:active, .linkish:active, .skip:active, .back:active { opacity: .55; }
   border-radius: 999px; border: 1px solid var(--line);
   background: var(--card); color: var(--ink-2); cursor: pointer;
 }
+/* 关闭按钮：次级形态 —— 更轻的边框和字色，主行动仍然是「看看我的清单」 */
+.veil-btn-ghost {
+  background: transparent; border-color: transparent;
+  color: var(--ink-3); font-size: 13.5px; padding: 8px 16px;
+}
 html[data-ls="big"] .veil-q { font-size: 26px; }
 html[data-ls="big"] .veil-wish { font-size: 24px; }
 html[data-ls="big"] .veil-sign { font-size: 16px; }

@@ -194,6 +194,26 @@ const body = (extra = '') =>
   check('阈值常量是 48', STALE_MONTHS === 48, String(STALE_MONTHS));
 }
 
+// ---- 10. 巡检源健康度（官方源优先三级分级的机器层）----
+{
+  const wh = await import('../scripts/lib/watch-health.mjs');
+  let f = wh.nextFailures({ a: 2, b: 1, gone: 5 }, ['b'], ['a', 'b', 'c']);
+  // 成功的清零（b 没有 → 从 map 里删掉）、源被删的连计数一起删、失败的保留
+  check('健康度·成功清零', !('b' in f) && f.a === 2 && !('gone' in f), JSON.stringify(f));
+  f = wh.bumpFailure(f, 'a');
+  f = wh.bumpFailure(f, 'a');
+  check('健康度·失败累加', f.a === 4, JSON.stringify(f));
+  const longs = wh.longUnreachable(f, 3);
+  check('健康度·连续≥3 才进长期名单', longs.length === 1 && longs[0].id === 'a' && longs[0].consecutiveFailures === 4, JSON.stringify(longs));
+  check('健康度·阈值为 3', wh.FAIL_THRESHOLD === 3, String(wh.FAIL_THRESHOLD));
+  // 截断检测：比基线短一半以上才算，基线太短不判
+  check('健康度·骤缩一半判截断', wh.isTruncated(400, 1000) === true, '');
+  check('健康度·小幅波动不判截断', wh.isTruncated(900, 1000) === false && wh.isTruncated(600, 1000) === false, '');
+  check('健康度·基线太短不判（新源首抓正常）', wh.isTruncated(50, 100) === false, '');
+  check('健康度·变长不判', wh.isTruncated(2000, 1000) === false, '');
+  check('健康度·基线缺失不判', wh.isTruncated(100, undefined) === false, '');
+}
+
 console.log(`\n${pass}/${pass + fails.length} 通过`);
 if (fails.length) {
   console.log('失败项：\n' + fails.map((f) => `  · ${f}`).join('\n'));

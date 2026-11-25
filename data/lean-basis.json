@@ -1,54 +1,54 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-24",
+  "updatedAt": "2026-11-25",
   "why": "偏向的账：每条带 lean 的规则，在它当次被复核时依据的证据原文指纹 + 当时的偏向。指纹对不上 = 原文变了或偏向被改过，必须回去重读（npm run check:lean）。重新登记只能是人真读过原文之后跑 npm run accept:lean，别在 CI 里跑。",
   "rules": {
     "stomach-gastroscopy-average-risk": {
-      "hash": "ea4d5047943bc1d3",
+      "hash": "37e7c0bc3888cc5c",
       "lean": "for"
     },
     "chest-xray-routine": {
-      "hash": "5970203ac186b682",
+      "hash": "39174de76164137b",
       "lean": "against"
     },
     "psa-50-69": {
-      "hash": "6f11c55482fc8a0f",
+      "hash": "25e4ca44cee46da7",
       "lean": "either"
     },
     "echo-routine": {
-      "hash": "db9293fcabeb164a",
+      "hash": "f75d9f043ca3b5b3",
       "lean": "against"
     },
     "tsh-screening": {
-      "hash": "254d5d1ca2578853",
+      "hash": "3a635bcf1854e80a",
       "lean": "either"
     },
     "pregnancy-guard": {
-      "hash": "e0a2e06153bd1dc4",
+      "hash": "d35a9316f919597f",
       "lean": "for"
     },
     "ovarian-family-history": {
-      "hash": "49daa43bb60ce153",
+      "hash": "52d2dce68a3376ee",
       "lean": "against"
     },
     "diabetes-followup": {
-      "hash": "1c1db9c1e9d6624f",
+      "hash": "2480a418ed2ef81c",
       "lean": "for"
     },
     "hypertension-followup": {
-      "hash": "f4d321f454cc2951",
+      "hash": "3870bd7f8c3c74ff",
       "lean": "for"
     },
     "cvd-followup": {
-      "hash": "4b46262c061412c2",
+      "hash": "8e20c07d93e65629",
       "lean": "for"
     },
     "cancer-survivor-followup": {
-      "hash": "acb50aad66361e49",
+      "hash": "b233a37adb0d29df",
       "lean": "for"
     },
     "thyroid-followup": {
-      "hash": "32c34f3934d978a6",
+      "hash": "401e7606572defb5",
       "lean": "for"
     },
     "lung-ldct-80plus": {
@@ -56,27 +56,27 @@
       "lean": "either"
     },
     "colorectal-screening-75plus": {
-      "hash": "ee7d4a815dec4c8f",
+      "hash": "e7fa94d9c314718d",
       "lean": "either"
     },
     "stomach-gastroscopy-75plus": {
-      "hash": "6d2f54f86521c798",
+      "hash": "c94d84cfca776d1b",
       "lean": "either"
     },
     "breast-cancer-75plus": {
-      "hash": "8b7ab66ad611c256",
+      "hash": "c471c66359ab6c80",
       "lean": "either"
     },
     "cervical-cancer-65plus": {
-      "hash": "9311b351233987cc",
+      "hash": "872e45dab394baff",
       "lean": "against"
     },
     "aaa-screening-75plus": {
-      "hash": "c47b4e0ced6f1b41",
+      "hash": "68e2f9583ecab36f",
       "lean": "either"
     },
     "psa-family-45": {
-      "hash": "16992e93641df34c",
+      "hash": "4b1a4500a6298d98",
       "lean": "for"
     },
     "dm-family-hba1c": {

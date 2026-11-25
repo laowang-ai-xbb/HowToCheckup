@@ -595,6 +595,12 @@ for (const r of rulesFile.rules) {
     if (!hay.includes(normalizeText(String(c.version)))) err(`[${tag}] clause.version「${c.version}」在证据出处里找不到`);
   }
   if (c.supersedes !== undefined && !ids.has(c.supersedes)) err(`[${tag}] clause.supersedes 指向不存在的规则「${c.supersedes}」`);
+  // 分歧文案（可选）：写了就必须是 { key, text } 且都不为空 —— 防"半截分歧"进结果页
+  if (c.dispute !== undefined) {
+    if (!c.dispute || typeof c.dispute.key !== 'string' || !c.dispute.key.trim()
+      || typeof c.dispute.text !== 'string' || !c.dispute.text.trim())
+      err(`[${tag}] clause.dispute 必须是非空 { key, text }`);
+  }
   // 语义复核闭环：没有 supported 记录就提醒（不阻塞——先让闭环跑起来）
   const review = semanticReview[r.id];
   if (!review || review.verdict !== 'supported')

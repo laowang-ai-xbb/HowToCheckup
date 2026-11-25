@@ -25,17 +25,33 @@ const unb64url = (str) => {
 };
 
 /** 只编码会影响结论的字段，链接更短 */
+/* 链接要带哪些字段 —— 语义已翻转（老板 2026-11-25 定）：
+ *   默认把问卷的每个字段都带上，只有登记进 EXCLUDE_FROM_LINK 且写明理由的才不带。
+ * 为什么翻转：KEEP 手工白名单曾经漏掉 cookingOilFume —— 结果页油烟提醒"有时出现有时消失"，
+ * 走查两天才定位到是链接路径丢字段。白名单靠人记，会一直漏；黑名单靠登记，漏了会被
+ * 下面的守护测试（questions-unit）直接点名。 */
+const EXCLUDE_FROM_LINK = {
+  // 目前没有需要剔除的字段。将来若确有"不影响任何结果页展示、纯属敏感"的字段，
+  // 在这里登记 key → 理由，守护测试会核对问卷里的每个 key 都落在 KEEP ∪ EXCLUDE 之内。
+};
 const KEEP = [
   'age', 'gender', 'pregnant', 'smoking', 'packYears', 'secondhand', 'alcohol',
   'occupationDust', 'familyHistory', 'pastHistory', 'hpStatus',
   // P0/P1.0：年限决定 LDCT 结论，不带过去会让别人看到一份"换了个结论"的清单
   'smokingQuitYears', 'secondhandYears', 'occupationYears', 'occupationAgents',
+  'occupationTypes',
   'symptomFlags', 'frailty', 'recentHospital',
+  // 油烟决定结果页那张"长期接触油烟"提醒卡：链接路径丢了它，卡就凭空消失 —— 2026-11-25 根因修复
+  'cookingOilFume',
   'fallHistory', 'gaitDifficulty', 'memoryConcern',
   // 体型（J10 方案 2）：不带过去，收到链接的人看到的清单和原主人不一样 ——
   // 清单本身不受影响，但结果页那张体型卡会缺，看着像坏了一半。
   'bodyMode', 'bodyHeight', 'bodyWeight', 'bodyWaist', 'bodyShape', 'weightLoss',
 ];
+
+/* 导出给守护测试（questions-unit）：核对问卷每个 key 都落在 KEEP ∪ EXCLUDE 里 */
+export const LINK_EXCLUDE = EXCLUDE_FROM_LINK;
+export const LINK_KEEP = KEEP;
 
 export const encodeProfile = (profile) => {
   const slim = {};

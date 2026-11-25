@@ -15,7 +15,10 @@
  * ② 是新加的：病长在家人身上，跟他说「祝你早日康复」是句错话，
  * 但"十年内这些病会成为过去"这句安慰对他同样成立 —— 所以彩蛋照给，只换人称。
  *
- * 两边同时命中时按①走：自己病过的人，这句话是对他自己说的。
+ * 三种命中（老板 2026-11-25 第 2 条）：既往症和家族史**都**勾了病的，
+ * 祝福改成「祝你和你的家人身体健康」—— 病人和家属都是他牵挂的人，只祝一边都是错话。
+ *
+ * 两边同时命中时的处理见下面「三种命中」—— 2026-11-25 起改为独立的 wishBoth 文案。
  * 没病的人两边都不给 —— 没病的人看到「祝你早日康复」会觉得被冒犯，
  * 也会显得产品在乱猜。
  */
@@ -27,10 +30,17 @@ export const eggFor = (profile) => {
   const self = Array.isArray(profile?.pastHistory) ? profile.pastHistory : [];
   const family = Array.isArray(profile?.familyHistory) ? profile.familyHistory : [];
 
-  if (egg.trigger.some((k) => self.includes(k))) {
+  const selfHit = egg.trigger.some((k) => self.includes(k));
+  const familyHit = (egg.familyTrigger || []).some((k) => family.includes(k));
+
+  // 两边都命中 → 病人和家属都是他牵挂的人，只祝一边都是错话（老板 2026-11-25 第 2 条）
+  if (selfHit && familyHit) {
+    return { ...egg, wish: egg.wishBoth, sign: egg.signBoth, forBoth: true };
+  }
+  if (selfHit) {
     return { ...egg, wish: egg.wish, forFamily: false };
   }
-  if ((egg.familyTrigger || []).some((k) => family.includes(k))) {
+  if (familyHit) {
     return { ...egg, wish: egg.wishFamily, forFamily: true };
   }
   return null;

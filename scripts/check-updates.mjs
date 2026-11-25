@@ -21,6 +21,7 @@ import { dirname } from 'node:path';
 import { fetchSource, sha, squash } from './lib/source-fetch.mjs';
 import { summarize } from './lib/diff-text.mjs';
 import { newTitles, extractTitles, snapshotOf } from './lib/catalog-watch.mjs';
+import { nextFailures, bumpFailure, longUnreachable, isTruncated } from './lib/watch-health.mjs';
 
 const INDEX = 'data/snapshots/_index.json';
 const argv = process.argv.slice(2);
@@ -89,23 +90,41 @@ for (const [url, info] of urls) {
 /* ---- 第二层：发布方目录页监控 ----
  * 老巡检只能看到"已引用的那篇变了"；这里补的是"发布方在别处发了一篇新的"。
  * 第一次跑（或显式 --init-watch-baseline）只写基线不报警，否则每家网站的首页
- * 都会冒出一堆"新标题"，几周后没人再看 —— 那等于没接。 */
+ * 都会冒出一堆"新标题"，几周后没人再看 —— 那等于没接。
+ * 2026-11-25 升级（官方源优先三级分级）：tier A 官方直连；tier B 官方有 WAF 不降级，
+ * 连续失败 ≥3 周才标"长期抓不到"（failures 持久化），截断检测防把抓坏了当成指南改了。 */
 const WATCH_FILE = 'data/guideline-watch.json';
 const BASE_FILE = 'data/snapshots/_watch-baseline.json';
-const catalog = { sources: 0, newGuidelines: [], broken: [], baselineCreated: false };
+const FAIL_FILE = 'data/snapshots/_watch-failures.json';
+const catalog = { sources: 0, newGuidelines: [], broken: [], truncated: [], longUnreachable: [], baselineCreated: false };
 {
   let watch = null;
   try { watch = JSON.parse(readFileSync(WATCH_FILE, 'utf8')); } catch { /* 没有配置文件就只跑老巡检 */ }
   if (watch?.sources?.length) {
     let base = {};
     try { base = JSON.parse(readFileSync(BASE_FILE, 'utf8')); } catch { /* 首次运行 */ }
+    let failures = {};
+    try { failures = JSON.parse(readFileSync(FAIL_FILE, 'utf8')); } catch { /* 首次运行 */ }
     const next = {};
+    const okIds = [];
+    const srcIds = watch.sources.map((s) => s.id);
     for (const src of watch.sources) {
       catalog.sources++;
       try {
         const { text } = await fetchSource(src.url);
         const snap = snapshotOf(src.id, src.url, text, src.keywords);
+        // 截断检测：正文比基线短一半以上 → 疑似 WAF 打断/改版，不当成"指南改了"
+        const baseChars = base[src.id]?.chars;
+        if (!initWatchBaseline && isTruncated(snap.chars, baseChars)) {
+          catalog.truncated.push({ source: src.org, url: src.url, baseChars, nowChars: snap.chars });
+          // 沿用旧基线：这次结果不可信
+          if (base[src.id]) next[src.id] = base[src.id];
+          failures = bumpFailure(failures, src.id);
+          process.stdout.write('t');
+          continue;
+        }
         next[src.id] = snap;
+        okIds.push(src.id);
         const hadBase = base[src.id] && Array.isArray(base[src.id].titles);
         // 基线文件整体不存在才算"首次"：单个栏目第一次抓到就默默补上，
         // 否则 WAF 常年抓不到的那两家的报错会让每周都误报"首次运行"。
@@ -121,9 +140,17 @@ const catalog = { sources: 0, newGuidelines: [], broken: [], baselineCreated: fa
         // 等站点恢复后会一次性冒出几十条"新指南"。现在失败就沿用旧基线，不覆盖。
         if (base[src.id]) next[src.id] = base[src.id];
         const errText = String(e.message || e).slice(0, 160);
-        catalog.broken.push({ source: src.org, url: src.url, error: errText });
+        catalog.broken.push({ source: src.org, url: src.url, tier: src.tier || 'A', error: errText });
+        failures = bumpFailure(failures, src.id);
       }
       process.stdout.write('o');
+    }
+    // 连续失败计数：成功的清零；≥3 周的进"长期抓不到"名单（B 级源用 mirrorUrl 雷达补位）
+    catalog.longUnreachable = longUnreachable(nextFailures(failures, okIds, srcIds));
+    const finalFailures = nextFailures(failures, okIds, srcIds);
+    if (Object.keys(finalFailures).length || existsSync(FAIL_FILE)) {
+      mkdirSync(dirname(FAIL_FILE), { recursive: true });
+      writeFileSync(FAIL_FILE, JSON.stringify(finalFailures, null, 2) + '\n', 'utf8');
     }
     // 只在有成功抓到的源时才写基线；全失败时一个字都不写，避免把空壳固化。
     if (Object.keys(next).length > 0 && (initWatchBaseline || !existsSync(BASE_FILE)
@@ -139,6 +166,22 @@ console.log(
   `来源 ${urls.size} 个：无变化 ${same.length}，关键数字变了 ${changed.length}，仅版式变化 ${cosmetic.length}，` +
     `抓取失败 ${broken.length}，引用失效 ${quoteBroken.length}`,
 );
+
+if (catalog.truncated.length) {
+  console.log('\n【疑似页面被截断 —— 正文比上次短了一半以上，先当抓坏了处理】');
+  for (const t of catalog.truncated) {
+    console.log(`· ${t.source}: ${t.baseChars} → ${t.nowChars} 字符  ${t.url}`);
+  }
+  console.log('处理：本轮沿用旧基线、不报警；下次还这样就人工看一眼是不是改版。');
+}
+
+if (catalog.longUnreachable.length) {
+  console.log('\n【长期抓不到 —— 连续 3 周以上失败，官方源地位不变，但不指望它主动报信了】');
+  for (const f of catalog.longUnreachable) {
+    console.log(`· ${f.id}：连续 ${f.consecutiveFailures} 周失败`);
+  }
+  console.log('处理：周报里人工确认这家是否改版；有新指南会由 mirrorUrl（转载雷达）先兜底发现。');
+}
 
 if (quoteBroken.length) {
   console.log('\n【最要紧：引用失效 —— 我们引的那句在最新原文里已经找不到】');

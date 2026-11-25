@@ -140,9 +140,15 @@ export const applySafety = (profile, raw, opts = {}) => {
     });
   }
   if (lung.legacyDispute && !lung.eligible && !lung.indeterminate) {
+    // 2-B 分歧通用化（2026-11-25）：文案来自条款卡 clause.dispute（数据），不再硬编码 ——
+    // 以后新增分歧只改 rules.json，机制不动。找不到数据时用兜底文案，行为不劣化。
+    const withDispute = ['A', 'B', 'C']
+      .flatMap((k) => buckets[k])
+      .find((r) => r.id.startsWith('lung-ldct') && r.clause?.dispute);
     meta.disputes.push({
-      key: 'lung-ldct',
-      text: '你的情况按 2025 版中国 LDCT 指南不够高危条件，但按 USPSTF/ACS 等较宽松口径可能需要筛查。两版结论不一致，请带上吸烟和暴露年限去咨询医生。',
+      key: withDispute?.clause?.dispute?.key || 'lung-ldct',
+      text: withDispute?.clause?.dispute?.text
+        || '你的情况按 2025 版中国 LDCT 指南不够高危条件，但按 USPSTF/ACS 等较宽松口径可能需要筛查。两版结论不一致，请带上吸烟和暴露年限去咨询医生。',
     });
   }
 

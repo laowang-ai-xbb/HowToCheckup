@@ -1,77 +1,145 @@
 {
-  "note": "发布方目录页监控。原巡检只看 rules.json 里已引用的 URL，结构上发现不了'指南发在新地址'。这里盯的是发布方栏目/列表页：出现新标题就报警，再由规则判断要不要自动收进规则（见 scripts/auto-apply.mjs）。抓不到不算产品错，只提醒链接可能改版；连续失败才降级，一次抖动不报警。",
+  "note": "发布方目录页监控 + 官方源优先三级分级（2026-11-25 老板批准开工）。tier=A 官方直连（每周抓原文/落地页，最稳定）；tier=B 官方有 WAF —— 官方地位不降级，连续 3 周失败才在周报标「长期抓不到」，mirrorUrl 是 C 级转载雷达：只用来发现新指南线索，不做原文核对，官方一恢复自动切回。抓不到不算产品错，只提醒链接可能改版；一次抖动不报警。",
   "sources": [
     {
       "id": "nhc-guideline",
       "org": "国家卫生健康委员会",
       "url": "https://www.nhc.gov.cn/wjw/zcwjnew/list.shtml",
-      "keywords": ["指南", "方案", "规范", "标准"],
-      "note": "卫健委政策文件栏目：筛查与早诊早治方案多在这里首发。该站对脚本常返 412/验证页，抓不到会如实记为 broken，不写基线。"
+      "keywords": [
+        "指南",
+        "方案",
+        "规范",
+        "标准"
+      ],
+      "note": "卫健委政策文件栏目：筛查与早诊早治方案多在这里首发。该站对脚本常返 412/验证页，抓不到会如实记为 broken，不写基线。",
+      "tier": "B",
+      "mirrorUrl": "https://www.gov.cn/zhengce/",
+      "mirrorNote": "C 级雷达：中国政府网政策栏目。卫健委文件多会同步转载到政府网，仅发现新标题线索。"
     },
     {
       "id": "cicams",
       "org": "国家癌症中心",
       "url": "https://www.cicams.ac.cn/",
-      "keywords": ["指南", "筛查", "防癌", "共识"],
-      "note": "国家癌症中心首页/新闻栏目：防癌体检指南、肺癌筛查指南发布口。抓不到时如实记 broken，不冒充正常。"
+      "keywords": [
+        "指南",
+        "筛查",
+        "防癌",
+        "共识"
+      ],
+      "note": "国家癌症中心首页/新闻栏目：防癌体检指南、肺癌筛查指南发布口。抓不到时如实记 broken，不冒充正常。",
+      "tier": "B",
+      "mirrorUrl": "https://www.gov.cn/zhengce/",
+      "mirrorNote": "C 级雷达：同上。国家癌症中心的指南类文件也可能经政府网/部委栏目转载。"
     },
     {
       "id": "cma-guideline",
       "org": "中华医学会",
       "url": "https://www.cma.org.cn/col/col42/index.html",
-      "keywords": ["指南", "共识", "分会", "防治"],
-      "note": "中华医学会指南与共识栏目。"
+      "keywords": [
+        "指南",
+        "共识",
+        "分会",
+        "防治"
+      ],
+      "note": "中华医学会指南与共识栏目。",
+      "tier": "A"
     },
     {
       "id": "yiigle-diabetes",
       "org": "中华糖尿病杂志（中华医学会期刊平台）",
       "url": "https://zhtnbzz.yiigle.com/topic/62.jspx",
-      "keywords": ["指南", "共识", "防治", "糖尿病"],
-      "note": "2026-11-24 新增：col42 抓不到时的权威替代。中国糖尿病防治指南等在此首发，正文可逐字核对。"
+      "keywords": [
+        "指南",
+        "共识",
+        "防治",
+        "糖尿病"
+      ],
+      "note": "2026-11-24 新增：col42 抓不到时的权威替代。中国糖尿病防治指南等在此首发，正文可逐字核对。",
+      "tier": "A"
     },
     {
       "id": "chinacdc",
       "org": "中国疾病预防控制中心",
       "url": "https://www.chinacdc.cn/",
-      "keywords": ["指南", "技术指南", "免疫", "疫苗"],
-      "note": "疫苗与传染病相关技术文件。该站有 WAF，脚本直连可能失败，靠浏览器兜底；仍失败则记 broken。"
+      "keywords": [
+        "指南",
+        "技术指南",
+        "免疫",
+        "疫苗"
+      ],
+      "note": "疫苗与传染病相关技术文件。该站有 WAF，脚本直连可能失败，靠浏览器兜底；仍失败则记 broken。",
+      "tier": "B",
+      "mirrorUrl": "https://www.ndcpa.gov.cn/",
+      "mirrorNote": "C 级雷达：国家疾病预防控制局官网（实测可达，无疾控中心那道 WAF）。免疫规划相关文件多在这里同步发布。"
     },
     {
       "id": "uspstf",
       "org": "美国预防服务工作组",
       "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation-topics/uspstf-a-and-b-recommendations",
-      "keywords": ["screening", "recommendation", "cancer", "lung", "breast"],
-      "note": "A/B 级推荐列表页：新增或级别变化会先在这里出现。目前最稳定的一个源。"
+      "keywords": [
+        "screening",
+        "recommendation",
+        "cancer",
+        "lung",
+        "breast"
+      ],
+      "note": "A/B 级推荐列表页：新增或级别变化会先在这里出现。目前最稳定的一个源。",
+      "tier": "A"
     },
     {
       "id": "cdc-acip",
       "org": "美国疾控中心免疫实践咨询委员会",
       "url": "https://www.cdc.gov/acip/vaccine-recommendations/index.html",
-      "keywords": ["recommendation", "vaccine", "schedule", "adult"],
-      "note": "2026-11-24 修正：旧地址 /vaccines/acip/recommendations.html 已 404，但 HTTP 200 返回 Page Not Found，被误判成功。换成现行 ACIP 推荐页。"
+      "keywords": [
+        "recommendation",
+        "vaccine",
+        "schedule",
+        "adult"
+      ],
+      "note": "2026-11-24 修正：旧地址 /vaccines/acip/recommendations.html 已 404，但 HTTP 200 返回 Page Not Found，被误判成功。换成现行 ACIP 推荐页。",
+      "tier": "A"
     },
     {
       "id": "cdc-adult-imz",
       "org": "美国疾控中心成人免疫程序",
       "url": "https://www.cdc.gov/vaccines/hcp/imz-schedules/adult.html",
-      "keywords": ["schedule", "adult", "vaccine", "influenza", "covid"],
-      "note": "2026-11-24 新增：成人疫苗程序表，疫苗规则的权威交叉来源。"
+      "keywords": [
+        "schedule",
+        "adult",
+        "vaccine",
+        "influenza",
+        "covid"
+      ],
+      "note": "2026-11-24 新增：成人疫苗程序表，疫苗规则的权威交叉来源。",
+      "tier": "A"
     },
     {
       "id": "liver-pdf-landing",
       "org": "协和医学杂志（原发性肝癌诊疗指南落地页）",
       "url": "https://xhyxzz.pumch.cn/cn/article/doi/10.12290/xhyxzz.2024-0304",
-      "keywords": ["原发性肝癌诊疗指南", "2025", "2026", "修订"],
+      "keywords": [
+        "原发性肝癌诊疗指南",
+        "2025",
+        "2026",
+        "修订"
+      ],
       "note": "2026-11-25 新增：PDF 巡检盲区的解法。指南更新时发布方不是改旧 PDF 的内容，而是传一份新 PDF、生成新 URL——盯旧 PDF 的 URL 永远发现不了。落地页盯的是'这篇文章'本身：标题、版本号一变（如 2024→2025），说明出新版了，再去挖新 PDF 地址。",
-      "watchFor": "liver-cancer-screening"
+      "watchFor": "liver-cancer-screening",
+      "tier": "A"
     },
     {
       "id": "diabetes-pdf-landing",
       "org": "中华糖尿病杂志（中国糖尿病防治指南落地页）",
       "url": "https://rs.yiigle.com/cmaid/1525739",
-      "keywords": ["中国糖尿病防治指南", "2025", "2026", "更新"],
+      "keywords": [
+        "中国糖尿病防治指南",
+        "2025",
+        "2026",
+        "更新"
+      ],
       "note": "2026-11-25 新增：同上。糖尿病防治指南（2024版）的文章页；新版指南发布时这篇的关联/推荐位会出现新标题。",
-      "watchFor": "diabetes-followup,diabetes-family-history,cvd-family-carotid"
+      "watchFor": "diabetes-followup,diabetes-family-history,cvd-family-carotid",
+      "tier": "A"
     }
   ]
 }
