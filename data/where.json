@@ -32,7 +32,8 @@
           "renal",
           "glucose",
           "lipids",
-          "uric"
+          "uric",
+          "homocysteine"
         ]
       },
       {
@@ -67,6 +68,14 @@
         "dept": "不用挂号：候检时自己在手机上填",
         "ids": [
           "questionnaire"
+        ]
+      },
+      {
+        "dept": "肺功能室 · 骨密度室 · 体成分室（40 岁以上加测前两项）",
+        "ids": [
+          "spirometry",
+          "bone-density",
+          "body-composition"
         ]
       }
     ]

@@ -140,6 +140,20 @@
       "note": "2026-11-25 新增：同上。糖尿病防治指南（2024版）的文章页；新版指南发布时这篇的关联/推荐位会出现新标题。",
       "watchFor": "diabetes-followup,diabetes-family-history,cvd-family-carotid",
       "tier": "A"
+    },
+    {
+      "id": "nhc-2025-checkup-guideline",
+      "org": "国家卫生健康委办公厅",
+      "url": "https://www.nhc.gov.cn/yzygj/c100068/202511/4feaeb6de63e44cb9fd4ac8f579ca279/files/2.%E5%9F%BA%E6%9C%AC%E4%BD%93%E6%A3%80%E9%A1%B9%E7%9B%AE%EF%BC%882025%E5%B9%B4%E7%89%88%EF%BC%89.docx",
+      "keywords": [
+        "体检",
+        "指引",
+        "基本体检项目"
+      ],
+      "note": "《成人健康体检项目推荐指引（2025年版）》附件2 基本体检项目 docx；官网直连可达（2026-11-25 实测）。",
+      "tier": "A",
+      "mirrorUrl": "http://www.luzhai.gov.cn/xxgk/fdzdgknr/zdlyxxgk/ggylws/ggylwszcygh/202511/t20251120_3692838.shtml",
+      "mirrorNote": "政府域名全文转载（鹿寨县人民政府），官网改版时作发现线索，逐字核对永远以官网原件为准。"
     }
   ]
 }

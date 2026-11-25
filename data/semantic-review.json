@@ -75,7 +75,7 @@
     "verdict": "supported",
     "reviewedAt": "2026-11-25",
     "by": "ai-session",
-    "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+    "note": "3-A 重审：基础清单以 2025 版国家指引附件2 为主证据（8 条引文预检命中），2022 共识降为对照；clause.version 升到 2025。"
   },
   "oral-scaling": {
     "verdict": "supported",
@@ -256,5 +256,11 @@
     "reviewedAt": "2026-11-25",
     "by": "ai-session",
     "note": "第三批条款卡：population 与 followup_path 按证据引文/正文核对，数字回读通过；USPSTF 英文原文与国内指南结论分别落卡。"
+  },
+  "base-package-40plus": {
+    "verdict": "supported",
+    "reviewedAt": "2026-11-25",
+    "by": "ai-session",
+    "note": "3-A 新增：肺功能/骨密度 40 岁以上入基本项目，引文「40岁以上人群」逐字命中；frequency 无指南间隔，写\"遵医嘱\"。"
   }
 }

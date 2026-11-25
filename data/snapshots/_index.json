@@ -411,5 +411,16 @@
       "diabetes-family-history",
       "cvd-family-carotid"
     ]
+  },
+  "https://www.nhc.gov.cn/yzygj/c100068/202511/4feaeb6de63e44cb9fd4ac8f579ca279/files/2.%E5%9F%BA%E6%9C%AC%E4%BD%93%E6%A3%80%E9%A1%B9%E7%9B%AE%EF%BC%882025%E5%B9%B4%E7%89%88%EF%BC%89.docx": {
+    "file": "data/snapshots/094de22886.txt",
+    "fetchedAt": "2026-11-25",
+    "sha256": "9be681d08741510c8f90481e27a415683aad91ba66683685c89e67237b23a624",
+    "chars": 595,
+    "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "usedBy": [
+      "base-package",
+      "base-package-40plus"
+    ]
   }
 }
