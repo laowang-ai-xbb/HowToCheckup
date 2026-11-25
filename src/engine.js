@@ -78,17 +78,49 @@ export const emptyProfile = () => ({
   familyHistory: [],
   pastHistory: [],
   hpStatus: '',
+  recentChecks: [],
   // 60 岁以上才问，只用于出「转诊卡」，不参与 A/B/C 判定
   fallHistory: '',
   gaitDifficulty: '',
   memoryConcern: '',
 });
 
+/**
+ * 既往检查史 → 规则：哪条规则命中了"你最近做过这项"。
+ *
+ * 为什么按规则 id 精确列、不按 skipIfDoneWithin 的窗口数字反推：
+ *   同样写 5 年，肠镜是 5 年一次、胃镜也是 5 年一次，但低剂量 CT 是 1 年、
+ *   肝癌是半年 —— 用数字反推会把"半年内做过肝脏检查"误当成"1 年内做过 CT"。
+ *   一行一条，读起来也一眼能对。
+ *
+ * 这里只**打标记**，不改 A/B/C 分档：填了"做过"不等于"以后不用管"，
+ * 是否真的跳过由医生判断。产品负责提醒，不负责下结论。
+ */
+export const RECENT_CHECK_FIELDS = ['recentChecks'];
+const RULE_TO_CHECK = {
+  'colorectal-screening': 'colonoscopy',
+  'lung-ldct-high-risk': 'ldct',
+  'stomach-gastroscopy-high-risk': 'gastroscopy',
+  'stomach-gastroscopy-average-risk': 'gastroscopy',
+  'breast-cancer-screening': 'breast',
+  'breast-cancer-screening-high-risk': 'breast',
+  'cervical-cancer-screening': 'cervical',
+  'liver-cancer-screening': 'liver',
+};
+
+/** 这条规则对应的检查，用户填了"最近做过"吗？ */
+export const recentlyDone = (rule, profile) => {
+  const key = RULE_TO_CHECK[rule.id];
+  if (!key) return false;
+  return Array.isArray(profile.recentChecks) && profile.recentChecks.includes(key);
+};
+
 /** 跑一遍规则，返回分好档、排好序的结果 */
 export const evaluate = (profile) => {
   const buckets = { A: [], B: [], C: [] };
   for (const rule of rules) {
     if (!match(rule.when, profile)) continue;
+    rule.recentlyDone = recentlyDone(rule, profile);
     buckets[rule.category].push(rule);
   }
   const sortRule = (a, b) => (a.priority ?? 999) - (b.priority ?? 999);

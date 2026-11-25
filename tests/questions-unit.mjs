@@ -37,8 +37,22 @@ check('80 岁仍然问', SENSORY.every((k) => keysAt(80).has(k)));
 
 // 题量基准：首页不再显示「还剩 N 题」（老板第 10 条要求隐藏），但题量本身仍是设计基准，
 // 60 岁以上多出的三题会直接影响答题时长，所以这两条留着守住。
-check('59 岁不含年龄共 10 题', keysAt(59).size - 1 === 10, String(keysAt(59).size - 1));
+check('59 岁不含年龄共 11 题', keysAt(59).size - 1 === 11, String(keysAt(59).size - 1));
 check('60 岁起多 3 题', keysAt(60).size - keysAt(59).size === 3, String(keysAt(60).size - keysAt(59).size));
+
+/* 既往检查史（P0-2/P1-10）：和幽门螺杆菌那题一起构成"以前查过什么"。
+ * 它不参与 A/B/C 判定，只在卡片上提示"最近做过"，所以这里守三件事：
+ *   题目存在、可选可跳过、值都是 schema 登记过的。 */
+check('有既往检查史这道题', keysAt(59).has('recentChecks'));
+const rcQ = questions.find((q) => q.key === 'recentChecks');
+check('既往检查史是可选的多选题', !!rcQ && rcQ.kind === 'multi' && rcQ.optional === true);
+check('既往检查史给了「都没做过」和「记不清」两个出口',
+  !!rcQ && /都没做过/.test(rcQ.noneLabel || '') && /记不清/.test(rcQ.unknownLabel || ''));
+const rcSchema = JSON.parse(readFileSync('data/inputs.schema.json', 'utf8')).fields.recentChecks;
+check('既往检查史的每个选项都在 schema 里登记',
+  !!rcSchema && rcQ.options.every((o) => rcSchema.items.includes(o.v)),
+  rcQ ? rcQ.options.map((o) => o.v).join(',') : 'no question');
+check('既往检查史明确不改档位（informationalOnly）', rcSchema?.informationalOnly === true);
 
 const pk = new Set(questions.map((q) => q.key));
 check('三题都在 questions 里', SENSORY.every((k) => pk.has(k)));

@@ -205,6 +205,30 @@ export const questions = [
     ],
   },
   {
+    /* 既往检查史（P0-2 路 A + P1-10）。和上面那题一起回答"以前查过什么"。
+     * 为什么做成一题多选、而不是每项追问具体年份：
+     *   · 老人记不住"肠镜是 2022 年还是 2023 年"，问年份只会得到猜的数；
+     *   · skipIfDoneWithin 要的只是"最近这个间隔内做没做"，一个勾就够；
+     *   · 只问常做的六类，避免问卷膨胀。
+     * 为什么选了也不改清单分档：见 inputs.schema.json 的 intentionalNoRule —— 
+     * "做过"不等于"以后不用管"，是否跳过交给医生，产品只提示。 */
+    key: 'recentChecks',
+    kind: 'multi',
+    title: '下面这些检查，最近按间隔做过了吗？',
+    hint: '只选你确定做过的；记不清就不选。它会让清单提醒你「这项刚做过」，但要不要真的跳过，还是要听医生的。',
+    optional: true,
+    noneLabel: '最近都没做过',
+    unknownLabel: '记不清',
+    options: [
+      { v: 'colonoscopy', l: '肠镜', sub: '最近 5 年内做过' },
+      { v: 'gastroscopy', l: '胃镜', sub: '最近 5 年内做过' },
+      { v: 'ldct', l: '低剂量胸部 CT', sub: '最近 1 年内做过' },
+      { v: 'breast', l: '乳腺超声或钼靶', sub: '最近 1 年内做过' },
+      { v: 'cervical', l: '宫颈 TCT 或 HPV', sub: '最近 3 年内做过' },
+      { v: 'liver', l: '肝脏超声加甲胎蛋白', sub: '最近半年内做过' },
+    ],
+  },
+  {
     key: 'body',
     kind: 'body',
     title: '体型',

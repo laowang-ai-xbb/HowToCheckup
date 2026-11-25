@@ -27,7 +27,7 @@ const unb64url = (str) => {
 /** 只编码会影响结论的字段，链接更短 */
 const KEEP = [
   'age', 'gender', 'pregnant', 'smoking', 'packYears', 'secondhand', 'alcohol',
-  'occupationDust', 'familyHistory', 'pastHistory', 'hpStatus',
+  'occupationDust', 'familyHistory', 'pastHistory', 'hpStatus', 'recentChecks',
   'fallHistory', 'gaitDifficulty', 'memoryConcern',
   // 体型（J10 方案 2）：不带过去，收到链接的人看到的清单和原主人不一样 ——
   // 清单本身不受影响，但结果页那张体型卡会缺，看着像坏了一半。

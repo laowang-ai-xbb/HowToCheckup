@@ -264,6 +264,28 @@
       "required": false,
       "label": "幽门螺杆菌感染状态"
     },
+    "recentChecks": {
+      "type": "array",
+      "items": [
+        "colonoscopy",
+        "gastroscopy",
+        "ldct",
+        "breast",
+        "cervical",
+        "liver"
+      ],
+      "sentinelValues": [
+        "unknown"
+      ],
+      "required": false,
+      "label": "最近按间隔做过的筛查项目",
+      "informationalOnly": true,
+      "intentionalNoRule": {
+        "values": ["colonoscopy", "gastroscopy", "ldct", "breast", "cervical", "liver"],
+        "reason": "既往检查史由引擎在展示层消费（src/engine.js 的 RECENT_CHECK_FIELDS），用于兑现 skipIfDoneWithin『N 年内做过可跳过』：卡片显示『你填了最近做过』，但不改 A/B/C 分档——填了『做过』不等于『不用管』，是否跳过由医生判断，避免把不确定变成漏检。"
+      },
+      "note": "只做提示，不改变任何档位判定。"
+    },
     "fallHistory": {
       "type": "enum",
       "values": [
