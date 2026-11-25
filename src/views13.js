@@ -85,7 +85,7 @@ export const atomHTML = (rule, idx, key, ctx) => {
       ${mutex}
     </div>
     ${soft ? `<p class="tip">${FREQ_BASIS[rule.frequency.basis] || ''}${rule.frequency.basisNote ? '：' + esc(rule.frequency.basisNote) : ''}</p>` : ''}
-    ${rule.recentlyDone ? '<p class="tip"><b>你填了最近做过这项：</b>这次可以先不做，是否真的跳过请和医生确认。</p>' : ''}
+    ${rule.recentlyDone ? '<p class="tip"><b>你填了最近做过这项：</b>清单仍把它列着，不代表一定要做；要不要这次跳过，请和医生确认。</p>' : ''}
     ${(rule.redFlags || []).length ? `<p class="tip"><b>出现这些情况要去看医生：</b>${rule.redFlags.map(esc).join('、')}</p>` : ''}
     ${tellDoctorHTML(rule)}
     ${ruleEvBox(rule, ctx)}

@@ -278,7 +278,7 @@
         "unknown"
       ],
       "required": false,
-      "label": "最近按间隔做过的筛查项目",
+      "label": "最近做过的筛查项目",
       "informationalOnly": true,
       "intentionalNoRule": {
         "values": ["colonoscopy", "gastroscopy", "ldct", "breast", "cervical", "liver"],

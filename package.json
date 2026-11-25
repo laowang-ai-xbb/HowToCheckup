@@ -22,9 +22,10 @@
     "test:env": "node tests/env-unit.mjs",
     "test:lean": "node tests/lean-unit.mjs",
     "test:mutation": "node tests/mutation.mjs",
-    "test": "npm run validate && npm run test:diff && npm run test:env && npm run test:lean && npm run test:questions && npm run test:body && npm run check:invariants && npm run check:lean && npm run check:research && npm run check:dupes && npm run test:mutation && npm run check:fingerprint && npm run check:ui",
+    "test": "npm run validate && npm run check:copy && npm run test:diff && npm run test:env && npm run test:lean && npm run test:questions && npm run test:body && npm run check:invariants && npm run check:lean && npm run check:research && npm run check:dupes && npm run test:mutation && npm run check:fingerprint && npm run check:ui",
     "test:questions": "node tests/questions-unit.mjs",
     "check:research": "node scripts/check-research.mjs",
+    "check:copy": "node tests/copy-lint.mjs",
     "check:dupes": "node scripts/check-dupes.mjs",
     "test:body": "node tests/body-unit.mjs",
     "check:fingerprint": "node scripts/check-fingerprint.mjs"
