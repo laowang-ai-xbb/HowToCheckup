@@ -16,6 +16,12 @@ import { applySafety } from '../scripts/lib/safety.mjs';
 
 export const rules = rulesJson.rules;
 export const catalogById = new Map(catalogJson.items.map((i) => [i.id, i]));
+
+/* 别名归一：FIT ≡ 便潜血这类"同一项两个名字"统一成一个 id。
+ * evaluate（当前清单去重）和 upcoming（只报新面孔）都要用它，
+ * 必须放模块层 —— 藏在 evaluate 里的话 upcoming 一引用就 ReferenceError，
+ * 结果页整个渲染不出来（2026-11-24 修 Bug B 时踩过）。 */
+const canon = (id) => catalogById.get(id)?.sameAs || id;
 export const vaccineMeta = vaccinesJson;
 
 /**
@@ -82,6 +88,10 @@ export const emptyProfile = () => ({
   familyHistory: [],
   pastHistory: [],
   hpStatus: '',
+  recentChecks: [],
+  // 红旗症状（P0-1）：一题多选，急诊/门诊分流只出提示，不改 A/B/C 判定。
+  // 'unknown'（说不清）也不触发任何警告——不知道不等于没有，卡片通用提示照常显示。
+  redFlags: [],
   // 60 岁以上才问，只用于出「转诊卡」，不参与 A/B/C 判定
   fallHistory: '',
   gaitDifficulty: '',
@@ -96,6 +106,84 @@ export const evaluateRaw = (profile) => {
     if (!match(rule.when, profile)) continue;
     // 必须复制：规则是模块级共享对象，直接往上打 hidden/shownIds 会污染下一次判定
     buckets[rule.category].push({ ...rule });
+  }
+  const sortRuleRaw = (a, b) => (a.priority ?? 999) - (b.priority ?? 999);
+  buckets.A.sort(sortRuleRaw);
+  buckets.B.sort(sortRuleRaw);
+  buckets.C.sort(sortRuleRaw);
+  return buckets;
+};
+
+/**
+ * 既往检查史 → 规则：哪条规则命中了"你最近做过这项"。
+ *
+ * 为什么按规则 id 精确列、不按 skipIfDoneWithin 的窗口数字反推：
+ *   同样写 5 年，肠镜是 5 年一次、胃镜也是 5 年一次，但低剂量 CT 是 1 年、
+ *   肝癌是半年 —— 用数字反推会把"半年内做过肝脏检查"误当成"1 年内做过 CT"。
+ *   一行一条，读起来也一眼能对。
+ *
+ * 这里只**打标记**，不改 A/B/C 分档：填了"做过"不等于"以后不用管"，
+ * 是否真的跳过由医生判断。产品负责提醒，不负责下结论。
+ */
+export const RECENT_CHECK_FIELDS = ['recentChecks'];
+const RULE_TO_CHECK = {
+  'colorectal-screening': 'colonoscopy',
+  'lung-ldct-high-risk': 'ldct',
+  'stomach-gastroscopy-high-risk': 'gastroscopy',
+  'stomach-gastroscopy-average-risk': 'gastroscopy',
+  'breast-cancer-screening': 'breast',
+  'breast-cancer-screening-high-risk': 'breast',
+  'cervical-cancer-screening': 'cervical',
+  'liver-cancer-screening': 'liver',
+};
+
+/** 这条规则对应的检查，用户填了"最近做过"吗？ */
+export const recentlyDone = (rule, profile) => {
+  const key = RULE_TO_CHECK[rule.id];
+  if (!key) return false;
+  return Array.isArray(profile.recentChecks) && profile.recentChecks.includes(key);
+};
+
+/* ---------------- 红旗症状分流（P0-1） ----------------
+ * 只做"提示去哪就医"，不改任何 A/B/C 判定，不下诊断。
+ * 三档来源：急症（立刻 120）/ 门诊（尽快看医生）/ 无（含"说不清"，不触发任何警告）。 */
+const EMERGENCY_FLAGS = ['stroke', 'chest', 'hemoptysis'];
+const CLINIC_FLAGS = ['bloodInStool', 'cough', 'weightLoss', 'bloodInUrine', 'lump'];
+/** 横幅上显示的短名——和问卷选项同源的大白话，不在多处另写一套。 */
+export const RED_FLAG_LABEL = {
+  stroke: '突然脸歪、一边胳膊没劲',
+  chest: '胸口像压了块石头',
+  hemoptysis: '咳出一大口鲜血',
+  bloodInStool: '大便带血',
+  cough: '咳嗽超两周不好',
+  weightLoss: '体重下降',
+  bloodInUrine: '尿里带血',
+  lump: '不痛的肿块',
+};
+
+/**
+ * 从画像算出红旗命中。返回 { emergency:[], clinic:[] }，元素是 { v, label }。
+ * 两条边界（老板 2026-11-25 拍板）：
+ *   ① "说不清"（redFlags==='unknown'）→ 两组都空，不弹、不挂横幅；
+ *   ② 掉体重联动：65 岁以上在老的 weightLoss 题答过 ge5，视为这里也命中一次，
+ *      但结果页顶部只出一条——两处命中合并去重（clinic 组里 v=weightLoss 只留一个）。
+ */
+export const redFlagHits = (profile) => {
+  const picked = Array.isArray(profile.redFlags) ? profile.redFlags : [];
+  const has = (v) => picked.includes(v)
+    || (v === 'weightLoss' && Number(profile.age) >= 65 && profile.weightLoss === 'ge5');
+  const pack = (list) => list.filter(has).map((v) => ({ v, label: RED_FLAG_LABEL[v] }));
+  return { emergency: pack(EMERGENCY_FLAGS), clinic: pack(CLINIC_FLAGS) };
+};
+
+/** 跑一遍规则：规则匹配 + 展示归一 + 最近做过标记，不做临床安全后处理。
+ *  对外入口 evaluate() 在此之上再套 applySafety。 */
+const evaluateBase = (profile) => {
+  const buckets = { A: [], B: [], C: [] };
+  for (const rule of rules) {
+    if (!match(rule.when, profile)) continue;
+    rule.recentlyDone = recentlyDone(rule, profile);
+    buckets[rule.category].push(rule);
   }
   const sortRule = (a, b) => (a.priority ?? 999) - (b.priority ?? 999);
   buckets.A.sort(sortRule);
@@ -115,7 +203,6 @@ export const evaluateRaw = (profile) => {
    *   · rule.shownIds = 这条规则实际要展示的项目；空了的整张卡不渲染。
    * 别把这项合并写进规则里 —— 规则一改，理由和依据就跟着乱。
    */
-  const canon = (id) => catalogById.get(id)?.sameAs || id;
   const claimed = new Map(); // 规范 id → 认领它的规则 id
   for (const key of ['A', 'B', 'C']) {
     for (const rule of buckets[key]) {
@@ -149,7 +236,7 @@ export const evaluateRaw = (profile) => {
  * 想临时回退，把这里改回 `return evaluateRaw(profile)` 即可，其余链路不用动。
  */
 export const evaluate = (profile) => {
-  const [buckets] = applySafety(profile, evaluateRaw(profile), {
+  const [buckets] = applySafety(profile, evaluateBase(profile), {
     canon: (id) => catalogById.get(id)?.sameAs || id,
   });
   return buckets;
@@ -158,7 +245,7 @@ export const evaluate = (profile) => {
 /** 带诊断信息的判定：结果页用它显示三态标签、回补入口与分歧提示 */
 export const evaluateDetailed = (profile) => applySafety(
   profile,
-  evaluateRaw(profile),
+  evaluateBase(profile),
   { canon: (id) => catalogById.get(id)?.sameAs || id },
 );
 
@@ -227,6 +314,19 @@ export const mutexNotes = (buckets) => {
 export const upcoming = (profile, buckets) => {
   if (!profile.age) return [];
   const already = new Set(buckets.A.map((r) => r.id).concat(buckets.B.map((r) => r.id)));
+  /* 「再过几年」只报新面孔。
+   * 2026-11-24 老板走查：44 岁的预告里出现「便潜血」，可它就在今年的基础套餐里——
+   * 同一项既在"今年要做"又在"过两年要加"，用户会以为自己漏了什么。
+   * 所以把当前清单里真实在展示的项目（规范化后）收进来，预告规则先滤掉这些老面孔，
+   * 只剩新项目的才预告；一张卡里也只说新加的那几项（肠镜后面不再挂着便潜血）。
+   * 只认 A/B（真正在让人做的事），不算 C——「不必做」卡里的项目不该挡住将来的推荐。 */
+  const presentIds = new Set();
+  for (const key of ['A', 'B']) {
+    for (const r of buckets[key]) {
+      if (r.hidden) continue;
+      for (const id of r.shownIds || []) presentIds.add(canon(id));
+    }
+  }
   const out = [];
   for (const rule of rules) {
     if (rule.category !== 'A' || already.has(rule.id)) continue;
@@ -234,6 +334,9 @@ export const upcoming = (profile, buckets) => {
       const age = profile.age + gap;
       if (age > 100) break;
       if (match(rule.when, { ...profile, age })) {
+        const fresh = (rule.catalogIds || []).filter((id) => !presentIds.has(canon(id)));
+        if ((rule.catalogIds || []).length > 0 && fresh.length === 0) break;
+        rule.shownIds = fresh;
         out.push({ rule, gap });
         break;
       }

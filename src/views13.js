@@ -348,6 +348,20 @@ export const foldHTML = (count, inner, extra = '') => !inner && !extra ? '' : `
     </details>
   </section>`;
 
+/* ---------------- 页尾：决策类型标签的解释（折叠） ----------------
+ * 老板 2026-11-25：标签要在结果页底部有解释，折叠展示，不占地方。
+ * 折叠件照抄 legendHTML 的样式（同一个 footer 里两种折叠件长得一样才和谐）。 */
+export const decisionLegendHTML = () => `
+  <details class="legend dlegend">
+    <summary>卡片上的「预防 / 筛查 / 复查」是什么意思</summary>
+    <dl>
+      <div><dt><span class="dtag dt-prevent">预防</span></dt><dd>平时保养或一生一次的基线检查，没病也该做，比如基础体检、洁牙。</dd></div>
+      <div><dt><span class="dtag dt-screen">筛查</span></dt><dd>还没生病时找早期线索。发现了能早处理，没发现也不代表万事大吉。</dd></div>
+      <div><dt><span class="dtag dt-follow">复查</span></dt><dd>已经确诊某种病，按医生定的间隔定期查，看有没有变化。不是查一次就完。</dd></div>
+    </dl>
+    <p class="dlegend-n">这个标签只说"这是哪类事"，不影响该不该做——该不该做看它所在的那一档。</p>
+  </details>`;
+
 /* ---------------- 页尾：依据分类标准 ---------------- */
 export const legendHTML = () => `
   <details class="legend">

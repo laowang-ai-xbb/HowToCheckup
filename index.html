@@ -7,8 +7,10 @@
     <title>长命百岁体检项目指南 · 体检做什么项目，来这查</title>
     <meta
       name="description"
-      content="回答几道选择题，按权威指南给出你的体检项目清单：建议做的、你来定的、建议不做的，每条都带频率和出处。"
+      content="免费、不用注册、不收集隐私。回答几道选择题，按国家权威指南算出你的体检项目清单：建议做的、你来定的、建议不做的，每条都带频率和出处，长辈也会用。"
     />
+    <link rel="canonical" href="__SITE_ORIGIN__/" />
+    <meta property="og:locale" content="zh_CN" />
     <!--
       旧版分享链接是 /?p=xxx（query）。跳到结果页入口，让 noindex 生效。
       新版链接是 r.html#p=xxx（hash），不会走到这里；但也兜住 hash 落在首页的情况。
@@ -36,13 +38,77 @@
     />
     <meta property="og:image" content="./og.png" />
     <meta name="twitter:card" content="summary_large_image" />
+    <!--
+      结构化数据：搜索引擎和 AI（豆包 / Kimi / ChatGPT 等）解析页面的标准通道。
+      只写产品事实 —— 免费、不收集隐私、依据公开指南、不是医疗建议，多一个字都不编：
+      结构化数据里写假信息会被搜索引擎降权。FAQ 取自规则数据的真实口径。
+      __SITE_ORIGIN__ 由构建脚本（scripts/gen-site-files.mjs）按真实域名替换。
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "长命百岁体检项目指南",
+          "alternateName": "HowToCheckup",
+          "url": "__SITE_ORIGIN__/",
+          "applicationCategory": "HealthApplication",
+          "operatingSystem": "Web",
+          "inLanguage": "zh-CN",
+          "description": "按年龄、性别和身体情况，从国家权威指南算出个人体检项目清单：建议做的、你来定的、建议不做的，每条带频率和出处。",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+          "isAccessibleForFree": true,
+          "author": { "@type": "Person", "name": "老王AI瞎bb" }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "体检项目是不是越多越好？",
+              "acceptedAnswer": { "@type": "Answer", "text": "不是。这份指南按国家卫健委《健康体检机构防癌体检指南（2025年版）》等公开指南，把项目分成三档：建议做的、你来定的、建议不做的。肿瘤标志物套餐等对无症状人群弊大于利的项目，被明确列在「建议不做」里。" }
+            },
+            {
+              "@type": "Question",
+              "name": "一般多少岁开始做肠镜？",
+              "acceptedAnswer": { "@type": "Answer", "text": "一般 45 岁起做结肠镜或便潜血等结直肠癌筛查，到 75 岁为止；父母、子女或亲兄弟姐妹有结直肠癌的，40 岁起开始。" }
+            },
+            {
+              "@type": "Question",
+              "name": "所有吸烟的人都建议做低剂量 CT 查肺癌吗？",
+              "acceptedAnswer": { "@type": "Answer", "text": "主要面向高风险人群：年龄达标且吸烟达到一定包年数的人。指南会按你填的吸烟情况判断你是否属于建议范围，不属于的人不推荐。" }
+            },
+            {
+              "@type": "Question",
+              "name": "这个工具收费吗？要注册吗？",
+              "acceptedAnswer": { "@type": "Answer", "text": "免费、不用注册、不收集隐私：回答几道选择题直接出清单，答案只保存在你自己的设备里。" }
+            },
+            {
+              "@type": "Question",
+              "name": "每条建议都有出处吗？",
+              "acceptedAnswer": { "@type": "Answer", "text": "有。每条项目都写明检查频率和依据的指南条款，可以点进依据页看原文摘录和官方链接。" }
+            },
+            {
+              "@type": "Question",
+              "name": "这份清单能代替医生吗？",
+              "acceptedAnswer": { "@type": "Answer", "text": "不能。这是健康信息工具，不是医疗建议；最终做什么检查，请以医生意见为准。" }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="app"></div>
     <noscript>
-      <p style="padding: 24px; font-family: system-ui, sans-serif">
-        这个工具需要开启 JavaScript。请在浏览器设置里允许 JavaScript 后刷新。
-      </p>
+      <!-- 禁 JS 时的兜底（也是不开 JS 的爬虫唯一能读到的内容）：只写产品事实 -->
+      <div style="padding: 24px; max-width: 560px; margin: 0 auto; font-family: system-ui, sans-serif; line-height: 1.7">
+        <h1 style="font-size: 20px; margin: 0 0 10px">长命百岁体检项目指南</h1>
+        <p>免费、不用注册、不收集隐私。回答几道选择题，按国家权威指南算出你的体检项目清单：建议做的、你来定的、建议不做的，每条带频率和出处，可以点开看原文。</p>
+        <p>完整工具需要开启 JavaScript。请在浏览器设置里允许 JavaScript 后刷新。</p>
+      </div>
     </noscript>
     <script type="module" src="/src/main.js"></script>
   </body>

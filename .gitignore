@@ -15,6 +15,10 @@ reports/
 # 端到端用例每次跑都会重出的截图，不入库（要看就跑 npm run check:ui）
 tests/shots/
 
+# 红旗/心情问卷走查脚本（p0/p3-flow-check）每次跑都会重出的截图，不入库
+tests/shots-p0/
+shots-p0/
+
 # 本机的助手工作目录（含记忆、自动化），跟产品无关，绝不入库
 .workbuddy/
 

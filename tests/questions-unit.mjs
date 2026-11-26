@@ -10,7 +10,7 @@
  */
 import { activeQuestions, questions } from '../src/questions.js';
 import { referrals } from '../src/referral.js';
-import { emptyProfile } from '../src/engine.js';
+import { emptyProfile, redFlagHits } from '../src/engine.js';
 import { readFileSync } from 'node:fs';
 
 const SENSORY = ['fallHistory', 'gaitDifficulty', 'memoryConcern'];
@@ -37,14 +37,15 @@ check('80 岁仍然问', SENSORY.every((k) => keysAt(80).has(k)));
 
 // 题量基准：首页不再显示「还剩 N 题」（老板第 10 条要求隐藏），但题量本身仍是设计基准，
 // 60 岁以上多出的三题会直接影响答题时长，所以这两条留着守住。
-/* 2026-11-24 起 50+ 多一题「有没有症状」——筛查前提闸，不是可跳过的可选项。
- * 基线由 10 改成 11；这一题不随年龄比较（59/60 都有），下面的差值仍是 +3。 */
-check('59 岁不含年龄共 11 题', keysAt(59).size - 1 === 11, String(keysAt(59).size - 1));
+/* 合并后题量（2026-11-26）：分叉点 10 题 + 症状闸 +1 + 红旗题 +1 + 既往检查史 +1 = 13 题（59 岁，不含年龄）。
+ * 60 岁起再加感官三题，差值 +3 不变。 */
+check('59 岁不含年龄共 13 题', keysAt(59).size - 1 === 13, String(keysAt(59).size - 1));
 check('60 岁起多 3 题', keysAt(60).size - keysAt(59).size === 3, String(keysAt(60).size - keysAt(59).size));
 
 /* 筛查前提与暴露年限：只在真正需要时展开，避免一上来多一堆题 */
 check('49 岁不问症状闸', !keysAt(49).has('symptomFlags'));
 check('50 岁问症状闸', keysAt(50).has('symptomFlags'));
+check('红旗症状所有年龄都问', keysAt(30).has('redFlags') && keysAt(70).has('redFlags'));
 check('69 岁不问衰弱闸', !keysAt(69).has('frailty') && !keysAt(69).has('recentHospital'));
 check('70 岁问衰弱闸', keysAt(70).has('frailty') && keysAt(70).has('recentHospital'));
 const withQuit = new Set(activeQuestions({ ...emptyProfile(), age: 55, gender: 'male', smoking: 'quit' }).map((q) => q.key));
@@ -53,6 +54,20 @@ const withSH = new Set(activeQuestions({ ...emptyProfile(), age: 55, gender: 'ma
 check('只有二手烟"是"才问年限', withSH.has('secondhandYears') && !keysAt(55).has('secondhandYears'));
 const withOcc = new Set(activeQuestions({ ...emptyProfile(), age: 55, gender: 'male', occupationDust: 'yes' }).map((q) => q.key));
 check('只有职业暴露"是"才问种类与年限', withOcc.has('occupationAgents') && withOcc.has('occupationYears'));
+
+/* 既往检查史（P0-2/P1-10）：和幽门螺杆菌那题一起构成"以前查过什么"。
+ * 它不参与 A/B/C 判定，只在卡片上提示"最近做过"，所以这里守三件事：
+ *   题目存在、可选可跳过、值都是 schema 登记过的。 */
+check('有既往检查史这道题', keysAt(59).has('recentChecks'));
+const rcQ = questions.find((q) => q.key === 'recentChecks');
+check('既往检查史是可选的多选题', !!rcQ && rcQ.kind === 'multi' && rcQ.optional === true);
+check('既往检查史给了「都没做过」和「记不清」两个出口',
+  !!rcQ && /都没做过/.test(rcQ.noneLabel || '') && /记不清/.test(rcQ.unknownLabel || ''));
+const rcSchema = JSON.parse(readFileSync('data/inputs.schema.json', 'utf8')).fields.recentChecks;
+check('既往检查史的每个选项都在 schema 里登记',
+  !!rcSchema && rcQ.options.every((o) => rcSchema.items.includes(o.v)),
+  rcQ ? rcQ.options.map((o) => o.v).join(',') : 'no question');
+check('既往检查史明确不改档位（informationalOnly）', rcSchema?.informationalOnly === true);
 
 const pk = new Set(questions.map((q) => q.key));
 check('三题都在 questions 里', SENSORY.every((k) => pk.has(k)));
@@ -116,6 +131,32 @@ check('每个选项都能过一遍分享链接（白名单不许漏项）', roun
   const unregistered = Object.keys(LINK_EXCLUDE || {}).filter((k) => !questions.some((q) => q.key === k));
   check('EXCLUDE 登记的字段必须真实存在于问卷（防手滑删题后留下幽灵登记）', unregistered.length === 0, unregistered.join(','));
 }
+
+/* 红旗症状（P0-1）：安全分流，不改 A/B/C。钉住四条边界，防误改：
+ *   ① 题目在、是可选多选、8 项、有"都没有/说不清"两个出口；
+ *   ② 急诊三项、门诊五项分组正确；
+ *   ③ "说不清"不触发任何警告（不知道不等于没有）；
+ *   ④ 65+ 老 weightLoss 题答 ge5 → 门诊体重条命中，且不重复。 */
+const rfQ2 = questions.find((q) => q.key === 'redFlags');
+check('红旗是可选多选、8 个症状', !!rfQ2 && rfQ2.kind === 'multi' && rfQ2.optional === true && rfQ2.options.length === 8);
+check('红旗有「这些都没有」和「说不清」两个出口',
+  !!rfQ2 && rfQ2.noneLabel === '这些都没有' && rfQ2.unknownLabel === '说不清');
+check('红旗 3 急诊 + 5 门诊',
+  rfQ2 && rfQ2.options.filter((o) => o.tone === 'emergency').length === 3
+  && rfQ2.options.filter((o) => o.tone === 'clinic').length === 5);
+const p1 = { ...emptyProfile(), redFlags: ['stroke', 'bloodInStool'] };
+const h1 = redFlagHits(p1);
+check('急诊+门诊分别命中', h1.emergency.length === 1 && h1.clinic.length === 1);
+check('「说不清」不触发任何警告',
+  redFlagHits({ ...emptyProfile(), redFlags: 'unknown' }).emergency.length === 0
+  && redFlagHits({ ...emptyProfile(), redFlags: 'unknown' }).clinic.length === 0);
+const hLink = redFlagHits({ ...emptyProfile(), age: 70, weightLoss: 'ge5', redFlags: ['weightLoss'] });
+check('掉体重联动只出一条，不重复', hLink.clinic.filter((x) => x.v === 'weightLoss').length === 1);
+// 症状属隐私，绝不进分享链接白名单——直接看链接里编码了哪些字段。
+const { encodeProfile } = await import('../src/share.js');
+const rawCode = encodeProfile(p1);
+const rawJson = JSON.parse(Buffer.from(rawCode.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8'));
+check('症状不进分享链接（隐私）', !('redFlags' in rawJson), Object.keys(rawJson).join(','));
 
 console.log(`\n${pass}/${pass + fail} 通过`);
 if (fail) process.exit(1);

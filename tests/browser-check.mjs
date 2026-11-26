@@ -45,8 +45,10 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
   // 连跑一百多步时，Windows/容器里的 /dev/shm 很容易被截图占满，Chrome 会假死，
-  // 表现为下一步 Runtime.evaluate 超时。这两项是稳定的无功能副作用的启动参数。
+  // 表现为下一步 Runtime.evaluate 超时。
+  // 8GB 机器上和前台软件抢资源时，防止无头页被系统节流雪上加霜（2026-11-24）。
   '--disable-dev-shm-usage', '--disable-background-timer-throttling',
+  '--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding',
   '--remote-debugging-port=' + PORT, '--user-data-dir=' + (process.env.TMP || '/tmp') + '/wb-cdp-profile',
   'about:blank',
 ], { stdio: 'ignore' });
@@ -88,7 +90,8 @@ const evaluate = async (expr, attempt = 0) => {
   return r.result?.value;
 };
 
-const waitFor = async (expr, label, timeout = 15000) => {
+/* 8GB 小机器内存一挤，无头 Chrome 渲染结果页会超 8 秒 —— 2026-11-24 连续三次在不同点位超时后放宽到 20 秒；断言本身不动，只是等页余量 */
+const waitFor = async (expr, label, timeout = 20000) => {
   const t0 = Date.now();
   while (Date.now() - t0 < timeout) {
     if (await evaluate(expr)) return true;
@@ -234,7 +237,7 @@ try {
   })()`);
   check('首页三个来源都挂了外链', links.n === 3 && links.hrefs.every((h) => /^https?:\/\//.test(h)), links.hrefs.join(' '));
   check('首页有「站在谁的肩膀上」', /站在谁的肩膀上/.test(links.text), links.text.slice(0, 20));
-  check('致敬模块里点了模型名', /DeepSeek/.test(links.text) && /混元/.test(links.text));
+  check('致敬模块里点了模型名', /DeepSeek/.test(links.text) && /混元/.test(links.text) && /baichuan/.test(links.text));
   /* 老板 2026-11-20 改的名：杨圣 → 天才杨，小马哥 → 天才姚。
      名字这种事最容易在下一次改文案时被"顺手改回去"，所以钉住两头：
      新名字必须在，旧名字必须不在。 */
@@ -352,14 +355,19 @@ try {
   await evaluate(`document.querySelector('[data-act=sex][data-v=male]').click()`);
   check('性别按钮能选中', await evaluate(`!!document.querySelector('.seg-b.on')`));
   await evaluate(`document.querySelector('[data-act=begin]').click()`);
-  await waitFor(`document.querySelectorAll('.opt').length > 0 && /吸烟/.test(document.querySelector('.qtitle').innerText)`, '吸烟题');
+  /* P0-1 之后问卷第一题是红旗症状题（安全优先于一切）。
+     它不是这段的主角，点「这些都没有」走人，让后面的断言继续守吸烟题。 */
+  await waitFor(`/最近有没有/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '第一题（红旗题）');
+  await evaluate(`(() => { const b = document.querySelector('[data-act=none]'); if (b) b.click(); })()`);
+  await waitFor(`/吸烟/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '吸烟题');
   await shot('02-quiz-smoke');
 
   /* 老板 2026-11-24 报的 bug：问卷逆流到第一题（年龄页）点「上一题」没反应。
    * 定稿交互：第一次点出提示（文案老板逐字定的），再点一次才回首页，年龄带出不重填。
    * 这三段必须在真浏览器里各走一遍 —— 哪一段缺失都是老人卡住的现场。
-   * 注意：从首页进来 step 直接落在吸烟题，中间隔着性别题，所以要一路退到年龄页。 */
-  for (let i = 0; i < 6 && !(await evaluate(`!!document.querySelector('#age')`)); i++) {
+   * 注意：P0-1 后 begin 直接落在红旗题，但年龄/性别题还在问卷里（供回看），
+   * 所以从吸烟题一路 back 仍能退到年龄页。 */
+  for (let i = 0; i < 8 && !(await evaluate(`!!document.querySelector('#age')`)); i++) {
     await evaluate(`document.querySelector('[data-act=back]').click()`);
     await sleep(80);
   }
@@ -377,20 +385,24 @@ try {
   check('再点一次真的回到首页（问卷没了，首页在）', backHome.home === true && backHome.quiz === false, JSON.stringify(backHome));
   check('回首页年龄自动带出（不用重填）', (await evaluate(`document.querySelector('#ageHome').value`)) === '52');
   // 重进问卷再逆流回第一题：武装必须已解除，不能带着上一轮的提示进来
+  // （重进后 begin 落在红旗题，for 循环自己一路 back，不用等它停在哪）
   await evaluate(`document.querySelector('[data-act=begin]').click()`);
-  await waitFor(`/吸烟/.test(document.querySelector('.qtitle').innerText)`, '吸烟题');
-  for (let i = 0; i < 6 && !(await evaluate(`!!document.querySelector('#age')`)); i++) {
+  await sleep(300);
+  for (let i = 0; i < 8 && !(await evaluate(`!!document.querySelector('#age')`)); i++) {
     await evaluate(`document.querySelector('[data-act=back]').click()`);
     await sleep(80);
   }
   await waitFor(`!!document.querySelector('#age')`, '又回到年龄页');
   const backClean = await evaluate(`(() => ({ hint: !!document.querySelector('.back-hint'), on: !!document.querySelector('.back.on') }))()`);
   check('重进问卷再回看第一题：没有残留提示（武装已解除）', !backClean.hint && !backClean.on, JSON.stringify(backClean));
-  // 原路返回吸烟题（年龄页 → 性别 → 吸烟），让后续流程从原状态继续
+  // 原路返回吸烟题（年龄页 → 性别 → 红旗题 → 吸烟），让后续流程从原状态继续
   await evaluate(`(() => { const b = document.querySelector('[data-act=age-next]'); if (b) b.click(); })()`);
   await waitFor(`!!document.querySelector('.opt')`, '性别题');
   await evaluate(`[...document.querySelectorAll('.opt')].find(b => b.innerText.includes('男')).click()`);
-  await waitFor(`/吸烟/.test(document.querySelector('.qtitle').innerText)`, '回到吸烟题');
+  // P0-1 后性别和吸烟之间隔着红旗题：点「这些都没有」过去
+  await waitFor(`/最近有没有|吸烟/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '红旗题或吸烟题');
+  await evaluate(`(() => { const b = document.querySelector('[data-act=none]'); if (b) b.click(); })()`);
+  await waitFor(`/吸烟/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '回到吸烟题');
 
   // 问卷里不该再出现性别题（已经在首屏答完）
   check('问卷里没有重复的性别题', !/^性别/.test(await evaluate(`document.querySelector('.qtitle').innerText`)));
@@ -432,6 +444,39 @@ try {
     if (await evaluate(`/你自己确诊过/.test((document.querySelector('.qtitle')||{}).innerText||'')`)) {
       const hasDementia = await evaluate(`[...document.querySelectorAll('.opt')].some(b => /阿尔茨海默/.test(b.innerText))`);
       check('既往症里有「阿尔茨海默病」这个选项', hasDementia);
+    }
+    /* G1 溢出引导（老板 2026-11-24 拍板）：既往病史 10 项一屏放不下才出现。
+     * 三件事在真浏览器里各验一遍：出现且文案带数量 / 一划就淡出 / 放得下的题绝不出现。 */
+    if (await evaluate(`/你自己确诊过/.test((document.querySelector('.qtitle')||{}).innerText||'')`)) {
+      const peekOn = await evaluate(`(() => {
+        const p = document.getElementById('peek');
+        return { exists: !!p, off: p ? p.classList.contains('off') : null,
+                 text: (document.getElementById('peek-t')||{}).textContent || '',
+                 fixed: p ? getComputedStyle(p).position : '', pe: p ? getComputedStyle(p).pointerEvents : '' };
+      })()`);
+      check('溢出题出现下滑引导（G1），文案带剩余数量和下一步',
+        peekOn.exists && peekOn.fixed === 'fixed' && peekOn.pe === 'none' && !peekOn.off
+        && /往下滑/.test(peekOn.text) && /下一步/.test(peekOn.text), JSON.stringify(peekOn));
+      await evaluate(`window.scrollTo(0, 400)`);
+      await sleep(180);
+      check('一开始往下滑引导就淡出', await evaluate(`document.getElementById('peek').classList.contains('off')`));
+      await evaluate(`window.scrollTo(0, 0)`);
+      await sleep(180);
+      // 下一题（幽门螺杆菌，3 个选项）放得下：引导必须不出现 —— 老板附加条件就是这条闸门
+      // 注意既往病史是多选题，点选项不跳题，必须按「下一步」走
+      await evaluate(`(() => { const b = document.querySelector('[data-act=multi-next]'); if (b) b.click(); })()`);
+      await sleep(260);
+      await waitFor(`/幽门螺杆菌/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '幽门螺杆菌题');
+      const peekNext = await evaluate(`(() => {
+        const p = document.getElementById('peek');
+        const els = [...document.querySelectorAll('.opt, .none-row .btn, [data-act=multi-next], [data-act=age-next]')];
+        const last = els[els.length - 1];
+        return { off: p ? p.classList.contains('off') : 'no-peek',
+                 overflow: last ? last.getBoundingClientRect().bottom > innerHeight + 8 : null,
+                 title: (document.querySelector('.qtitle')||{}).innerText || '' };
+      })()`);
+      check('内容放得下的题不出现引导（老板附加条件）',
+        peekNext.off === true && peekNext.overflow === false, JSON.stringify(peekNext).slice(0, 130));
     }
     /* 老板 2026-11-23 抓到的：「幽门螺杆菌查过吗」一进来「没查过，或不记得」就是选中态。
      * 根因是 emptyProfile 的默认值和这个选项的取值撞了（都是 'unknown'），
@@ -558,18 +603,35 @@ try {
    * 原来这里守的是"写明不参与判定"那句，老板说没价值已删 —— 别再改回去。 */
   const bodyCard = await evaluate(`(() => {
     const el = document.querySelector('.bodyc');
+    if (!el) return { has: false };
+    const d = el.querySelector('details');
+    if (d) d.open = true;
+    const inner = el.querySelector('.bodyc .detail');
+    const cs = inner ? getComputedStyle(inner) : null;
+    const btxt = el.querySelector('.btxt');
     return {
-      has: !!el,
-      txt: el ? el.textContent : '',
-      adv: el ? el.querySelectorAll('.badv li').length : 0,
-      ev: el ? !!el.querySelector('.evbox') : false,
+      has: true,
+      txt: el.textContent,
+      adv: el.querySelectorAll('.badv li').length,
+      ev: !!el.querySelector('.evbox'),
       old: document.body.textContent.includes('体型不参与上面清单的判定'),
+      /* 卡内 evbox 也有自己的 <summary>（"依据…"）且排在前面，querySelector 拿第一个会抓错 —— 必须挑体型卡自己的标题 */
+      summary: Array.from(el.querySelectorAll('summary')).map((s) => s.textContent || '').find((t) => /BMI 这个数|这两个数/.test(t)) || '',
+      oldSummary: el.textContent.includes('这两个数怎么算的'),
+      detailFs: cs ? parseFloat(cs.fontSize) : 0,
+      btxtFs: btxt ? parseFloat(getComputedStyle(btxt).fontSize) : 0,
     };
   })()`);
   check('结果页出体型卡：BMI、档位、分档建议、依据齐全',
     bodyCard.has && /BMI 27\.7/.test(bodyCard.txt) && /偏高/.test(bodyCard.txt)
       && bodyCard.adv >= 2 && bodyCard.ev && !bodyCard.old,
     JSON.stringify({ adv: bodyCard.adv, ev: bodyCard.ev, old: bodyCard.old }));
+  /* 老板 2026-11-24：折叠标题指代要清楚（"这两个数"在腰围不超标时指代悬空），
+     且展开内容字号要跟卡内正文一致 —— 两处都钉死，防下次改版顺手改回去。 */
+  check('体型折叠标题是定稿文案（BMI 指代清楚）',
+    /BMI 这个数是怎么算的 · 界值哪来的/.test(bodyCard.summary || '') && !bodyCard.oldSummary, bodyCard.summary);
+  check('展开内容字号与卡内正文一致（13.5px，不再突兀地大一号）',
+    bodyCard.detailFs === 13.5 && bodyCard.btxtFs === 13.5, `detail ${bodyCard.detailFs}px / btxt ${bodyCard.btxtFs}px`);
   check('52 岁吸烟男性命中肺癌 CT', result.a.some((n) => /CT/.test(n)), result.a.join(' | '));
   check('结果页带免责声明', result.hasDisclaimer);
   /* 回到顶部两个入口（R9 第 4 条）：浮动那颗要带字、页尾还要有一颗。
@@ -686,7 +748,10 @@ try {
     document.querySelector('[data-act=sex][data-v=male]').click();
     document.querySelector('[data-act=begin]').click();
   })()`);
-  await waitFor(`/你吸烟吗/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '吸烟题');
+  await waitFor(`/最近有没有/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '红旗题（直入回补）');
+  // P0-1 后 begin 落在红旗题：点「这些都没有」再到吸烟题
+  await evaluate(`(() => { const b = document.querySelector('[data-act=none]'); if (b) b.click(); })()`);
+  await waitFor(`/吸烟/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '吸烟题');
   await evaluate(`[...document.querySelectorAll('.opt')].find(b => /不方便说/.test(b.innerText)).click()`);
   for (let i = 0; i < 24; i++) {
     if (await evaluate(`!!document.querySelector('.actions') && /52 岁/.test((document.querySelector('.rwho') || {}).innerText || '')`)) break;
@@ -956,6 +1021,32 @@ try {
     await waitFor(`!!document.querySelector('[id^="soon-"]')`, '依据页对应分区');
     check('依据页有分区可落锚点',
       await evaluate(`!!document.querySelector('.evsec[id^="soon-"] .evc')`));
+  }
+
+  // ---- 3.5c 老板 2026-11-24 走查抓出的两个判定 bug ----
+  // A：幽门螺杆菌答「查过，阴性」不能再被推荐吹气；阳性必须保留（卡里有规范根除/复查提示）
+  {
+    const pn = Buffer.from(JSON.stringify({ age: 52, gender: 'male', hpStatus: 'negative' })).toString('base64url');
+    await goto(BASE + '/r.html#p=' + pn);
+    await waitFor(`!!document.querySelector('.docbody')`, '阴性 52 岁男结果页');
+    check('查过阴性不再被推荐幽门螺杆菌检测',
+      !/一生至少检测一次幽门螺杆菌/.test(await evaluate(`document.body.innerText`)));
+    const pp = Buffer.from(JSON.stringify({ age: 52, gender: 'male', hpStatus: 'positive' })).toString('base64url');
+    await goto(BASE + '/r.html#p=' + pp);
+    await waitFor(`!!document.querySelector('.docbody')`, '阳性 52 岁男结果页');
+    check('查过阳性仍保留幽门螺杆菌卡（带着根除/复查提示）',
+      /一生至少检测一次幽门螺杆菌/.test(await evaluate(`document.body.innerText`)));
+  }
+  // B：「再过几年要加上」只报新面孔 —— 便潜血每年都在做，不能再预告一遍
+  {
+    const p = Buffer.from(JSON.stringify({ age: 44, gender: 'male', smoking: 'no' })).toString('base64url');
+    await goto(BASE + '/r.html#p=' + p);
+    await waitFor(`!!document.querySelector('.soon')`, '再过几年模块');
+    const soon = await evaluate(`(() => ({ all: document.body.innerText, soon: document.querySelector('.soon').innerText }))()`);
+    check('「再过几年」预告了肠镜（44 岁明年该加的）', /肠镜/.test(soon.soon), soon.soon.slice(0, 60));
+    check('「再过几年」不再出现便潜血 / FIT（它们就在今年的清单里）',
+      !/便潜血/.test(soon.soon) && !/粪便免疫化学/.test(soon.soon), soon.soon.replace(/\s+/g, ' ').slice(0, 80));
+    check('便潜血仍在今年的基础套餐里（没有被误删）', /便潜血/.test(soon.all), '');
   }
 
   // ---- 3.6 50+ 女性：不问备孕题，但要留孕产兜底 ----
@@ -1399,7 +1490,53 @@ try {
   }
 
   // ---- 3.6 旧链接与残缺链接 ----
-  // 去年/上一版分享出去的 /?p=xxx 必须跳到结果页，否则那批链接会把首页顶进索引
+  /* ---- SEO/AIO 机器层（老板 2026-11-24 拍板五项全做）----
+   * 这些都在"源代码层"，用户看不见，坏了也没人发现 —— 所以必须在真浏览器里验：
+   * JSON-LD 要真的能被 JSON.parse（写错一个逗号整段结构化数据就静默失效），
+   * canonical 的占位符要被构建替换成真域名，noscript 兜底要对开 JS 的用户不可见。 */
+  {
+    await goto(BASE + '/');
+    await waitFor(`!!document.querySelector('#ageHome')`, '首页（SEO 验收）');
+    const seo = await evaluate(`(() => {
+      const c = document.querySelector('link[rel=canonical]');
+      const lds = [...document.querySelectorAll('script[type="application/ld+json"]')];
+      const ldText = lds.map(s => s.textContent).join('');
+      let types = [], nQ = 0, ldErr = '';
+      try {
+        const ld = JSON.parse(ldText);
+        types = (ld['@graph'] || []).map(n => n['@type']);
+        nQ = (ld['@graph'] || []).flatMap(n => n.mainEntity || []).length;
+      } catch (e) { ldErr = String(e).slice(0, 80); }
+      return {
+        canon: c ? c.getAttribute('href') : '',
+        desc: (document.querySelector('meta[name=description]') || {}).content || '',
+        ogLocale: (document.querySelector('meta[property="og:locale"]') || {}).content || '',
+        types, nQ, ldErr, ldText,
+        noscript: (document.querySelector('noscript') || {}).textContent || '',
+        bodyText: document.body.innerText,
+      };
+    })()`);
+    check('canonical 在且占位符已被真实域名替换',
+      // 注意不能锚定"域名+/就结束"：Pages 子路径部署（/HowToCheckup/）是合法 canonical，
+      // 本地占位域名（无路径）也合法。只要：http(s) 开头、以 / 结尾、占位符已被替换。
+      /^https?:\/.+\/$/.test(seo.canon || '') && !/__SITE_ORIGIN__/.test(seo.canon || ''), seo.canon);
+    check('description 带上「免费 / 不收集隐私」搜索词',
+      /免费/.test(seo.desc) && /不收集隐私/.test(seo.desc), seo.desc.slice(0, 46));
+    check('JSON-LD 是合法 JSON 且含 WebApplication + FAQPage',
+      seo.types.includes('WebApplication') && seo.types.includes('FAQPage') && !seo.ldErr,
+      seo.ldErr || seo.types.join(' / '));
+    check('FAQ 有 6 条问答且「不能代替医生」在场',
+      seo.nQ >= 6 && /代替医生/.test(seo.ldText), '问答 ' + seo.nQ + ' 条');
+    check('og:locale 在（转发卡片语言声明）', seo.ogLocale === 'zh_CN', seo.ogLocale);
+    check('noscript 兜底摘要写出了产品事实（给不开 JS 的爬虫读）',
+      /长命百岁体检项目指南/.test(seo.noscript) && /国家权威指南/.test(seo.noscript) && /需要开启 JavaScript/.test(seo.noscript));
+    check('noscript 兜底对正常用户不可见（页面视觉零变化）',
+      !seo.bodyText.includes('请在浏览器设置里允许'));
+    const llms = await evaluate(`fetch(BASE_PLACEHOLDER + '/llms.txt').then(r => r.ok ? r.text() : '').catch(() => '')`.replace('BASE_PLACEHOLDER', JSON.stringify(BASE)));
+    check('llms.txt 已上线且写了免费/免责/依据页', /免费/.test(llms) && /不是医疗建议/.test(llms) && /e\.html/.test(llms), 'llms.txt ' + llms.length + ' 字');
+  }
+
+  // 去年/上一版分享出去的 /?p= 必须跳到结果页，否则那批链接会把首页顶进索引
   await goto(BASE + '/?p=' + 'eyJhZ2UiOjUyfQ');
   await waitFor(`/\\/r\\.html$/.test(location.pathname)`, '旧链接跳转', 5000);
   // 原来这里写的是 check(名字, true)：永远是绿的，只证明"这一行执行到了"。
@@ -1481,10 +1618,11 @@ try {
   check('68 岁女性出 4 支疫苗（流感/肺炎/带状疱疹/乙肝，不含 HPV）', old.vacCount === 4, String(old.vacCount));
   check('疫苗区不写价格', old.hasPrice === false, old.vacText.slice(0, 40));
   check('答"摔倒过""记性差"出两张老年评估卡', old.refCount === 2, old.refTitles.join(' / '));
-  /* R6 第 2 条：这一段全站改名「去医院进行老年综合评估」并引真实出处。
-   * 老板当时否掉的是「转诊」这个说法，所以"体检中心做不了"这句解释要留着，标题不能再写"转诊"。 */
-  check('老年评估段落标题是「去医院进行老年综合评估」',
-    /去医院进行老年综合评估/.test(old.refHead) && !/转诊/.test(old.refHead), old.refHead);
+  /* 老板 2026-11-26 定稿：标题加「尽快」——这是要抓紧办的事，不是可选项。
+   * 提示文案同步精简为"老年综合评估体检中心做不了：要医生当面做、要看你的用药和家里环境"。
+   * 「转诊」这个说法仍是被否掉的，不能再出现。 */
+  check('老年评估段落标题是「尽快去医院进行老年综合评估」',
+    /尽快去医院进行老年综合评估/.test(old.refHead) && !/转诊/.test(old.refHead), old.refHead);
   check('老年评估卡片说清"体检中心做不了"', /体检中心做不了/.test(old.refText), old.refText.slice(0, 40));
   await shot('15-older');
   await evaluate(`document.querySelector('#vac').scrollIntoView({ block: 'start' })`);

@@ -66,6 +66,13 @@
   .kn { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; transform: translateY(1px); }
   .atom.key .aw { font-size: 14px; color: var(--ink); }
   .aw { font-size: 13.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.6; }
+  /* 「为什么列给你」：只复述用户自己填的画像，不摆依据（依据在依据页）。
+   * 用青绿细线+浅底做轻标记，不占大块——36 张卡每张一大块会把清单压成文档。 */
+  .whyYou { font-size: 12.5px; color: var(--ink-2); margin: 7px 0 0; line-height: 1.6;
+    padding: 5px 9px; border-left: 2px solid var(--teal); background: var(--teal-soft); border-radius: 0 6px 6px 0; }
+  .whyYou b { color: var(--teal); }
+  /* 卡片级红旗提示（P0-1）：用户勾过的症状，红色加粗，和橙色依据提示区分开 */
+  .redtip b { color: #a32d2d; }
   .am { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 7px; }
   .af { font-size: 12.5px; color: var(--teal); }
   .apick { font-size: 12px; color: var(--amber); }
@@ -327,12 +334,24 @@
             border-left: 3px solid var(--amber); background: var(--card); border-radius: 10px;
             padding: 10px 12px; margin: 0 0 10px; font-size: 12.5px; color: var(--ink-2); line-height: 1.7; }
   .evlean .apick { flex: none; font-weight: 600; }
-  /* ---- 依据页三段说明：去哪做 / 它为什么在你清单里 / 能查出什么 ----
+  /* ---- 依据页三段说明：去哪做 / 这条检查是怎么回事 / 能查出什么 ----
    * 三条共用同一条规则，不是"抄了一份一样的样式"：改一处三个一起变，
    * 谁也没法让其中一行悄悄长得不一样（老板 2026-11-22：三个模块必须统一）。
    * 所以「去哪做」连强调都不做 —— 科室名不加粗、不染青。 */
   .evr, .ewv { font-size: 13px; color: var(--ink-2); margin: 0 0 6px; line-height: 1.7; }
   .evr b, .ewv b { color: var(--ink); }
+  /* 「这条检查是怎么回事」：拆成圆点句，超过 3 句折进 details。
+   * 圆点只用青绿小点，不编号（项目规矩：不手写序号）；折叠件沿用详情块的视觉，
+   * 不另造一套配色，免得同一页里两种折叠件长得不一样。 */
+  .evwhy-l { list-style: none; margin: 4px 0 0; padding: 0; }
+  .evwhy-l li { position: relative; padding: 2px 0 2px 14px; line-height: 1.7; }
+  .evwhy-l li::before { content: ""; position: absolute; left: 2px; top: 11px;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--teal); }
+  .evwhy-more { margin-top: 4px; }
+  .evwhy-more > summary { cursor: pointer; color: var(--teal); font-size: 12.5px; list-style: none; }
+  .evwhy-more > summary::-webkit-details-marker { display: none; }
+  .evwhy-more[open] > summary::after { content: " ⌃"; }
+  .evwhy-more > summary::after { content: ""; }
   /* 标准项目那一节：按"在体检中心的哪个位置"分组，两列（科室 / 项目）对齐。
    * 不分两列的话，20 项会排成一堵墙，读完也不知道哪项在哪做。 */
   .ewb { margin: 2px 0 8px; }
@@ -486,7 +505,10 @@
     .doc > .toc a { justify-content: flex-start; border: 0; background: none; padding: 6px 8px; border-radius: 8px; font-size: 13.5px; }
     .doc > .toc a.on { background: var(--card); border: 0; }
     .doc > .docbody { grid-area: body; }
-    .docbody { max-width: 780px; }
+    /* 桌面端一列只认一个宽度（老板 2026-11-24 走查：横幅 888 / 正文 780 / 卡片 760，
+       三档宽窄不一看着散）。页头、横幅、正文、卡片统一收到 760，左右边缘全部对齐。 */
+    .docbody { max-width: 760px; }
+    .rhead { max-width: 760px; }
 
     /* B：两列 */
     .tl { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 34px; align-items: start; }
@@ -606,10 +628,13 @@
   .risknote > summary::-webkit-details-marker { display: none; }
   .risknote > summary::after { content: '展开 ›'; font-size: 11.5px; font-weight: 400; color: var(--teal); white-space: nowrap; }
   .risknote[open] > summary::after { content: '收起 ⌃'; }
-  .rnbody { padding: 2px 14px 14px; border-top: 1px dashed var(--line); font-size: 12.5px; line-height: 1.8; color: var(--ink-2); }
-  .rnbody p { margin: 8px 0; }
-  .rnbody ol { margin: 8px 0 0 18px; }
-  .rnbody li { margin: 5px 0; }
+  .rnbody { padding: 2px 14px 14px; border-top: 1px dashed var(--line); font-size: 12.5px; line-height: 1.75; color: var(--ink-2); }
+  .rnbody p { margin: 7px 0; }
+  /* 2026-11-26 老板走查：三条建议每条前面空隙过大，展开后整块松散。
+     收紧列表节奏：条间距 3px、行高压到 1.75、去掉 ol 的上外边距，
+     和下面「依据」小字的分隔节奏对齐。 */
+  .rnbody ol { margin: 4px 0 0; padding-left: 20px; }
+  .rnbody li { margin: 3px 0; }
   .rnbody b { color: var(--ink); }
   .rnsrc { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line); font-size: 11px; line-height: 1.7; color: var(--ink-3); }
 

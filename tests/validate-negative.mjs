@@ -38,10 +38,10 @@ const ldct = (doc) => doc.rules.find((r) => r.id === 'lung-ldct-high-risk');
   const { code, out } = runWith(() => {});
   check('对照：未篡改的规则文件校验通过', code === 0, out.slice(-300));
 }
-// 1. 人群数字与原文不符：把 50 岁起筛改成 45 岁（原文是 50–80）
+// 1. 人群数字与原文不符：把 50 岁起筛改成 40 岁（USPSTF 原文是 50–80；合并进来的中华医学会引文里有 45，所以 45 不再是"无出处"数字，2026-11-26 换成 40）
 {
-  const { code, out } = runWith((d) => { ldct(d).clause.population.include[0] = '年龄 45–80 岁'; });
-  check('数字回读：45 这个原文没有的年龄被抓到', code !== 0 && /45/.test(out) && /没有出处/.test(out), out.slice(-300));
+  const { code, out } = runWith((d) => { ldct(d).clause.population.include[0] = '年龄 40–80 岁'; });
+  check('数字回读：40 这个原文没有的年龄被抓到', code !== 0 && /40/.test(out) && /没有出处/.test(out), out.slice(-300));
 }
 // 2. 枚举非法：conflictPolicy 填了不在枚举里的值
 {

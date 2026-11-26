@@ -110,6 +110,11 @@ for (const r of rulesFile.rules) {
   if (!Array.isArray(r.topics) || r.topics.length === 0) err(`[${tag}] topics 必须是非空数组`);
   for (const t of r.topics || []) if (!TOPICS.has(t)) err(`[${tag}] topics 含未登记的标签 "${t}"（请先在 rules.schema.json 的 topics 中登记）`);
 
+  // decisionType（老板 2026-11-25 P1-6）：每张卡都要说清"这是预防/筛查/复查哪类事"。
+  // 它和 A/B/C 正交，不参与判定，但漏标卡片就没标签，所以设为必填、枚举锁死。
+  if (!['prevent', 'screen', 'follow'].includes(r.decisionType))
+    err(`[${tag}] decisionType 必须是 prevent / screen / follow 之一（预防/筛查/复查）`);
+
   // when 条件字段校验
   checkWhen(r.when, tag);
 

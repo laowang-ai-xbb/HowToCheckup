@@ -15,7 +15,10 @@
  */
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 
-/** 把仓库里的源码读成一个普通对象，供各条检查使用 */
+/** 把仓库里的源码读成一个普通对象，供各条检查使用
+ *  换行符统一成 \n：git autocrlf 会把工作区文件转成 CRLF，锚点和解析若按 \n 写
+ *  就会时灵时不灵（2026-11-26 老板要求清理：4 条变异失效全是这一个根因）。
+ *  以后写锚点/解析一律只用 \n，不用再各自打补丁。 */
 export const loadSources = (root = '.') => {
   const paths = [
     'index.html', 'r.html', 'e.html', '404.html',
@@ -29,12 +32,12 @@ export const loadSources = (root = '.') => {
   const files = {};
   for (const p of paths) {
     const full = `${root}/${p}`;
-    if (existsSync(full)) files[p] = readFileSync(full, 'utf8');
+    if (existsSync(full)) files[p] = readFileSync(full, 'utf8').replace(/\r\n/g, '\n');
   }
   // demo 目录已移出开源仓库（设计稿归档在本机）；目录不存在时这里就是空集
   try {
     for (const f of readdirSync(`${root}/demo`)) {
-      if (/\.html$/.test(f)) files[`demo/${f}`] = readFileSync(`${root}/demo/${f}`, 'utf8');
+      if (/\.html$/.test(f)) files[`demo/${f}`] = readFileSync(`${root}/demo/${f}`, 'utf8').replace(/\r\n/g, '\n');
     }
   } catch { /* 没有 demo 目录就跳过 */ }
   return files;
@@ -825,7 +828,7 @@ export const INVARIANTS = [
     why: '在第一题点「上一题」不能没有反应——但也不能一点就把人踢回首页（老人可能只是手滑）。定稿是三段行为：第一次点出提示并高亮，再点一次才回首页，往前走一步自动解除武装。三段里缺任何一段，按钮要么变哑巴、要么误伤；回首页还必须把年龄性别带出来，不能让人重填。',
     check(f) {
       /* main.js 是 CRLF，多行锚点先归一化再比，否则 Windows 工作区必误报 */
-      const main = (f['src/main.js'] || '').replace(/\r\n/g, '\n');
+      const main = (f['src/main.js'] || '');
       const css = f['src/styles.css'] || '';
       const btn = (main.match(/<button class="back\$\{[^}]*\}"[^>]*>/) || [''])[0];
       if (!btn) return '找不到「上一题」按钮';
@@ -841,6 +844,97 @@ export const INVARIANTS = [
       if (!css.includes('.back-hint')) return 'styles.css 没有 .back-hint 样式（提示条会裸奔）';
       if (!css.includes('.back.on')) return 'styles.css 没有 .back.on 高亮（武装状态看不出来）';
       if (!/\$\{state\.profile\.age \|\| ''\}/.test(main)) return '首页年龄输入框没有带出已填的年龄（回首页就丢答案）';
+      return null;
+    },
+  },
+  {
+    id: 'hp-negative-no-retest',
+    why: '老板 2026-11-24 走查：问卷里答了「查过，阴性」，结果页还让他做呼气试验——hp-test-once 的 when 只看了年龄没看答案。必须显式排除阴性；阳性保留（卡里带着规范根除/复查的提示，45+ 由胃癌高风险规则接去胃镜），别顺手把阳性也藏了。',
+    check(f) {
+      let rules;
+      try { rules = (JSON.parse(f['data/rules.json'] || '{}').rules) || []; } catch { return 'rules.json 不是合法 JSON'; }
+      const r = rules.find((x) => x.id === 'hp-test-once');
+      if (!r) return '找不到 hp-test-once 规则';
+      const none = (r.when && r.when.none) || [];
+      if (!none.some((c) => c && c.hpStatus === 'negative')) return 'hp-test-once 没有排除「查过阴性」，阴性用户会再被推荐吹气';
+      return null;
+    },
+  },
+  {
+    id: 'upcoming-only-new-items',
+    why: '老板 2026-11-24 走查：44 岁的「再过几年要加上」里出现便潜血——它就在今年的基础套餐里，同一项既"今年要做"又"过两年要加"，用户以为自己漏了什么。根修在 upcoming()：先收当前清单真实展示的项目（只认 A/B，「不必做」卡不挡将来的推荐），预告规则滤掉老面孔；全是老面孔的整条不预告；卡片只说新加的几项（肠镜后面不再挂着便潜血）。',
+    check(f) {
+      const e = (f['src/engine.js'] || '');
+      if (!/const presentIds = new Set\(\);/.test(e)) return 'upcoming 没有收集当前已展示的项目';
+      if (!/for \(const key of \['A', 'B'\]\)/.test(e)) return 'presentIds 没有只认 A/B（C「不必做」不该挡住将来的推荐）';
+      if (!/const fresh = \(rule\.catalogIds \|\| \[\]\)\.filter\(\(id\) => !presentIds\.has\(canon\(id\)\)\);/.test(e)) return 'upcoming 没有过滤已展示的项目（老面孔会再次预告）';
+      if (!/fresh\.length === 0\) break;/.test(e)) return '全是老面孔的规则没有被跳过';
+      if (!/rule\.shownIds = fresh;/.test(e)) return '预告卡没有只展示新加的项目（标题会重新挂上便潜血）';
+      return null;
+    },
+  },
+  {
+    id: 'seo-machine-layer',
+    why: '老板 2026-11-24 拍板的 SEO/AIO 五件套：canonical、og:url/og:locale、JSON-LD（WebApplication + 6 条真实 FAQ）、noscript 兜底摘要、llms.txt。这些是给搜索引擎和 AI 读的"机器说明书"——用户看不见，所以坏了也没人发现，必须钉住。内容只许写产品事实：写假信息会被搜索引擎降权。',
+    check(f) {
+      const idx = f['index.html'] || '';
+      if (!/<link rel="canonical" href="__SITE_ORIGIN__\/"/.test(idx)) return '首页没有 canonical（或占位符被改动）';
+      if (!/property="og:locale" content="zh_CN"/.test(idx)) return 'og:locale 丢了';
+      const desc = (idx.match(/<meta\s+name="description"\s+content="([^"]*)"/) || [''])[1];
+      if (!/免费/.test(desc) || !/不收集隐私/.test(desc)) return 'description 没带「免费 / 不收集隐私」关键词';
+      const m = idx.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+      if (!m) return '首页没有 JSON-LD 结构化数据';
+      let ld;
+      try { ld = JSON.parse(m[1].split('__SITE_ORIGIN__').join('https://x.example')); }
+      catch (e) { return `JSON-LD 不是合法 JSON（结构化数据会整体失效）：${e.message.slice(0, 60)}`; }
+      const types = (ld['@graph'] || []).map((n) => n['@type']);
+      if (!types.includes('WebApplication')) return 'JSON-LD 丢了 WebApplication（免费、健康类声明）';
+      if (!types.includes('FAQPage')) return 'JSON-LD 丢了 FAQPage';
+      const qs = (ld['@graph'] || []).flatMap((n) => n.mainEntity || []);
+      if (qs.length < 5) return `FAQ 只剩 ${qs.length} 条问答（应有 6 条）`;
+      if (!qs.some((q) => /代替医生|医疗建议/.test((q.acceptedAnswer || {}).text || ''))) return 'FAQ 丢了「不能代替医生」那条（免责必须在场）';
+      if (!/<noscript>[\s\S]*长命百岁体检项目指南[\s\S]*国家权威指南[\s\S]*<\/noscript>/.test(idx)) return 'noscript 兜底摘要丢了（不开 JS 的爬虫只能爬到空白）';
+      if (!/需要开启 JavaScript/.test(idx)) return 'noscript 里「开启 JavaScript」的提示丢了';
+      let llms = '';
+      try { llms = readFileSync('./public/llms.txt', 'utf8'); } catch { return 'public/llms.txt 不存在（构建不会凭空生出来）'; }
+      if (!/免费/.test(llms) || !/不是医疗建议/.test(llms) || !/\/e\.html/.test(llms)) return 'llms.txt 缺关键事实（免费 / 不是医疗建议 / 依据页路径）';
+      return null;
+    },
+  },
+  {
+    id: 'quiz-overflow-guide',
+    why: '老板 2026-11-24 走查：家族史/既往病史这类选项多的题一屏放不下，「下一步」在屏幕外，老人以为卡死会直接关页面。G1 方案：底部渐隐＋下滑箭头。老板附加条件是闸门——**仅在内容溢出时出现**（最后一个按钮底部超出视口 8px 以上），放得下的题绝不出现；滚动只负责藏不负责显（显的时机只交给每题渲染后的测量），demo 第一版两处 bug（遮罩锚进滚动内容、类名漏前缀）都写进了注释。',
+    check(f) {
+      const main = (f['src/main.js'] || '');
+      const css = (f['src/styles.css'] || '');
+      if (!/id="peek" aria-hidden="true"/.test(main)) return '问卷模板里没有溢出引导件';
+      if (!/const measureOverflowGuide = \(\) => \{/.test(main)) return 'measureOverflowGuide 丢了';
+      /* 老板附加条件：只在溢出时出现。这个判断是闸门，被拆掉引导会变成每题都有的装饰 */
+      if (!/last\.getBoundingClientRect\(\)\.bottom > window\.innerHeight \+ 8 : false;/.test(main)) return '溢出闸门被改了（引导会在放得下的题上也出现）';
+      if (!/peek\.classList\.add\('off'\); return;/.test(main)) return '放得下时没有把引导藏起来';
+      if (!/往下滑 · 下面还有/.test(main)) return '引导文案丢了（剩余数量）';
+      if (!/「下一步」在下面/.test(main)) return '引导文案丢了（只有下一步溢出的场景）';
+      /* 滚动监听只许藏不许显：显只能由测量触发，否则放得下的题会被误点亮 */
+      if (!/if \(!peek \|\| peek\.classList\.contains\('off'\)\) return;/.test(main)) return '滚动监听没有防误显闸（会把放得下的题也点亮）';
+      if (!/window\.addEventListener\('resize', \(\) => measureOverflowGuide\(\)/.test(main)) return 'resize 没有重测（转屏/放大字后闸门会失准）';
+      if (!/position: fixed/.test(css.match(/\.peek \{[^}]*\}/) || [''])) return '.peek 没有 fixed（会随内容滚走，遮罩等于没有）';
+      if (!/pointer-events: none/.test(css.match(/\.peek \{[^}]*\}/) || [''])) return '.peek 没挡事件也要写明 pointer-events: none';
+      if (!/@media \(prefers-reduced-motion: reduce\) \{\s*\.peek-chev \{ animation: none; \}/.test(css)) return '「减少动态效果」用户箭头还在跳';
+      if (!/\.totop, \.veil, \.eggband, \.peek \{ display: none !important; \}/.test(css)) return '打印稿里没有隐藏引导';
+      return null;
+    },
+  },
+  {
+    id: 'body-detail-harmony',
+    why: '老板 2026-11-24 走查体型卡：①折叠标题「这两个数怎么算的」指代悬空——腰围只有超标时才出现在卡上，页面常常只有一个数，改定稿「BMI 这个数是怎么算的 · 界值哪来的」（BMI 大写与卡内写法一致，保留「·」分隔）；②展开内容用全局 .detail 的 15.5px，比卡内正文（13.5px）还大一号，不和谐。修正：作用域限定 .bodyc .detail 对齐 13.5px（大字 16px），不动全局——.detail 还被打印稿用着。',
+    check(f) {
+      const main = (f['src/main.js'] || '');
+      const css = (f['src/styles.css'] || '');
+      if (!/<summary>BMI 这个数是怎么算的 · 界值哪来的<\/summary>/.test(main)) return '体型折叠标题不是定稿文案';
+      if (main.includes('这两个数怎么算的')) return '旧标题「这两个数怎么算的」又回来了';
+      if (!/\.bodyc \.detail \{ padding: 4px 0 0; font-size: 13\.5px; line-height: 1\.7; \}/.test(css)) return '.bodyc .detail 没有对齐 13.5px（展开文字又会比卡内正文大一号）';
+      if (!/html\[data-ls="big"\] \.bodyc \.detail \{ font-size: 16px; \}/.test(css)) return '大字模式下展开文字没有跟着调整';
+      if (!/\.bodyc \.detail p \{ margin: 0 0 8px; \}/.test(css)) return '展开段落间距没有收紧';
       return null;
     },
   },

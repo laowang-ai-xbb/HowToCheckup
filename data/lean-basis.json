@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-25",
+  "updatedAt": "2026-11-26",
   "why": "偏向的账：每条带 lean 的规则，在它当次被复核时依据的证据原文指纹 + 当时的偏向。指纹对不上 = 原文变了或偏向被改过，必须回去重读（npm run check:lean）。重新登记只能是人真读过原文之后跑 npm run accept:lean，别在 CI 里跑。",
   "rules": {
     "stomach-gastroscopy-average-risk": {
@@ -25,7 +25,7 @@
     },
     "pregnancy-guard": {
       "hash": "d35a9316f919597f",
-      "lean": "for"
+      "lean": "against"
     },
     "ovarian-family-history": {
       "hash": "52d2dce68a3376ee",
@@ -85,6 +85,22 @@
     },
     "cvd-family-carotid": {
       "hash": "fb9bbbfe56bc1606",
+      "lean": "for"
+    },
+    "ckd-followup": {
+      "hash": "95982468bfbeef80",
+      "lean": "for"
+    },
+    "intestinal-metaplasia-followup": {
+      "hash": "72fadd99d9f58b5d",
+      "lean": "for"
+    },
+    "birads-followup": {
+      "hash": "8eaf967804a7e5ae",
+      "lean": "for"
+    },
+    "lung-nodule-followup": {
+      "hash": "86566aa8a0b48783",
       "lean": "for"
     }
   }

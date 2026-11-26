@@ -65,6 +65,33 @@ export const questions = [
     ],
   },
   {
+    /* 红旗症状（P0-1，老板 2026-11-25 定稿）：一道安全检查，插在性别之后。
+     * 为什么前置：真有急诊症状的人，多答一题都是在耽误——放最后等于让人先花三分钟填完
+     * 再告诉他"你该先去医院"，那三分钟本就不该花。
+     * 为什么不改 A/B/C：这是安全分流，不是筛查判定。勾了只是弹提示/加横幅，
+     * 清单照出、分档照旧——工具没有资格替医生下诊断。
+     * tone=emergency 的三项当场弹 120；tone=clinic 的五项结果页挂横幅。
+     * "说不清"走 unknownLabel（存 'unknown'）：拿不准的人有台阶，不触发任何警告，
+     * 但卡片上原有的通用红旗提示照常显示——不知道不等于没有。 */
+    key: 'redFlags',
+    kind: 'multi',
+    title: '这些情况，最近有没有？',
+    optional: true,
+    noneLabel: '这些都没有',
+    unknownLabel: '说不清',
+    redFlag: true,
+    options: [
+      { v: 'stroke', l: '突然脸歪、一边胳膊没劲或说话不清', tone: 'emergency' },
+      { v: 'chest', l: '胸口像压了块石头，超过 15 分钟', tone: 'emergency' },
+      { v: 'hemoptysis', l: '咳出一大口鲜血', tone: 'emergency' },
+      { v: 'bloodInStool', l: '大便带血、发黑，或排便习惯变了超两周', tone: 'clinic' },
+      { v: 'cough', l: '咳嗽超两周不好，或声音一直哑', tone: 'clinic' },
+      { v: 'weightLoss', l: '没刻意减肥，体重却掉了 5% 以上', tone: 'clinic' },
+      { v: 'bloodInUrine', l: '尿里带血；女性非经期或同房后出血', tone: 'clinic' },
+      { v: 'lump', l: '不痛的肿块越来越大，或吃东西哽噎', tone: 'clinic' },
+    ],
+  },
+  {
     key: 'smoking',
     kind: 'single',
     title: '你吸烟吗？',
@@ -80,7 +107,7 @@ export const questions = [
     key: 'packYears',
     kind: 'single',
     title: '大概吸了多少？',
-    hint: '「包年」= 每天几包 × 吸了几年。每天 1 包吸 20 年 = 20 包年；每天 2 包吸 10 年 = 20 包年。这是肺癌筛查最关键的一个数。',
+    hint: '「包年」= 每天几包 × 吸了几年。每天 1 包吸 20 年 = 20 包年；每天 2 包吸 10 年 = 20 包年。戒了也要填：肺癌筛查看的是一辈子累计吸了多少。',
     showIf: (p) => p.smoking === 'yes' || p.smoking === 'quit',
     // 注意：这里的数值不是真实包年数，而是"跨没跨过 20 包年这条线"的档位标记。
     // 规则里统一写 packYears >= 20，所以标记取 20 / 10 / 0。
@@ -151,7 +178,7 @@ export const questions = [
     key: 'occupationTypes',
     kind: 'multi',
     title: '具体是哪一类？',
-    hint: '只用于给你提示，不改变结论。可多选。',
+    hint: '可多选',
     optional: true,
     showIf: (p) => p.occupationDust === 'yes',
     options: [
@@ -250,6 +277,12 @@ export const questions = [
       { v: 'dementia', l: '阿尔茨海默病 / 其他痴呆' },
       { v: 'cancer', l: '癌症（任何部位）' },
       { v: 'thyroid', l: '甲状腺结节、甲减、甲亢' },
+      /* 2026-11-26 老板点名四个细分项。都按"确诊过的病=查并发症/按分级随访，不是再筛一遍"处理，
+       * 每项在 rules.json 有对应 follow 卡（ckd / intestinal-metaplasia / birads / lung-nodule）。 */
+      { v: 'ckd', l: '慢性肾病' },
+      { v: 'intestinalMetaplasia', l: '肠化生' },
+      { v: 'birads', l: '乳腺 BI-RADS 分级异常（3 类及以上）' },
+      { v: 'lungNodule', l: '肺结节' },
     ],
   },
   {
@@ -261,6 +294,36 @@ export const questions = [
       { v: 'positive', l: '查过，是阳性' },
       { v: 'negative', l: '查过，是阴性' },
       { v: 'unknown', l: '没查过，或不记得' },
+    ],
+  },
+  {
+    /* 既往检查史（P0-2 路 A + P1-10）。和上面那题一起回答"以前查过什么"。
+     * 为什么做成一题多选、而不是每项追问具体年份：
+     *   · 老人记不住"肠镜是 2022 年还是 2023 年"，问年份只会得到猜的数；
+     *   · skipIfDoneWithin 要的只是"最近这个间隔内做没做"，一个勾就够；
+     *   · 只问常做的六类，避免问卷膨胀。
+     * 为什么选了也不改清单分档：见 inputs.schema.json 的 intentionalNoRule —— 
+     * "做过"不等于"以后不用管"，是否跳过交给医生，产品只提示。 */
+    key: 'recentChecks',
+    kind: 'multi',
+    title: '这几项检查，最近做过了吗？',
+    /* 文案三条硬规矩（copy-lint 会守）：
+     *   ① 不出现「按间隔」这类内部词 —— 那是 skipIfDoneWithin 的说法，用户没听过；
+     *   ② 不选「它会让清单…」这种解释产品机制的句式 —— 用户答这题时还没见到清单；
+     *   ③ 多选题只渲染 l，不渲染 sub（见 main.js 的 multi 分支）。时间窗口必须写进 l，
+     *      否则写了也看不见 —— 这一版就是踩了这个坑才让「最近」变成一句空话。
+     * 括号里的数字就是「最近」，不再另行解释；医学名词就地解释，别堆在提示里占半屏。 */
+    hint: '注意选项标注的年限；拿不准就不选。',
+    optional: true,
+    noneLabel: '最近都没做过',
+    unknownLabel: '记不清',
+    options: [
+      { v: 'colonoscopy', l: '肠镜 5 年内' },
+      { v: 'gastroscopy', l: '胃镜 5 年内' },
+      { v: 'ldct', l: '胸部低剂量 CT 1 年内' },
+      { v: 'breast', l: '乳腺超声 / X 光 1 年内' },
+      { v: 'cervical', l: '宫颈刮片 / HPV 检测 3 年内' },
+      { v: 'liver', l: '肝脏超声 + 抽血 半年内' },
     ],
   },
   {
@@ -276,7 +339,7 @@ export const questions = [
      *   不确定   —— 记不清体重，回头能补；结果页留着补数据的入口。
      *   不方便说 —— 不愿意报体重，降级到方案 1（凭买衣服的感觉选一个），不是跳过。
      * 方案 1 的四个选项刻意只写衣服尺码，不出现偏瘦 / 正常 / 偏胖 / 肥胖 任何一个词。 */
-    hint: 'BMI 就是体重除以身高的平方，体检报告上都有这个数。填两个数我替你算。',
+    hint: 'BMI 就是体重除以身高的平方。填两个数我替你算。',
     /* 这一道题填的不是一个字段，是五个（身高、体重、腰围、走哪条路、降级档）。
      * 列在这里，validate 才知道这些字段"界面上填得了"，不会当成死角。 */
     fields: ['bodyMode', 'bodyHeight', 'bodyWeight', 'bodyWaist', 'bodyShape'],
@@ -394,7 +457,7 @@ export const questions = [
     key: 'frailty',
     kind: 'single',
     title: '平时出门、上厕所这些，需要人帮忙吗？',
-    hint: '筛查的获益要好几年才看得见。身体底子弱的人，先让医生判断值不值，比多做几项检查重要。',
+    hint: '筛查的获益要好几年才看得见。身体差一点的人，先让医生判断值不值，比多做几项检查重要。',
     showIf: (p) => Number(p.age) >= 70,
     options: [
       { v: 'no', l: '不用帮忙' },

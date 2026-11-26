@@ -31,8 +31,9 @@ const unb64url = (str) => {
  * 走查两天才定位到是链接路径丢字段。白名单靠人记，会一直漏；黑名单靠登记，漏了会被
  * 下面的守护测试（questions-unit）直接点名。 */
 const EXCLUDE_FROM_LINK = {
-  // 目前没有需要剔除的字段。将来若确有"不影响任何结果页展示、纯属敏感"的字段，
-  // 在这里登记 key → 理由，守护测试会核对问卷里的每个 key 都落在 KEEP ∪ EXCLUDE 之内。
+  // 红旗症状（P0-1）：这是"现在就要去就医"的安全提示，不是画像。
+  // 它不参与任何 A/B/C 判定，带过去也不会改变清单，只会白白暴露健康隐私。
+  redFlags: '症状属安全分流与隐私，不影响清单，不进链接',
 };
 const KEEP = [
   'age', 'gender', 'pregnant', 'smoking', 'packYears', 'secondhand', 'alcohol',
@@ -41,6 +42,8 @@ const KEEP = [
   'smokingQuitYears', 'secondhandYears', 'occupationYears', 'occupationAgents',
   'occupationTypes',
   'symptomFlags', 'frailty', 'recentHospital',
+  // 既往检查史（P0-2 路A）：决定卡片上的「最近做过」提示，丢了会显示错
+  'recentChecks',
   // 油烟决定结果页那张"长期接触油烟"提醒卡：链接路径丢了它，卡就凭空消失 —— 2026-11-25 根因修复
   'cookingOilFume',
   'fallHistory', 'gaitDifficulty', 'memoryConcern',

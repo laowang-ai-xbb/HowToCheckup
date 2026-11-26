@@ -422,5 +422,27 @@
       "base-package",
       "base-package-40plus"
     ]
+  },
+  "https://rs.yiigle.com/cmaid/1553325": {
+    "file": "data/snapshots/b0740ab93c.txt",
+    "fetchedAt": "2026-11-25",
+    "sha256": "14a765a6344fe652250f682e2b4b44ce83253fa73b4583dcb4a2ad45d11d5ad6",
+    "chars": 1175,
+    "contentType": "text/html; charset=utf-8",
+    "note": "yiigle 单篇页脚本只能抓到摘要；本快照为中华肿瘤杂志 2025,47(9):769-810 正文逐字摘录，经网页抓取工具取得",
+    "usedBy": [
+      "lung-ldct-high-risk"
+    ]
+  },
+  "https://dom-pubs.onlinelibrary.wiley.com/doi/full/10.3322/caac.70083": {
+    "file": "data/snapshots/2d84a84081.txt",
+    "fetchedAt": "2026-11-25",
+    "sha256": "b4f1885a5cce06567f9f005e1b4b51cf60259ff66fc2cad378fd2df5f32846aa",
+    "chars": 885,
+    "contentType": "text/html; charset=utf-8; qs=0.9",
+    "note": "Wiley/CA 全文页对脚本返回验证页；本快照为该文（doi:10.3322/caac.70083）逐字原文摘录，经网页抓取工具取得",
+    "usedBy": [
+      "colorectal-screening"
+    ]
   }
 }

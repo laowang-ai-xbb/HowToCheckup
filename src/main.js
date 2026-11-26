@@ -6,7 +6,7 @@ import './styles.css';
 /* 结果页与依据页的排版件（老板 2026-11-22 定的那版「结论卡」）。
    这套版式先在设计稿里定稿，再搬进产品；结果页与依据页共用同一份样式文件，改一处要两边一起看。 */
 import './v13.css';
-import { emptyProfile, evaluate, evaluateDetailed, upcoming, ruleLabel, vaccinesFor, vaccineMeta, mutexNotes, rules as allRules } from './engine.js';
+import { emptyProfile, evaluate, evaluateDetailed, upcoming, ruleLabel, vaccinesFor, vaccineMeta, mutexNotes, redFlagHits, RED_FLAG_LABEL, rules as allRules } from './engine.js';
 import { gateMessage, vaccinesDeferred } from '../scripts/lib/safety.mjs';
 import { questions, activeQuestions, SHAPE_OPTIONS } from './questions.js';
 import { bmiOf, bodyLevel, cutsFor, bodyOf, BODY_EVIDENCE } from './body.js';
@@ -18,10 +18,11 @@ import { signBarHTML, signLineResultHTML } from './author.js';
 import fp from '../data/fingerprint.json' with { type: 'json' };
 import { renderShareCard } from './share-image.js';
 import { makePrintData, printSheet } from './print-sheet.js';
+import { mindCardHTML, mountMind } from './mind.js';
 import { revealAboveKeyboard, keyboardLikelyOpen } from './keyboard.js';
 import { evRows, evCount } from './evfmt.js';
 import {
-  atomHTML, tocHTML, baseHTML, vacHTML, refHTML, foldHTML, legendHTML,
+  atomHTML, tocHTML, baseHTML, vacHTML, refHTML, foldHTML, legendHTML, decisionLegendHTML,
   gapsTopHTML, soonHTML, evBoxHTML,
 } from './views13.js';
 
@@ -106,6 +107,8 @@ const writeLsToUrl = () => {
   // 快照链接是 v=2&s=...，画像链接是 p=...，两种都要保住原顺序和值。
   const raw = (location.hash || '').replace(/^#/, '');
   const parts = raw.split('&').filter((x) => x && !x.startsWith('ls='));
+  // 「自己的清单」标记也要保住：切大字把它弄丢，下次刷新又变回"别人分享给你的"
+  if (/(^|&)m=1(&|$)/.test(raw) && !parts.includes('m=1')) parts.push('m=1');
   if (state.bigText) parts.push('ls=big');
   url.hash = parts.join('&');
   history.replaceState(null, '', url.toString());
@@ -143,7 +146,11 @@ if (snap) {
 } else if (restored) {
   Object.assign(state.profile, restored);
   state.view = 'result';
-  state.fromShare = true;
+  /* m=1 标记"这是我自己刚答完的清单"（从依据页回来 / 大字刷新等重载场景）。
+     没有它，从依据页点「回到你的清单」会被当成别人分享来的：
+     页头冒「这是别人分享给你的清单」，病友彩蛋还会再弹一次。 */
+  state.fromShare = !/[#&]m=1/.test(rawParam);
+  if (!state.fromShare) state.eggSeen = true; // 自己的清单重载，不再弹彩蛋
 } else if (isResultPage) {
   state.view = 'broken';
 }
@@ -302,8 +309,9 @@ const sourceLink = (s) =>
 /* 致敬模块：结果页和首页共用一份文案，避免两处慢慢写岔 */
 const CREDITS = [
   '内容依据国家卫生健康委员会、国家癌症中心、中华医学会各分会、美国预防服务工作组（USPSTF）的公开文件；分级方法借自 USPSTF 的 A/B/C/D/I 五级。',
-  /* 2026-11-20 老板改名：杨圣 → 天才杨，小马哥 → 天才姚。别自作主张改回去。 */
-  '梁圣的 DeepSeek、天才杨的 Kimi、唐圣的 GLM、天才姚的混元都有参与开发。',
+  /* 2026-11-20 老板改名：杨圣 → 天才杨，小马哥 → 天才姚。别自作主张改回去。
+     2026-11-24 老板补名：川总的 baichuan 加进第一棒。 */
+  '川总的baichuan、梁圣的 DeepSeek、天才杨的 Kimi、唐圣的 GLM、天才姚的混元都有参与开发。',
 ];
 
 const creditsHTML = (cls = '') => `
@@ -388,14 +396,15 @@ const renderStart = () => {
  * 按百分比分五段。最后一段要长一点，因为那时人最想放弃。
  */
 const progressWord = (pct, total, step) => {
+  /* 「最后一题」看的是真实位置（step 到没到 total-1），不是进度百分比：
+   * 老板 2026-11-26 走查：80% 门槛让第 10/12 题就喊「最后一题」，用户数着还差两题，
+   * 产品却说马上揭晓 —— 信任就是这么一点点磨掉的。百分比只负责前半程的鼓励。 */
+  if (total > 0 && step >= total - 1) return '最后一题，马上揭晓您的体检项目清单';
   if (pct < 20) return '一分钟就好';
   if (pct < 40) return '你手速真快';
   if (pct < 60) return '过半了';
-  if (pct < 80) {
-    const left = Math.max(total - step - 1, 1);
-    return `只剩 ${left} 个了`;
-  }
-  return '最后一题，马上揭晓您的体检项目清单';
+  const left = Math.max(total - step - 1, 1);
+  return `只剩 ${left} 个了`;
 };
 
 /* ---------------- 体型那题（J10 方案 2） ----------------
@@ -590,8 +599,13 @@ const renderQuiz = () => {
   } else {
     const dunno = cur === 'unknown';
     const arr = Array.isArray(cur) ? cur : [];
-    body = `<div class="opts two-col">` + q.options.map((o, i) => {
+    body = `<div class="opts two-col${q.redFlag ? ' redflags' : ''}">` + q.options.map((o, i) => {
       const on = arr.includes(o.v) ? ' on' : '';
+      /* 2026-11-26 老板走查：红旗题的选项长得和别的多选不一样（红橙边框、选中变红橙底）。
+       * 颜色本想标急诊/门诊，但同一屏一半红一半橙反而让人犹豫"这题和刚才那些是不是不一样"。
+       * 统一成普通多选样式 —— 真正的安全信息不靠颜色：勾急诊项当场弹 120 全屏层，
+       * 门诊项结果页顶部有橙框横幅，卡片上有红字提示，三条通道都比一个色条重。
+       * 判定只看 v 属哪组（engine.redFlagHits），与样式无关。 */
       return `<button class="opt${on}" data-act="toggle" data-i="${i}" aria-pressed="${on ? 'true' : 'false'}">
         <span class="tick"></span><span class="opt-l">${esc(o.l)}</span>
       </button>`;
@@ -620,6 +634,7 @@ const renderQuiz = () => {
     <h2 class="qtitle" id="qtitle" tabindex="-1">${esc(q.title)}</h2>
     ${q.hint ? `<p class="qhint">${esc(q.kind === 'body' && state.profile.bodyMode === 'shape' ? BODY_SHAPE_HINT : q.hint)}</p>` : ''}
     ${body}
+    <div class="peek" id="peek" aria-hidden="true"><div class="peek-in"><div class="peek-chev">↓</div><div class="peek-t" id="peek-t"></div></div></div>
     ${/* 老板 2026-11-20 拍板：「这题跳过」全站删掉。
          它和「不确定」在结果页走的是同一条路（都记 unknown），两个按钮通向同一个结果，
          用户会在按钮前停下来想"跳过和不确定差在哪"，答案是没差。
@@ -631,6 +646,17 @@ const renderQuiz = () => {
             这两种回看时才确实缺一个"不改答案也能往下"的出口。 */ state.step < state.maxStep && !(
         q.kind === 'age' || q.kind === 'multi' || (q.kind === 'body' && state.profile.bodyMode !== 'shape')
       ) ? `<button class="btn primary big rev-next" data-act="review-next">下一步</button>` : ''}
+    ${state.showEmergency ? `
+    <div class="emergency-mask" role="alertdialog" aria-modal="true" aria-labelledby="emg-title">
+      <div class="emergency-sheet">
+        <h2 id="emg-title">先别填了，现在就打 120</h2>
+        <p class="emg-why">时间就是生命。立即打120，并告知你的亲友。别自己开车去医院。</p>
+        <div class="emg-actions">
+          <a class="emg-call" href="tel:120" data-act="emergency-call">拨打 120</a>
+          <button class="emg-later" type="button" data-act="emergency-continue">我知道了，继续填问卷</button>
+        </div>
+      </div>
+    </div>` : ''}
   </main>`;
 
   // 换题时回到页首：手机屏矮，上题的长选项会让人以为新题从半截开始。
@@ -663,7 +689,41 @@ const renderQuiz = () => {
     // 焦点移到题面：读屏用户换题后能听到"第几题、问什么"，而不是停在原来的位置
     document.getElementById('qtitle').focus({ preventScroll: true });
   }
+  setupOverflowGuide();
 };
+
+/* ---- 溢出引导（G1 · 老板 2026-11-24 拍板）----
+ * 仅当「选项 + 下一步」一屏放不下时才出现：底部渐隐遮罩 + 跳动的下滑箭头。
+ * 老板附加条件就是闸门：内容放得下绝不出现，不许退化成每题都有的装饰。
+ * 量法：最后一个可点的按钮底部超出视口 8px 以上才算溢出（差一点点不算）。
+ * 用户一开始往下滑就淡出（全局 scroll 监听只负责藏、不负责显——
+ * 显的时机只交给每题渲染后的测量，否则"放得下的题"会被误点亮）。
+ * 「减少动态效果」用户箭头不跳动（CSS media query 管），文字提示保留。 */
+const measureOverflowGuide = () => {
+  const peek = document.getElementById('peek');
+  if (!peek) return;
+  const tip = document.getElementById('peek-t');
+  const btns = [...app.querySelectorAll('button')]
+    .filter((b) => !b.closest('.qmeta') && b.offsetParent !== null);
+  const last = btns[btns.length - 1];
+  const overflow = last ? last.getBoundingClientRect().bottom > window.innerHeight + 8 : false;
+  if (!overflow) { peek.classList.add('off'); return; }
+  const n = [...app.querySelectorAll('.opt')].filter((o) => o.getBoundingClientRect().top > window.innerHeight).length;
+  const hasNext = !!app.querySelector('[data-act="multi-next"], [data-act="age-next"], [data-act="body-next"], [data-act="review-next"]');
+  tip.textContent = n > 0 && hasNext
+    ? `往下滑 · 下面还有 ${n} 个选项和「下一步」`
+    : (n > 0 ? `往下滑 · 下面还有 ${n} 个选项` : '往下滑 · 「下一步」在下面');
+  peek.classList.remove('off');
+};
+const setupOverflowGuide = () => measureOverflowGuide();
+
+window.addEventListener('scroll', () => {
+  const peek = document.getElementById('peek');
+  if (!peek || peek.classList.contains('off')) return;
+  const nearBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80;
+  if (window.scrollY > 60 || nearBottom) peek.classList.add('off');
+}, { passive: true });
+window.addEventListener('resize', () => measureOverflowGuide(), { passive: true });
 
 /** 年龄分段：为什么要分四段，见 renderQuiz 里的 AGE_MSG */
 const ageTier = (v) => {
@@ -1193,7 +1253,7 @@ const bodyCardHTML = () => {
       ${b.loss ? `<p class="btxt warn">${esc(b.loss.say)}</p>` : ''}
       ${bodyEvidenceHTML()}
       <details>
-        <summary>这两个数怎么算的 · 界值哪来的</summary>
+        <summary>BMI 这个数是怎么算的 · 界值哪来的</summary>
         <div class="detail">
           <p>BMI ＝ 体重（公斤）÷ 身高（米）的平方。举例：1.65 米、62 公斤 → 62 ÷ 1.65 ÷ 1.65 ＝ 22.8。</p>
           <p>${esc(b.range)}${senior ? '（65 岁以上的界值和年轻人不是一套：体重偏低的风险比微胖更大）' : ''}。18–64 岁用中国成人标准：低于 18.5 偏低，18.5–23.9 正常，24.0–27.9 偏高，28.0 起是肥胖；65–79 岁适宜范围 20.0–26.9，80 岁及以上 22.0–26.9 —— 老人太瘦的风险比微胖更大，所以界值整体往上抬，而且不再分"肥胖"这一档。</p>
@@ -1216,7 +1276,6 @@ const riskNoteHTML = (kind, p) => {
     <details class="risknote" data-note="oil">
       <summary>你长期接触油烟，需特别注意</summary>
       <div class="rnbody">
-        <p>你「经常炒菜、长期接触油烟」。这是一个需要认真对待的风险。</p>
         <ol>
           <li><b>有症状或合并高危，立即去呼吸内科 / 胸外科评估</b>：咳血、胸痛、持续咳嗽，或有吸烟、二手烟、肺癌家族史时，让医生判断是否做 CT。</li>
           <li><b>抽油烟机早开晚关</b>：开火前开，关火后再跑 5–10 分钟。</li>
@@ -1414,6 +1473,17 @@ const renderResult = () => {
     vacs,
     refs,
   });
+  /* 门诊红旗横幅 / 卡片提示（P0-1）：只列"尽快看医生"的门诊项。
+   * 急诊项不在这里出——它已在问卷当场全屏弹过 120，放到结果页当横幅反而弱化了。
+   * "说不清"不产生任何命中；掉体重和老 weightLoss 题命中时已由引擎合并去重。 */
+  const flagHits = redFlagHits(p);
+  // 卡片级红旗提示：只给明确一一对应的规则（redFlagKeys），且用户确实勾了那个症状。
+  // 其余门诊项由顶部横幅统一说，卡片不硬关联，避免误导。
+  const hitVSet = new Set(flagHits.emergency.concat(flagHits.clinic).map((x) => x.v));
+  const flagOnCard = (rule) => (rule.redFlagKeys || [])
+    .filter((v) => hitVSet.has(v))
+    .map((v) => RED_FLAG_LABEL[v]);
+
   const ctx = {
     href: evPageHref,
     mutex: MUTEX,
@@ -1421,6 +1491,7 @@ const renderResult = () => {
     refNote: REFERRAL_NOTE,
     vaccineWarn: vaccineMeta.severeWarn,
     disputeFor: disputeTextFor,
+    flagOnCard,
   };
 
   /* 目录按清单实况生成：没有疫苗就不出现「疫苗」那一格。
@@ -1446,12 +1517,21 @@ const renderResult = () => {
     ? '标了序号的三件最不能省，排在必做最前面'
     : A_REST.length ? '带序号的这几件最不能省，排在必做最前面' : '';
 
+  const flagBanner = flagHits.clinic.length
+    ? `<div class="flag-banner" role="alert">
+        <b>这 ${flagHits.clinic.length} 项需尽快看医生：${flagHits.clinic.map((x) => esc(x.label)).join('、')}</b>
+        <p>这不是"体检"该解决的问题，请尽快去医院，让医生当面判断。并告知你的亲友。</p>
+        <p class="flag-acts"><button class="linkish" type="button" data-act="flag-fold">收起</button><span>·</span><button class="linkish" type="button" data-act="flag-q">看要问医生的话 ›</button></p>
+       </div>`
+    : '';
+
   app.innerHTML = `
   <main class="screen result v13">
   <div class="doc">
     <header class="rhead">
       <div class="rwho">${p.age} 岁 · ${p.gender === 'female' ? '女' : '男'}${body.bmi ? ` · BMI ${body.bmi.toFixed(1)}` : ''}</div>
       <h1>今年该查什么</h1>
+      ${flagBanner}
       ${/* 页首不放"共 N 项：必做 X、你来定 Y、不做 Z"（老板 R10 删的）：
            那串数字跟下面目录格子里的数字是同一件事，摆两遍等于没摆。
            只留这句"序号是什么意思"，因为它是唯一不重复的信息。 */ ''}
@@ -1482,7 +1562,6 @@ const renderResult = () => {
         ${/* 老板 2026-11-20 选的布局方案 3：按钮跟着段落走。
              刚看完"要做什么"是最想存下来的时刻，按钮就长在这儿，不在页尾。 */ ''}
         <button class="btn primary big seg-cta" data-act="share-img">存成一张图，发给家人</button>
-        <p class="seg-tip">这张单子可以直接发给家人。</p>
       </section>
 
       ${/* 老板 2026-11-26 定：标准项目放在「看你的情况」前面（先看人人都做的，再看要自己定的）。 */ ''}
@@ -1494,6 +1573,9 @@ const renderResult = () => {
         <div class="rows">${b.B.map((r) => atomHTML(r, 0, false, ctx)).join('')}</div>
       </section>` : ''}
       ${vacHTML(vacs, ctx)}
+      ${/* 老板 2026-11-26：心情模块放在疫苗后面、不用做前面。
+          它是"身体之外"的一张可选卡，不跟在操作按钮和免责声明的页尾。 */ ''}
+      ${mindCardHTML()}
       ${refHTML(refs, ctx)}
       ${!state.snapshot ? bodyCardHTML() : ''}
       ${!state.snapshot ? riskNoteHTML('ad', p) : ''}
@@ -1516,6 +1598,7 @@ const renderResult = () => {
 
   <footer class="disclaim">
     <p><b>这不是医疗建议。</b>清单依据公开指南自动生成，不能替代医生面诊。已确诊疾病、正在服药、或近期有不适的人，请直接找医生。</p>
+    ${decisionLegendHTML()}
     ${legendHTML()}
     ${creditsHTML()}
     <!-- 页尾再放一个：读到最底下想回去的时候，浮动那颗容易被忽略（PC 尤其），
@@ -1526,6 +1609,7 @@ const renderResult = () => {
   </main>`;
   lastStep = -1;
   window.scrollTo(0, 0);
+  mountMind(app);
   paintToc();
   syncTocHeight();
 
@@ -1796,7 +1880,36 @@ app.addEventListener('click', async (ev) => {
       state.profile[q.key] = 'unknown';
     }
     state.touched.add(q.key);
+    // 红旗题：勾了急诊项，先在原题当场弹全屏 120 提示，再让人决定继续与否。
+    // 只弹一次（showEmergency 由弹层的"继续填"清掉），不会每次重绘都弹。
+    if (q.redFlag) {
+      const hits = redFlagHits(state.profile);
+      if (hits.emergency.length && !state.showEmergency) {
+        state.showEmergency = true;
+        render();
+        return;
+      }
+    }
     next();
+    return;
+  }
+  if (act === 'emergency-continue') { state.showEmergency = false; next(); return; }
+  if (act === 'flag-fold') { app.querySelector('.flag-banner')?.classList.toggle('folded'); return; }
+  if (act === 'flag-q') {
+    // 老板 2026-11-26：点一次插一段，点三次就是三遍同样的话。改成开关：
+    // 再点只收起已有的一段，绝不重复插入 —— 同一份话在屏幕上只该有一个副本。
+    const banner = app.querySelector('.flag-banner');
+    const acts = banner?.querySelector('.flag-acts');
+    const btn = acts?.querySelector('[data-act="flag-q"]');
+    if (!acts || !btn) return;
+    const old = banner.querySelector('.flag-qtext');
+    if (old) {
+      old.remove();
+      btn.textContent = '看要问医生的话 ›';
+    } else {
+      acts.insertAdjacentHTML('afterend', '<p class="flag-qtext">医生只有几分钟，可以先问：我这个情况要不要马上处理？需要做哪些检查？</p>');
+      btn.textContent = '收起问医生的话 ⌃';
+    }
     return;
   }
   if (act === 'restart') {
@@ -1920,7 +2033,8 @@ addEventListener('hashchange', () => {
   if (!next) return;
   state.profile = { ...emptyProfile(), ...next };
   state.view = 'result';
-  state.fromShare = true;
+  state.fromShare = !/(^|&)m=1(&|$)/.test(location.hash.replace(/^#/, ''));
+  if (!state.fromShare) state.eggSeen = true;
   render();
 });
 

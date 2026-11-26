@@ -128,13 +128,50 @@ function render() {
     const label = leanOf(rule);
     return label ? `<div class="evlean"><span class="apick">${label}</span><span>${esc(rule.leanNote || '')}</span></div>` : '';
   };
+  /**
+   * 「这条检查是怎么回事」正文（老板 2026-11-25 定稿）：
+   * 以前标题叫「它为什么在你清单里」，可这段讲的是指南/共识的通用道理（给医生看的判定标准），
+   * 不是"因为你填了什么所以命中你"——名实不符，用户看不懂。改名后按句拆成圆点：
+   * 前 3 句直接显示，超过 3 句折进 details，避免胃镜那条 259 字把整页撑成论文。
+   * 为什么不用手写序号：项目早有规矩，圆点列宁愿不编号，也不手写①②③（维护会错序）。
+   * 这段文字里的数字由 scripts/check-reason-source.mjs 对着证据快照校验，改错数字会被拦。
+   */
+  const whyBlock = (why) => {
+    if (!why) return '';
+    // 按句号 / 分号断句，保留句末标点；换行压掉，避免来源文本里的软换行拆碎句子
+    const sentences = String(why).replace(/\s+/g, '')
+      .split(/(?<=[。；!?！？])/).map((s) => s.trim()).filter(Boolean);
+    if (sentences.length <= 3) {
+      return `<div class="evr evwhy"><b>这条检查是怎么回事：</b><ul class="evwhy-l">${sentences
+        .map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>`;
+    }
+    const head = sentences.slice(0, 3);
+    const rest = sentences.slice(3);
+    return `<div class="evr evwhy"><b>这条检查是怎么回事：</b><ul class="evwhy-l">${head
+      .map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
+      <details class="evwhy-more"><summary>展开剩下 ${rest.length} 句 ›</summary>
+        <ul class="evwhy-l">${rest.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
+      </details></div>`;
+  };
+  /**
+   * 依据页模块定位表（内容全部来自 data/rules.json，逐项独立维护，不做全局拼接）：
+   * ┌ verdict  结论句    —— 一句话回答"这条对你是什么安排"，唯一允许出现"你"的判定文案
+   * ├ lean     指南态度  —— 各指南/共识分歧时的诚实标注（如美国/start vs 中国指南差异），无分歧则不渲染
+   * ├ where    去哪做    —— 挂号科室 + 检查地点，用户来这页最常找的信息，排第二位
+   * ├ reason   判定道理  —— 为什么这么判（谁该查、为什么是这个人群），通用医学道理，不提"你"
+   * ├ findings 能查出什么 —— 该检查的能力与边界（查得出什么、查不出什么）
+   * ├ inner    附加模块  —— 个性化附注（如问医生清单、频率表），按规则条件渲染
+   * └ evidence 依据卡    —— 指南原文摘录 + 来源 + 链接，数字由 check-reason-source.mjs 对快照校验
+   * 防重复/防冲突：verdict 只写安排不写道理，reason 只写道理不写安排；
+   * 通用 whyYou（"为什么列给你"）已删，理由并进 reason，避免卡片与依据页说两遍。
+   */
   const sec = (id, title, verdict, why, inner, findings, where, lean = '') => `
     <section class="evsec" id="${id}">
       <h2>${esc(title)}</h2>
       ${verdict ? `<p class="evv">${esc(verdict)}</p>` : ''}
       ${lean}
       ${where || ''}
-      ${why ? `<p class="evr"><b>它为什么在你清单里：</b>${esc(why)}</p>` : ''}
+      ${whyBlock(why)}
       ${findings ? `<p class="evr"><b>能查出什么：</b>${esc(findings)}</p>` : ''}
       ${inner}
     </section>`;
@@ -272,12 +309,14 @@ function wire() {
     const q = new URLSearchParams(raw);
     const url = new URL('r.html', location.href);
     // 快照模式把 v=2&s= 一起带回去（还有 a= 锚点要去掉）；画像模式带 p=。
+    // m=1 = "我自己的清单"（2026-11-26 老板走查）：没有这个标记 r.html 会把 #p=
+    // 当分享链接，页头冒出「这是别人分享给你的清单」、彩蛋再弹一次。
     const code = q.get('s');
     if (q.get('v') && code) {
       url.hash = `v=${q.get('v')}&s=${code}`;
     } else {
       const pcode = q.get('p');
-      if (pcode) url.hash = 'p=' + pcode;
+      if (pcode) url.hash = 'p=' + pcode + '&m=1';
     }
     location.href = url.toString();
   };

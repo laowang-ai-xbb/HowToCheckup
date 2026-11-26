@@ -42,6 +42,15 @@ const rowOf = (rule) => ({
 export const makePrintData = (profile, { aRules = [], bRules = [], cRules = [], baseIds = [], vacs = [], refs = [] }) => {
   const age = Number(profile.age) || 0;
   const now = new Date();
+  /* 「问医生的问题清单」（老板 2026-11-25 P1-9）：
+   * 从这次命中的 A/B 规则里挑带 askDoctor 模板的，最多 4 条。只用规则里预置的问句，
+   * 不在这里凭空生成诊断 —— 打印稿只递问题，不下结论。
+   * 顺序沿用结果页（A 在前、priority 小的在前），保证和屏幕看到的一致。 */
+  const askDoctor = [...aRules, ...bRules]
+    .filter(Boolean)
+    .filter((r) => r.askDoctor)
+    .slice(0, 4)
+    .map((r) => r.askDoctor);
   return {
     who: `${age} 岁 · ${profile.gender === 'female' ? '女' : '男'}`,
     date: `${now.getFullYear()} 年 ${now.getMonth() + 1} 月`,
@@ -54,6 +63,9 @@ export const makePrintData = (profile, { aRules = [], bRules = [], cRules = [], 
     vaccines: vacs.map((v) => ({ name: v.name, dose: v.dose, who: v.who })),
     cga: refs.map(({ title, why, dept }) => ({ title, why, dept })),
     cgaNote: '老年综合评估要医生当面做、要看你的用药和家里环境。',
+    askDoctor,
+    askLead: '医生只有 3 分钟，先问这一句：',
+    askLeadQ: '我这份体检清单里，哪几项是针对我的情况必须做的？',
     wish: '祝你长命百岁，身体嗨皮！',
     sign: '一个想你长命百岁的人',
   };
@@ -125,6 +137,17 @@ const CSS = `
   .cga b{font-size:12px}
   .cga p{font-size:11px;color:var(--ink-2);margin-top:1mm;line-height:1.55}
   .cga .dept{color:var(--teal)}
+
+  /* 「问医生的问题清单」（P1-9）：用墨色+青绿，和清单同一套视觉。
+   * 放在页脚上方，整块 break-inside:avoid —— 内容变多时整体挪到下一页，不拆行。 */
+  .ask{margin-top:5mm;border-top:1px solid var(--line);padding-top:3mm;break-inside:avoid}
+  .ask ol{list-style:none;counter-reset:q}
+  .ask li{counter-increment:q;position:relative;padding:1.3mm 0 1.3mm 7mm;border-bottom:1px dashed var(--line);font-size:11.5px;line-height:1.5;color:var(--ink-2)}
+  .ask li:last-child{border-bottom:0}
+  .ask li:before{content:"Q" counter(q);position:absolute;left:0;top:1.3mm;font-size:10px;color:var(--teal);font-weight:700}
+  .ask .lead{background:var(--paper);border-radius:5px;padding:2mm 2.5mm;margin-top:2mm}
+  .ask .lead b{font-size:11.5px;color:var(--teal)}
+  .ask .lead p{font-size:10.5px;color:var(--ink-2);margin-top:.5mm;line-height:1.55}
 
   /* 页脚：祝福是产品彩蛋那一句的路子 —— 不解释、不署名机构，就一个人味儿签名 */
   .foot{margin-top:auto;padding-top:5mm;border-top:1px solid var(--line);
@@ -243,6 +266,17 @@ const SCRIPT = `
         }).join('') + '</div>'));
     }
     if (d.C.length) blocks.push(tableBlock('建议不做', '没有证据支持获益', d.C, true));
+    /* 问医生的问题清单：只有命中卡片里预置了问句时才出现，整块装箱不拆行。
+       2026-11-26 老板走查：标题原来自己一套（裸 h2 + note），和表格模块的 .sh 头
+       不是一种排版语言。改成和「建议做 / 你来定」同款 .sh 结构——标题靠左、
+       字号字距一致、副题挂右侧，整页只有一种模块头的写法。 */
+    if (d.askDoctor && d.askDoctor.length) {
+      blocks.push(plainBlock('<section class="sec ask"><div class="sh"><h2>你可以这样问医生</h2>' +
+        '<span class="c">照着问就行，以医生的说法为准</span></div>' +
+        '<ol>' + d.askDoctor.map(function(q){ return '<li>' + esc(q) + '</li>'; }).join('') + '</ol>' +
+        '<div class="lead"><b>' + esc(d.askLead) + '</b><p>' + esc(d.askLeadQ) + '</p></div>' +
+        '</section>'));
+    }
 
     blocks.forEach(function(b){
       var box = m(b.html(b.rows || []));

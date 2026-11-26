@@ -75,9 +75,9 @@ const MUTATIONS = [
   {
     inv: 'claimed-from-catalog-not-shown',
     file: 'src/main.js',
-    // src/main.js 是 CRLF，锚点里的换行必须写 \r\n，否则永远找不到（踩过一次）
-    from: '[...A_REST, ...b.B, ...b.C]\r\n      .flatMap((r) => r.catalogIds || [])',
-    to: '[...A_REST, ...b.B, ...b.C]\r\n      .flatMap((r) => r.shownIds || [])',
+    // loadSources 已把换行符统一成 \n，锚点一律只写 \n（2026-11-26 根治，别再写 \r\n）
+    from: '[...A_REST, ...b.B, ...b.C]\n      .flatMap((r) => r.catalogIds || [])',
+    to: '[...A_REST, ...b.B, ...b.C]\n      .flatMap((r) => r.shownIds || [])',
     desc: '把虚假线的口径改回 shownIds（claimed 会恒空，虚线永远不出现）',
   },
   {
@@ -104,8 +104,8 @@ const MUTATIONS = [
   {
     inv: 'share-image-no-summary',
     file: 'src/main.js',
-    from: "        groups: [\r\n          { title: 'A · 建议做'",
-    to: "        summary: ['建议做 5 项'],\r\n        groups: [\r\n          { title: 'A · 建议做'",
+    from: "        groups: [\n          { title: 'A · 建议做'",
+    to: "        summary: ['建议做 5 项'],\n        groups: [\n          { title: 'A · 建议做'",
     desc: '又把统计摘要传给分享图',
   },
   {
@@ -183,8 +183,8 @@ const MUTATIONS = [
   {
     inv: 'no-glossary-on-result',
     file: 'src/main.js',
-    from: '    <div class="docbody">\r\n      <section id="must">',
-    to: '    <div class="docbody">\r\n      ${glossHTML(b)}\r\n      <section id="must">',
+    from: '    <div class="docbody">\n      <section id="must">',
+    to: '    <div class="docbody">\n      ${glossHTML(b)}\n      <section id="must">',
     desc: '把术语说明模块接回结果页',
   },
   {
@@ -232,7 +232,7 @@ const MUTATIONS = [
   {
     inv: 'gap-editor-spa-view',
     file: 'src/main.js',
-    from: "const renderResult = () => {\r\n  state.view = 'result';",
+    from: "const renderResult = () => {\n  state.view = 'result';",
     to: 'const renderResult = () => {',
     desc: '走完问卷进结果页时不给 view 正名',
   },
@@ -368,6 +368,41 @@ const MUTATIONS = [
     from: 'if (state.exitArmed) {',
     to: 'if (state.exitArmed === "never") {',
     desc: '「再点一次回首页」那段被拆了，第二下只会重复出提示',
+  },
+  {
+    inv: 'hp-negative-no-retest',
+    file: 'data/rules.json',
+    from: '{ "hpStatus": "negative" }',
+    to: '{ "hpStatus": "unknown" }',
+    desc: 'hp-test-once 又不排除阴性了，查过阴性的用户被推荐重测',
+  },
+  {
+    inv: 'upcoming-only-new-items',
+    file: 'src/engine.js',
+    from: 'const fresh = (rule.catalogIds || []).filter((id) => !presentIds.has(canon(id)));',
+    to: 'const fresh = (rule.catalogIds || []).slice();',
+    desc: '「再过几年」不再滤老面孔，便潜血又挂回预告里',
+  },
+  {
+    inv: 'seo-machine-layer',
+    file: 'index.html',
+    from: '"@type": "WebApplication"',
+    to: '"@type": "WebSite"',
+    desc: 'JSON-LD 里的软件声明被换掉，免费/健康类身份丢失',
+  },
+  {
+    inv: 'quiz-overflow-guide',
+    file: 'src/main.js',
+    from: 'bottom > window.innerHeight + 8 : false;',
+    to: 'bottom > -1 : true;',
+    desc: '溢出闸门被拆，放得下的题也会弹出引导（违背老板附加条件）',
+  },
+  {
+    inv: 'body-detail-harmony',
+    file: 'src/styles.css',
+    from: '.bodyc .detail { padding: 4px 0 0; font-size: 13.5px; line-height: 1.7; }',
+    to: '.bodyc .detail { padding: 4px 0 0; font-size: 15.5px; line-height: 1.7; }',
+    desc: '展开文字又回到 15.5px，比卡内正文大一号（老板指出的不和谐）',
   },
 ];
 
