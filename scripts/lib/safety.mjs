@@ -152,8 +152,8 @@ export const applySafety = (profile, raw, opts = {}) => {
     });
   }
 
-  // ---- 3.3bis 边界透明化（demo）：条款卡 clause.boundary 声明的"指南界线" ----
-  // 用户贴在界线附近但没过线（below）/ 刚过线不久（above）时，在他真正看到的那张卡里说一句。
+  // ---- 3.3bis 界线变化（demo）：条款卡 clause.boundary 声明的"指南界线" ----
+  // 老板 2026-11-26 定：不再散落在卡内，统一并进"快到线了，这些会变"模块。
   // 只引用指南已写明的线（near 数字必须有引文支撑，validate 把关），不发明阈值。
   meta.boundaries = [];
   for (const k of ['A', 'B', 'C']) {
@@ -166,7 +166,10 @@ export const applySafety = (profile, raw, opts = {}) => {
         const hit = b.side === 'above'
           ? (v > near && v <= near + 2)
           : (v >= near - 2 && v < near);
-        if (hit) meta.boundaries.push({ ruleId: r.id, text: b.text });
+        if (!hit) continue;
+        // gap = 几年后到线：below 是"还差几年"，above 是"刚过线"，都用 1 年起算
+        const gap = Math.max(1, Math.abs(near - v));
+        meta.boundaries.push({ ruleId: r.id, text: b.text, rule: r, gap, mergesRule: b.mergesRule || '' });
       }
     }
   }

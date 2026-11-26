@@ -771,7 +771,7 @@ const next = () => {
 
 /* ---------------- 结果 ----------------
  * 版式在 views13.js（结果页与依据页共用同一套零件）。这里只负责三件事：
- *   ① 取数：画像 → 引擎 → A/B/C、缺口、体型、疫苗、老年评估、再过几年；
+ *   ① 取数：画像 → 引擎 → A/B/C、缺口、体型、疫苗、老年评估、快到线了；
  *   ② 总装：页头 / 目录 / 正文 / 页脚，顺序与 demo 完全一致；
  *   ③ 产品独有的东西：大字开关、彩蛋、缺口回补按钮、分享与打印。
  *
@@ -1311,7 +1311,7 @@ const renderResult = () => {
     C: raw.C.filter((r) => !r.hidden),
   };
   MUTEX = mutexNotes(b);
-  // 快照模式下不预测"再过几年"：那需要完整画像往后推年龄重算，
+  // 快照模式下不预测"快到线了"：那需要完整画像往后推年龄重算，
   // 而快照只有年龄/性别和已定稿的清单，硬推会给出和原主人不一致的项目。
   const soon = state.snapshot ? [] : upcoming(p, raw);
 
@@ -1421,8 +1421,6 @@ const renderResult = () => {
     refNote: REFERRAL_NOTE,
     vaccineWarn: vaccineMeta.severeWarn,
     disputeFor: disputeTextFor,
-    /* 3.3bis 边界透明化：引擎算好的『贴线提示』，按规则卡投放 */
-    boundaryFor: (ruleId) => (safety.boundaries || []).find((b) => b.ruleId === ruleId)?.text || '',
   };
 
   /* 目录按清单实况生成：没有疫苗就不出现「疫苗」那一格。
@@ -1496,7 +1494,7 @@ const renderResult = () => {
       ${!state.snapshot ? bodyCardHTML() : ''}
       ${!state.snapshot ? riskNoteHTML('ad', p) : ''}
       ${foldHTML(b.C.length, b.C.map((r) => atomHTML(r, 0, false, ctx)).join(''), unlistedHTML())}
-      ${soonHTML(soon, ctx)}
+      ${soonHTML(soon, ctx, safety.boundaries || [])}
 
       <div class="actions">
         <button class="btn primary" data-act="share-img">存成一张图，发给家人</button>

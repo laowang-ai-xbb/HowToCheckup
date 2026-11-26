@@ -253,6 +253,13 @@
              padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); line-height: 1.55; }
   .soon .syear { flex: none; font-size: 11.5px; color: var(--teal); background: var(--teal-soft);
                  border-radius: 999px; padding: 2px 8px; }
+  /* 「加上」和「重定」用小标签区分，同一套灰/青绿，不引入警告色 */
+  .soon .skind { flex: none; font-size: 11px; font-weight: 600; color: var(--teal);
+                 border: 1px solid var(--teal); border-radius: 5px; padding: 0 6px; line-height: 1.6; }
+  .soon .skind.kind-recheck { color: var(--ink-2); border-color: var(--ink-3); }
+  /* 一行里"加上什么"和"为什么到这条线"分主副两层，字号差一档、同一 ink 色系 */
+  .soon .sbody { display: grid; gap: 2px; }
+  .soon .snote { font-size: 12px; color: var(--ink-3); line-height: 1.55; }
   .soon .evbox { margin-top: 8px; }
   .tip { font-size: 12px; color: var(--ink-3); line-height: 1.65; margin: 8px 0 0; }
 
@@ -658,18 +665,15 @@
   }
   .atom-stale b { color: var(--ink-2); font-weight: 600; }
 
-  /* 卡内"界线提示 / 风险模型说明"（3.3bis demo）：同 .tip 形态，灰左线 ——
-     纯信息说明，不是警告，比分歧/过期再轻一档，保持整卡安静。 */
-  .atom-boundary {
-    border-left: 2px solid var(--ink-3);
-    padding-left: 8px;
-  }
-  .atom-boundary b { color: var(--ink-2); font-weight: 600; }
-  .atom-model {
-    border-left: 2px solid var(--ink-3);
-    padding-left: 8px;
-  }
-  .atom-model b { color: var(--ink-2); font-weight: 600; }
+  /* 卡尾「关于风险模型」小块（3.3bis demo）：标题/正文/出处三行，字号跟卡内正文一档。
+     用浅底 + 一道顶边把它和正文分段，但不是警告条 —— 不用红橙、不加粗整句。 */
+  .atom .model-ref { margin-top: 12px; padding: 10px 12px 9px;
+                     border-top: 1px solid var(--line); background: var(--teal-soft); border-radius: 0 0 9px 9px; }
+  .atom .model-ref .mr-h { margin: 0; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+  .atom .model-ref .mr-b { margin: 4px 0 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.6; }
+  .atom .model-ref .mr-a { display: inline-block; margin-top: 6px; font-size: 12px; color: var(--teal); }
+  html[data-ls="big"] .model-ref .mr-h { font-size: 15px; }
+  html[data-ls="big"] .model-ref .mr-b { font-size: 15.5px; }
 
   /* ---- hover 只给真指针设备 ----
    * 触摸屏上 :hover 会"粘住"：手指抬起后那行底色还留着，用户以为还是选中的。

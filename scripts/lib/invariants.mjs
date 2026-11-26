@@ -565,18 +565,19 @@ export const INVARIANTS = [
   },
   {
     id: 'soon-has-evidence',
-    why: '「再过几年」是拿规则年龄往后推判出来的，不是拍脑袋写的年龄线；老板要求标题去「的」、收紧上方空隙、模块自己带依据，并且依据页要给这些链接留落点。',
+    why: '「快到线了，这些会变」是拿规则年龄往后推判出来的，不是拍脑袋写的年龄线；老板 2026-11-26 定：界线变化也并进这个模块（加上/重定两类），模块自己带依据，依据页要给这些链接留落点。',
     check(f) {
       const v = f['src/views13.js'] || '';
       const m = f['src/main.js'] || '';
       const e = f['src/evidence.js'] || '';
       const at = v.indexOf('export const soonHTML');
       const fn = at < 0 ? '' : v.slice(at, v.indexOf('/* ---------------- 每年都做的标准项', at) > at ? v.indexOf('/* ---------------- 每年都做的标准项', at) : undefined);
-      if (!fn || !/再过几年要加上 <span>/.test(fn)) return '再过几年标题不是定稿文案';
-      if (/再过几年要加上的/.test(fn)) return '标题又带上了「的」';
-      if (!/evBoxHTML\(/.test(fn)) return '再过几年模块没有依据框';
-      if (!/\$\{soonHTML\(soon, ctx\)\}/.test(m)) return '结果页没有把依据页链接函数传给再过几年模块';
-      if (!/id="soon-all"/.test(e)) return '依据页没有再过几年分区，表格链接会跳空';
+      if (!fn || !/快到线了，这些会变 <span>/.test(fn)) return '模块标题不是定稿文案（应为「快到线了，这些会变」）';
+      if (/再过几年要加上/.test(fn)) return '旧标题「再过几年要加上」又回来了 —— 它容纳不了「重定」这一类';
+      if (!/evBoxHTML\(/.test(fn)) return '模块没有依据框';
+      if (!/kind: '重定'/.test(fn)) return '模块没接住界线变化（重定类）';
+      if (!/\$\{soonHTML\(soon, ctx, safety\.boundaries \|\| \[\]\)\}/.test(m)) return '结果页没把界线变化传给模块';
+      if (!/id="soon-all"/.test(e)) return '依据页没有这个分区，表格链接会跳空';
       return null;
     },
   },

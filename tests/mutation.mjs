@@ -274,9 +274,9 @@ const MUTATIONS = [
   {
     inv: 'soon-has-evidence',
     file: 'src/main.js',
-    from: '${soonHTML(soon, ctx)}',
+    from: '${soonHTML(soon, ctx, safety.boundaries || [])}',
     to: '${soonHTML(soon)}',
-    desc: '再过几年模块不带依据页链接',
+    desc: '模块不带依据页链接、也不接界线变化',
   },
   {
     inv: 'evidence-toc-sticky',

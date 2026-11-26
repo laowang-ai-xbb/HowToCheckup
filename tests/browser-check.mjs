@@ -860,35 +860,38 @@ try {
     check('顶部不再有分歧模块', !disp.top, JSON.stringify(disp));
   }
 
-  // ---- 3.25 3.3bis demo：界线提示在卡内 + 模型指路卡在卡尾 ----
+  // ---- 3.25 3.3bis demo：界线变化统一进「快到线了」模块 + 模型指路卡在卡尾 ----
   {
-    // 贴线提示只能挂连续输入字段（age）。包年/戒烟年数在问卷里是档位标记（20/10/0、lt5/ge5），
-    // 档位输入没有"贴线"档 —— 曾经挂过 packYears:19 的 demo，链接一走 sanitizeProfile 就被
-    // 洗成无值（19 不是合法档位），引擎当 0 包年照样出 C 档卡，但界线提示永远不触发。
-    // 39 岁男：贴着 40 岁线 → 基础项目区出现"界线提示"（baseHTML 独立渲染分支）
+    // 界线提示只能挂连续输入字段（age）—— 包年/戒烟年数是档位标记，没有贴线档。
+    // 老板 2026-11-26 定：卡内不再散落提示，统一进「快到线了，这些会变」，和原有 upcoming 合并。
+    // 39 岁男：40 岁线 → 模块里既有「加上」(肺功能/骨密度) 也有「重定」一句
     const p1 = Buffer.from(JSON.stringify({
       age: 39, gender: 'male',
     })).toString('base64url');
-    // 上一段测试停在 r.html#p=...：同路径仅换 hash 不会重载页面，必须先回首页再进
     await goto(BASE + '/');
     await goto(`${BASE}/r.html#p=${p1}`);
     await waitFor(`!!document.querySelector('.actions')`, '贴线画像结果页');
     await sleep(200);
     const b = await evaluate(`(() => ({
-      hints: [...document.querySelectorAll('.atom-boundary')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 90)),
+      title: document.querySelector('#soon h2')?.textContent || '',
+      rows: [...document.querySelectorAll('#soon li')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 100)),
+      inCard: document.querySelectorAll('.atom-boundary').length,
+      kinds: [...document.querySelectorAll('#soon .skind')].map(e => e.textContent),
     }))()`);
-    check('贴线用户在卡内看到「界线提示」（39 岁→40 岁基础项目线）', b.hints.length >= 1 && /接近 40 岁.*基础项目/.test(b.hints.join('')), JSON.stringify(b));
-    // 74 岁男：贴着 75 岁线 → 肠癌筛查卡里出现"界线提示"（atomHTML 常规分支）
+    check('界线变化统一进「快到线了」模块（模块名已改）', /快到线了/.test(b.title) && b.rows.length >= 1, JSON.stringify(b));
+    check('同一件事只说一遍：界线理由降为副说明', b.kinds.length === 1 && b.kinds[0] === '加上' && /接近 40 岁/.test(b.rows.join('')), JSON.stringify(b));
+    check('卡内不再重复出现界线提示', b.inCard === 0, JSON.stringify(b));
+    // 74 岁男：75 岁线 → 模块里出现「重定」一句（upcoming 本身为空，靠 boundary 补上）
     const p3 = Buffer.from(JSON.stringify({ age: 74, gender: 'male' })).toString('base64url');
     await goto(BASE + '/');
     await goto(`${BASE}/r.html#p=${p3}`);
     await waitFor(`!!document.querySelector('.actions')`, '74 岁结果页');
     await sleep(200);
     const c = await evaluate(`(() => ({
-      hints: [...document.querySelectorAll('.atom-boundary')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 90)),
+      rows: [...document.querySelectorAll('#soon li')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 110)),
     }))()`);
-    check('贴线用户在卡内看到「界线提示」（74 岁→75 岁肠癌线）', c.hints.length >= 1 && /接近 75 岁.*医生/.test(c.hints.join('')), JSON.stringify(c));
-    // 40 岁女、糖尿病家族史 → 糖化卡尾部出现模型指路说明
+    check('「到线要重定」也进模块（74 岁→75 岁肠癌线）', c.rows.length >= 1 && /重定/.test(c.rows.join('')) && /75 岁/.test(c.rows.join('')), JSON.stringify(c));
+    // 40 岁女、糖尿病家族史 → 糖化卡尾部出现模型指路说明（老板定的 China-PAR 固定说法）
     const p2 = Buffer.from(JSON.stringify({
       age: 40, gender: 'female', familyHistory: ['diabetes'],
     })).toString('base64url');
@@ -897,9 +900,11 @@ try {
     await waitFor(`!!document.querySelector('.actions')`, '糖化画像结果页');
     await sleep(200);
     const mo = await evaluate(`(() => ({
-      notes: [...document.querySelectorAll('.atom-model')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 90)),
+      notes: [...document.querySelectorAll('.model-ref')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 130)),
+      heads: [...document.querySelectorAll('.model-ref .mr-h')].map(e => e.textContent),
     }))()`);
-    check('糖化卡尾部有「关于风险模型」说明', mo.notes.length >= 1 && /风险评分表.*不估算个人风险数值/.test(mo.notes.join('')), JSON.stringify(mo));
+    check('糖化卡尾部有结构化的「关于风险模型」说明', mo.notes.length >= 1 && /China-PAR.*不估算个人风险数值/.test(mo.notes.join('')), JSON.stringify(mo));
+    check('模型说明标题/正文/出处三行结构', mo.heads.length >= 1 && mo.heads[0].includes('关于风险模型'), JSON.stringify(mo.heads));
   }
 
   // ---- 3.5 换一份人群画像再验一遍排版 ----
@@ -920,31 +925,31 @@ try {
     await shot('12-female');
   }
 
-  // ---- 3.5b 再过几年：标题定稿、上方空隙收紧、模块自带依据且有落点 ----
+  // ---- 3.5b 快到线了：标题定稿、上方空隙收紧、模块自带依据且有落点 ----
   {
     const p = Buffer.from(JSON.stringify({ age: 44, gender: 'female', smoking: 'no' })).toString('base64url');
     await goto(BASE + '/r.html#p=' + p);
-    await waitFor(`!!document.querySelector('.soon')`, '再过几年模块');
+    await waitFor(`!!document.querySelector('.soon')`, '快到线了模块');
     const soonInfo = await evaluate(`(() => {
       const s = document.querySelector('.soon');
       const h = s.querySelector('h2');
       const prev = s.previousElementSibling;
       return {
         title: h.innerText,
-        old: /再过几年要加上的/.test(document.body.innerText),
+        old: /再过几年要加上/.test(document.body.innerText),
         ev: !!s.querySelector('.evbox'),
         evText: (s.querySelector('.evbox summary') || {}).innerText || '',
         gapTop: prev ? Math.round(h.getBoundingClientRect().top - prev.getBoundingClientRect().bottom) : null,
       };
     })()`);
-    check('再过几年标题用定稿文案且不再带「的」', /^再过几年要加上/.test(soonInfo.title) && !soonInfo.old, JSON.stringify(soonInfo));
-    check('再过几年模块自带依据框', soonInfo.ev && /依据 \d+ 条/.test(soonInfo.evText), soonInfo.evText);
-    check('再过几年标题上方空隙已收紧', soonInfo.gapTop !== null && soonInfo.gapTop <= 34, String(soonInfo.gapTop));
+    check('模块标题用定稿文案、旧标题不回归', /^快到线了，这些会变/.test(soonInfo.title) && !soonInfo.old, JSON.stringify(soonInfo));
+    check('模块自带依据框', soonInfo.ev && /依据 \d+ 条/.test(soonInfo.evText), soonInfo.evText);
+    check('模块标题上方空隙已收紧', soonInfo.gapTop !== null && soonInfo.gapTop <= 34, String(soonInfo.gapTop));
     const soonEvHref = await evaluate(`document.querySelector('.soon .evbox .evt td:nth-child(2) a')?.getAttribute('href') || ''`);
-    check('再过几年依据链接指向依据页', /e\.html#p=.+&a=soon-/.test(soonEvHref), String(soonEvHref).slice(0, 90));
+    check('依据链接指向依据页', /e\.html#p=.+&a=soon-/.test(soonEvHref), String(soonEvHref).slice(0, 90));
     await goto(soonEvHref);
-    await waitFor(`!!document.querySelector('[id^="soon-"]')`, '依据页再过几年分区');
-    check('依据页有再过几年分区可落锚点',
+    await waitFor(`!!document.querySelector('[id^="soon-"]')`, '依据页对应分区');
+    check('依据页有分区可落锚点',
       await evaluate(`!!document.querySelector('.evsec[id^="soon-"] .evc')`));
   }
 
