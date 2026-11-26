@@ -83,7 +83,7 @@ function render() {
     A = raw.A.filter((r) => !r.hidden);
     B = raw.B.filter((r) => !r.hidden);
     C = raw.C.filter((r) => !r.hidden);
-    /* 结果页的「快到线了，这些会变」把规则年龄往后推重新判，这些规则当前不在 A/B/C 里。
+    /* 结果页的「年龄到了，这些检查会变」把规则年龄往后推重新判，这些规则当前不在 A/B/C 里。
        依据页得给它们留落点，否则结果页那张「依据 N 条」表里的链接会跳到空处。 */
     soon = upcoming(profile, raw);
     vax = vaccinesFor(profile);
@@ -161,7 +161,7 @@ function render() {
     ${vax.length ? '<a href="#vax-all">疫苗</a>' : ''}
     ${refs.length ? '<a href="#cga-all">老年综合评估</a>' : ''}
     ${body && (body.known || body.mode === 'shape') ? '<a href="#body-all">体型（BMI）</a>' : ''}
-    ${soon.length ? '<a href="#soon-all">快到线了，这些会变</a>' : ''}`;
+    ${soon.length ? '<a href="#soon-all">年龄到了，这些检查会变</a>' : ''}`;
 
   app.innerHTML = `
   <main class="page v13">
@@ -193,7 +193,7 @@ function render() {
         ${vax.length ? '<a href="#vax-all">疫苗</a>' : ''}
         ${refs.length ? '<a href="#cga-all">老年综合评估</a>' : ''}
         <a href="#body-all">体型（BMI）</a>
-        ${soon.length ? '<a href="#soon-all">快到线了，这些会变</a>' : ''}
+        ${soon.length ? '<a href="#soon-all">年龄到了，这些检查会变</a>' : ''}
       </nav>
 
       <div class="evbody">
@@ -219,7 +219,7 @@ function render() {
 
         ${soon.length ? `
         <section class="evsec" id="soon-all">
-          <h2>快到线了，这些会变</h2>
+          <h2>年龄到了，这些检查会变</h2>
           <p class="evv">到年龄再加，提前做不增加获益，只增加假阳性。</p>
         </section>
         ${soon.map(({ rule, gap }) => `

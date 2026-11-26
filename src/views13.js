@@ -205,7 +205,7 @@ export const gapsTopHTML = (gaps, { open = false, editor = '' } = {}) => !gaps |
     </div>
   </details>`;
 
-/* ---------------- 快到线了，这些会变 ----------------
+/* ---------------- 年龄到了，这些检查会变 ----------------
  * 老板 2026-11-26 定的口径：卡内的"界线提示"不再散在各张卡里，统一收进这个模块。
  * 两类变化都放这儿：① 到年龄会"加上"的新项目（原 upcoming）；② 到年龄要"重定"的
  * 界线（如 75 岁后肠癌查不查没有统一结论）。模块名从"再过几年要加上"改掉，因为
@@ -226,12 +226,11 @@ export const soonHTML = (soon, ctx = null, boundaries = []) => {
   const evRules = [...new Map(rows.map((r) => [r.rule?.id, r.rule]).filter(([id]) => id)).values()];
   return `
   <section class="soon" id="soon">
-    <h2 class="sh">快到线了，这些会变 <span>到年龄才加、到年龄要重定 —— 提前知道，不用提前做</span></h2>
+    <h2 class="sh">年龄到了，这些检查会变 <span>到年龄才加，到年龄要重定</span></h2>
     <ul>${rows.map(({ gap, kind, text, note }) => `<li>
       <b class="syear">${gap} 年后</b><b class="skind ${kind === '重定' ? 'kind-recheck' : ''}">${kind}</b>
       <span class="sbody"><span>${esc(text)}</span>${note ? `<small class="snote">${esc(note)}</small>` : ''}</span>
     </li>`).join('')}</ul>
-    <p class="tip">不提前做。到线之前加了不增加获益，只增加假阳性。</p>
     ${ctx && evRules.length ? evBoxHTML(
     evRules.flatMap((rule) => evRows(rule, ctx.href('soon-' + rule.id))),
     { href: ctx.href('soon-all'), hint: '到年龄才变，依据哪份指南', allText: '在依据页看这些项目的原文 ›' },

@@ -860,10 +860,10 @@ try {
     check('顶部不再有分歧模块', !disp.top, JSON.stringify(disp));
   }
 
-  // ---- 3.25 3.3bis demo：界线变化统一进「快到线了」模块 + 模型指路卡在卡尾 ----
+  // ---- 3.25 3.3bis demo：界线变化统一进「年龄到了，这些检查会变」模块 + 模型指路卡在卡尾 ----
   {
     // 界线提示只能挂连续输入字段（age）—— 包年/戒烟年数是档位标记，没有贴线档。
-    // 老板 2026-11-26 定：卡内不再散落提示，统一进「快到线了，这些会变」，和原有 upcoming 合并。
+    // 老板 2026-11-26 定：卡内不再散落提示，统一进「年龄到了，这些检查会变」，和原有 upcoming 合并。
     // 39 岁男：40 岁线 → 模块里既有「加上」(肺功能/骨密度) 也有「重定」一句
     const p1 = Buffer.from(JSON.stringify({
       age: 39, gender: 'male',
@@ -878,9 +878,15 @@ try {
       inCard: document.querySelectorAll('.atom-boundary').length,
       kinds: [...document.querySelectorAll('#soon .skind')].map(e => e.textContent),
     }))()`);
-    check('界线变化统一进「快到线了」模块（模块名已改）', /快到线了/.test(b.title) && b.rows.length >= 1, JSON.stringify(b));
+    check('界线变化统一进「年龄到了，这些检查会变」模块', /年龄到了/.test(b.title) && b.rows.length >= 1, JSON.stringify(b));
     check('同一件事只说一遍：界线理由降为副说明', b.kinds.length === 1 && b.kinds[0] === '加上' && /接近 40 岁/.test(b.rows.join('')), JSON.stringify(b));
     check('卡内不再重复出现界线提示', b.inCard === 0, JSON.stringify(b));
+    const nav = await evaluate(`(() => {
+      const links = [...document.querySelectorAll('.toc a')];
+      const i = links.findIndex(a => a.textContent.includes('注意'));
+      return { i, last: links.length - 1, prev: i > 0 ? links[i - 1].textContent : '', href: i >= 0 ? links[i].getAttribute('href') : '' };
+    })()`);
+    check('目录「注意」按钮排在「不用做」后、指向年龄到了模块', nav.prev.includes('不用做') && nav.href === '#soon', JSON.stringify(nav));
     // 74 岁男：75 岁线 → 模块里出现「重定」一句（upcoming 本身为空，靠 boundary 补上）
     const p3 = Buffer.from(JSON.stringify({ age: 74, gender: 'male' })).toString('base64url');
     await goto(BASE + '/');
@@ -925,11 +931,11 @@ try {
     await shot('12-female');
   }
 
-  // ---- 3.5b 快到线了：标题定稿、上方空隙收紧、模块自带依据且有落点 ----
+  // ---- 3.5b 年龄到了这些检查会变：标题定稿、上方空隙收紧、模块自带依据且有落点 ----
   {
     const p = Buffer.from(JSON.stringify({ age: 44, gender: 'female', smoking: 'no' })).toString('base64url');
     await goto(BASE + '/r.html#p=' + p);
-    await waitFor(`!!document.querySelector('.soon')`, '快到线了模块');
+    await waitFor(`!!document.querySelector('.soon')`, '年龄到了模块');
     const soonInfo = await evaluate(`(() => {
       const s = document.querySelector('.soon');
       const h = s.querySelector('h2');
@@ -937,12 +943,14 @@ try {
       return {
         title: h.innerText,
         old: /再过几年要加上/.test(document.body.innerText),
+        noTip: !/不提前做。到线之前加了不增加获益/.test(document.body.innerText),
         ev: !!s.querySelector('.evbox'),
         evText: (s.querySelector('.evbox summary') || {}).innerText || '',
         gapTop: prev ? Math.round(h.getBoundingClientRect().top - prev.getBoundingClientRect().bottom) : null,
       };
     })()`);
-    check('模块标题用定稿文案、旧标题不回归', /^快到线了，这些会变/.test(soonInfo.title) && !soonInfo.old, JSON.stringify(soonInfo));
+    check('模块标题用定稿文案、旧标题不回归', /^年龄到了，这些检查会变/.test(soonInfo.title) && !soonInfo.old, JSON.stringify(soonInfo));
+    check('「不提前做…」那句已删除', soonInfo.noTip, JSON.stringify(soonInfo));
     check('模块自带依据框', soonInfo.ev && /依据 \d+ 条/.test(soonInfo.evText), soonInfo.evText);
     check('模块标题上方空隙已收紧', soonInfo.gapTop !== null && soonInfo.gapTop <= 34, String(soonInfo.gapTop));
     const soonEvHref = await evaluate(`document.querySelector('.soon .evbox .evt td:nth-child(2) a')?.getAttribute('href') || ''`);

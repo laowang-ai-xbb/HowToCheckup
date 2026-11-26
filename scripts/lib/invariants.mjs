@@ -565,15 +565,17 @@ export const INVARIANTS = [
   },
   {
     id: 'soon-has-evidence',
-    why: '「快到线了，这些会变」是拿规则年龄往后推判出来的，不是拍脑袋写的年龄线；老板 2026-11-26 定：界线变化也并进这个模块（加上/重定两类），模块自己带依据，依据页要给这些链接留落点。',
+    why: '「年龄到了，这些检查会变」是拿规则年龄往后推判出来的，不是拍脑袋写的年龄线；老板 2026-11-26 定：界线变化也并进这个模块（加上/重定两类），模块自己带依据，依据页要给这些链接留落点。',
     check(f) {
       const v = f['src/views13.js'] || '';
       const m = f['src/main.js'] || '';
       const e = f['src/evidence.js'] || '';
       const at = v.indexOf('export const soonHTML');
       const fn = at < 0 ? '' : v.slice(at, v.indexOf('/* ---------------- 每年都做的标准项', at) > at ? v.indexOf('/* ---------------- 每年都做的标准项', at) : undefined);
-      if (!fn || !/快到线了，这些会变 <span>/.test(fn)) return '模块标题不是定稿文案（应为「快到线了，这些会变」）';
+      if (!fn || !/年龄到了，这些检查会变 <span>/.test(fn)) return '模块标题不是定稿文案（应为「年龄到了，这些检查会变」）';
+      if (/不提前做。到线之前加了不增加获益/.test(fn)) return '老板要求删掉的「不提前做…」提示又回来了';
       if (/再过几年要加上/.test(fn)) return '旧标题「再过几年要加上」又回来了 —— 它容纳不了「重定」这一类';
+      if (!/label: '注意'/.test(m)) return '目录缺「注意」锚点（应排在「不用做」后）';
       if (!/evBoxHTML\(/.test(fn)) return '模块没有依据框';
       if (!/kind: '重定'/.test(fn)) return '模块没接住界线变化（重定类）';
       if (!/\$\{soonHTML\(soon, ctx, safety\.boundaries \|\| \[\]\)\}/.test(m)) return '结果页没把界线变化传给模块';

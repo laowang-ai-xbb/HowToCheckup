@@ -771,7 +771,7 @@ const next = () => {
 
 /* ---------------- 结果 ----------------
  * 版式在 views13.js（结果页与依据页共用同一套零件）。这里只负责三件事：
- *   ① 取数：画像 → 引擎 → A/B/C、缺口、体型、疫苗、老年评估、快到线了；
+ *   ① 取数：画像 → 引擎 → A/B/C、缺口、体型、疫苗、老年评估、年龄到了；
  *   ② 总装：页头 / 目录 / 正文 / 页脚，顺序与 demo 完全一致；
  *   ③ 产品独有的东西：大字开关、彩蛋、缺口回补按钮、分享与打印。
  *
@@ -1311,7 +1311,7 @@ const renderResult = () => {
     C: raw.C.filter((r) => !r.hidden),
   };
   MUTEX = mutexNotes(b);
-  // 快照模式下不预测"快到线了"：那需要完整画像往后推年龄重算，
+  // 快照模式下不预测"年龄到了"：那需要完整画像往后推年龄重算，
   // 而快照只有年龄/性别和已定稿的清单，硬推会给出和原主人不一致的项目。
   const soon = state.snapshot ? [] : upcoming(p, raw);
 
@@ -1425,6 +1425,9 @@ const renderResult = () => {
 
   /* 目录按清单实况生成：没有疫苗就不出现「疫苗」那一格。
    * 摆一个点进去空着的入口，比不摆更让人怀疑这份清单。 */
+  /* 「注意」在「不用做」后面：老板 2026-11-26 定的顺序。它指向 #soon（年龄到了的检查变化），
+   * 只在真有变化时露出来 —— 和别格一样，空入口比不摆更让人怀疑。 */
+  const noticeN = (safety.boundaries || []).filter((x) => !x.mergesRule || !soon.some((s) => s.rule.id === x.mergesRule)).length + soon.length;
   const SECS = [
     { id: 'must', label: '必做', n: A_REST.length },
     { id: 'maybe', label: '看你的情况', n: b.B.length },
@@ -1432,6 +1435,7 @@ const renderResult = () => {
     { id: 'vac', label: '疫苗', n: vacs.length },
     { id: 'ref', label: '老年评估', n: refs.length },
     { id: 'no', label: '不用做', n: b.C.length },
+    { id: 'soon', label: '注意', n: noticeN },
   ].filter((x) => x.n > 0);
 
   const body = bodyOf(p);

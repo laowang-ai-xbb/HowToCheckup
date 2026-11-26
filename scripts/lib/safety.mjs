@@ -153,7 +153,7 @@ export const applySafety = (profile, raw, opts = {}) => {
   }
 
   // ---- 3.3bis 界线变化（demo）：条款卡 clause.boundary 声明的"指南界线" ----
-  // 老板 2026-11-26 定：不再散落在卡内，统一并进"快到线了，这些会变"模块。
+  // 老板 2026-11-26 定：不再散落在卡内，统一并进"年龄到了，这些会变"模块。
   // 只引用指南已写明的线（near 数字必须有引文支撑，validate 把关），不发明阈值。
   meta.boundaries = [];
   for (const k of ['A', 'B', 'C']) {
