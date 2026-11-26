@@ -274,7 +274,7 @@ export const baseHTML = ({ ids, baseRule, claimed, scaling }, ctx) => {
     <h2 class="sh">每年都做的标准 ${ids.length} 项 <span>这是每个人每年最基础的检查项目</span></h2>
     ${gs.map((g) => `<div class="bgrp"><h3>${esc(g.t)}<span>${g.ids.length}</span></h3><div class="chips">${g.ids.map(chip).join('')}</div></div>`).join('')}
     ${other.length ? `<div class="bgrp"><h3>其他<span>${other.length}</span></h3><div class="chips">${other.map(chip).join('')}</div></div>` : ''}
-    ${dup ? '<p class="tip">带虚线的几项在上面专项里已经说过 —— 同一项只说一次。</p>' : ''}
+    ${dup ? '<p class="tip">带虚线的项目在上面专项里已经说过，同一项只做一次。</p>' : ''}
     ${evBoxHTML(rows, { href: ctx.href('base-all'), hint: '为什么"人人每年都查"', allText: '在依据页看这份目录的原文 ›' })}
     ${scalingHTML(scaling, ctx)}
   </section>`;

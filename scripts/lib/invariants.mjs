@@ -516,11 +516,11 @@ export const INVARIANTS = [
   },
   {
     id: 'dashed-tip-only-when-dashed',
-    why: '「带虚线的几项…」原先无条件出现，老板走查时页面上根本没有虚线项 —— 一句话在解释一个不存在的记号。',
+    why: '「带虚线的项目…」原先无条件出现，老板走查时页面上根本没有虚线项 —— 一句话在解释一个不存在的记号。',
     check(f) {
       const v = f['src/views13.js'] || '';
       if (!/const dup = ids\.filter\(\(id\) => claimedKeys\.has\(canon\(id\)\)\)\.length;/.test(v)) return '没有统计实际被认领的标准项';
-      if (!/\$\{dup \? '<p class="tip">带虚线的几项/.test(v)) return '虚线提示又在无条件出现';
+      if (!/\$\{dup \? '<p class="tip">带虚线的项目/.test(v)) return '虚线提示又在无条件出现';
       return null;
     },
   },

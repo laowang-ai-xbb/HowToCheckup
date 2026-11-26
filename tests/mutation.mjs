@@ -253,8 +253,8 @@ const MUTATIONS = [
   {
     inv: 'dashed-tip-only-when-dashed',
     file: 'src/views13.js',
-    from: "${dup ? '<p class=\"tip\">带虚线的几项在上面专项里已经说过 —— 同一项只说一次。</p>' : ''}",
-    to: "'<p class=\"tip\">带虚线的几项在上面专项里已经说过 —— 同一项只说一次。</p>'",
+    from: "${dup ? '<p class=\"tip\">带虚线的项目在上面专项里已经说过，同一项只做一次。</p>' : ''}",
+    to: "'<p class=\"tip\">带虚线的项目在上面专项里已经说过，同一项只做一次。</p>'",
     desc: '虚线提示改回无条件出现',
   },
   {

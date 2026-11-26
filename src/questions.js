@@ -153,7 +153,7 @@ export const questions = [
     key: 'occupationTypes',
     kind: 'multi',
     title: '具体是哪一类？',
-    hint: '这道题不影响清单，是帮你把接触史记清楚，看医生时可以直接说。可多选。',
+    hint: '可多选',
     optional: true,
     showIf: (p) => p.occupationDust === 'yes',
     options: [
