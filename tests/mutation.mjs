@@ -75,9 +75,9 @@ const MUTATIONS = [
   {
     inv: 'claimed-from-catalog-not-shown',
     file: 'src/main.js',
-    // src/main.js 是 CRLF，锚点里的换行必须写 \r\n，否则永远找不到（踩过一次）
-    from: '[...A_REST, ...b.B, ...b.C]\r\n      .flatMap((r) => r.catalogIds || [])',
-    to: '[...A_REST, ...b.B, ...b.C]\r\n      .flatMap((r) => r.shownIds || [])',
+    // loadSources 已把换行符统一成 \n，锚点一律只写 \n（2026-11-26 根治，别再写 \r\n）
+    from: '[...A_REST, ...b.B, ...b.C]\n      .flatMap((r) => r.catalogIds || [])',
+    to: '[...A_REST, ...b.B, ...b.C]\n      .flatMap((r) => r.shownIds || [])',
     desc: '把虚假线的口径改回 shownIds（claimed 会恒空，虚线永远不出现）',
   },
   {
@@ -104,8 +104,8 @@ const MUTATIONS = [
   {
     inv: 'share-image-no-summary',
     file: 'src/main.js',
-    from: "        groups: [\r\n          { title: 'A · 建议做'",
-    to: "        summary: ['建议做 5 项'],\r\n        groups: [\r\n          { title: 'A · 建议做'",
+    from: "        groups: [\n          { title: 'A · 建议做'",
+    to: "        summary: ['建议做 5 项'],\n        groups: [\n          { title: 'A · 建议做'",
     desc: '又把统计摘要传给分享图',
   },
   {
@@ -183,8 +183,8 @@ const MUTATIONS = [
   {
     inv: 'no-glossary-on-result',
     file: 'src/main.js',
-    from: '    <div class="docbody">\r\n      <section id="must">',
-    to: '    <div class="docbody">\r\n      ${glossHTML(b)}\r\n      <section id="must">',
+    from: '    <div class="docbody">\n      <section id="must">',
+    to: '    <div class="docbody">\n      ${glossHTML(b)}\n      <section id="must">',
     desc: '把术语说明模块接回结果页',
   },
   {
@@ -232,7 +232,7 @@ const MUTATIONS = [
   {
     inv: 'gap-editor-spa-view',
     file: 'src/main.js',
-    from: "const renderResult = () => {\r\n  state.view = 'result';",
+    from: "const renderResult = () => {\n  state.view = 'result';",
     to: 'const renderResult = () => {',
     desc: '走完问卷进结果页时不给 view 正名',
   },

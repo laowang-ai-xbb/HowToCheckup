@@ -332,14 +332,19 @@ try {
   await evaluate(`document.querySelector('[data-act=sex][data-v=male]').click()`);
   check('性别按钮能选中', await evaluate(`!!document.querySelector('.seg-b.on')`));
   await evaluate(`document.querySelector('[data-act=begin]').click()`);
-  await waitFor(`document.querySelectorAll('.opt').length > 0 && /吸烟/.test(document.querySelector('.qtitle').innerText)`, '吸烟题');
+  /* P0-1 之后问卷第一题是红旗症状题（安全优先于一切）。
+     它不是这段的主角，点「这些都没有」走人，让后面的断言继续守吸烟题。 */
+  await waitFor(`/最近有没有/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '第一题（红旗题）');
+  await evaluate(`(() => { const b = document.querySelector('[data-act=none]'); if (b) b.click(); })()`);
+  await waitFor(`/吸烟/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '吸烟题');
   await shot('02-quiz-smoke');
 
   /* 老板 2026-11-24 报的 bug：问卷逆流到第一题（年龄页）点「上一题」没反应。
    * 定稿交互：第一次点出提示（文案老板逐字定的），再点一次才回首页，年龄带出不重填。
    * 这三段必须在真浏览器里各走一遍 —— 哪一段缺失都是老人卡住的现场。
-   * 注意：从首页进来 step 直接落在吸烟题，中间隔着性别题，所以要一路退到年龄页。 */
-  for (let i = 0; i < 6 && !(await evaluate(`!!document.querySelector('#age')`)); i++) {
+   * 注意：P0-1 后 begin 直接落在红旗题，但年龄/性别题还在问卷里（供回看），
+   * 所以从吸烟题一路 back 仍能退到年龄页。 */
+  for (let i = 0; i < 8 && !(await evaluate(`!!document.querySelector('#age')`)); i++) {
     await evaluate(`document.querySelector('[data-act=back]').click()`);
     await sleep(80);
   }
@@ -357,20 +362,24 @@ try {
   check('再点一次真的回到首页（问卷没了，首页在）', backHome.home === true && backHome.quiz === false, JSON.stringify(backHome));
   check('回首页年龄自动带出（不用重填）', (await evaluate(`document.querySelector('#ageHome').value`)) === '52');
   // 重进问卷再逆流回第一题：武装必须已解除，不能带着上一轮的提示进来
+  // （重进后 begin 落在红旗题，for 循环自己一路 back，不用等它停在哪）
   await evaluate(`document.querySelector('[data-act=begin]').click()`);
-  await waitFor(`/吸烟/.test(document.querySelector('.qtitle').innerText)`, '吸烟题');
-  for (let i = 0; i < 6 && !(await evaluate(`!!document.querySelector('#age')`)); i++) {
+  await sleep(300);
+  for (let i = 0; i < 8 && !(await evaluate(`!!document.querySelector('#age')`)); i++) {
     await evaluate(`document.querySelector('[data-act=back]').click()`);
     await sleep(80);
   }
   await waitFor(`!!document.querySelector('#age')`, '又回到年龄页');
   const backClean = await evaluate(`(() => ({ hint: !!document.querySelector('.back-hint'), on: !!document.querySelector('.back.on') }))()`);
   check('重进问卷再回看第一题：没有残留提示（武装已解除）', !backClean.hint && !backClean.on, JSON.stringify(backClean));
-  // 原路返回吸烟题（年龄页 → 性别 → 吸烟），让后续流程从原状态继续
+  // 原路返回吸烟题（年龄页 → 性别 → 红旗题 → 吸烟），让后续流程从原状态继续
   await evaluate(`(() => { const b = document.querySelector('[data-act=age-next]'); if (b) b.click(); })()`);
   await waitFor(`!!document.querySelector('.opt')`, '性别题');
   await evaluate(`[...document.querySelectorAll('.opt')].find(b => b.innerText.includes('男')).click()`);
-  await waitFor(`/吸烟/.test(document.querySelector('.qtitle').innerText)`, '回到吸烟题');
+  // P0-1 后性别和吸烟之间隔着红旗题：点「这些都没有」过去
+  await waitFor(`/最近有没有|吸烟/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '红旗题或吸烟题');
+  await evaluate(`(() => { const b = document.querySelector('[data-act=none]'); if (b) b.click(); })()`);
+  await waitFor(`/吸烟/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '回到吸烟题');
 
   // 问卷里不该再出现性别题（已经在首屏答完）
   check('问卷里没有重复的性别题', !/^性别/.test(await evaluate(`document.querySelector('.qtitle').innerText`)));
@@ -704,7 +713,10 @@ try {
     document.querySelector('[data-act=sex][data-v=male]').click();
     document.querySelector('[data-act=begin]').click();
   })()`);
-  await waitFor(`/你吸烟吗/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '吸烟题');
+  await waitFor(`/最近有没有/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '红旗题（直入回补）');
+  // P0-1 后 begin 落在红旗题：点「这些都没有」再到吸烟题
+  await evaluate(`(() => { const b = document.querySelector('[data-act=none]'); if (b) b.click(); })()`);
+  await waitFor(`/吸烟/.test((document.querySelector('.qtitle')||{}).innerText||'')`, '吸烟题');
   await evaluate(`[...document.querySelectorAll('.opt')].find(b => /不方便说/.test(b.innerText)).click()`);
   for (let i = 0; i < 24; i++) {
     if (await evaluate(`!!document.querySelector('.actions')`)) break;

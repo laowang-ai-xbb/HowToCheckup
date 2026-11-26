@@ -15,7 +15,10 @@
  */
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 
-/** 把仓库里的源码读成一个普通对象，供各条检查使用 */
+/** 把仓库里的源码读成一个普通对象，供各条检查使用
+ *  换行符统一成 \n：git autocrlf 会把工作区文件转成 CRLF，锚点和解析若按 \n 写
+ *  就会时灵时不灵（2026-11-26 老板要求清理：4 条变异失效全是这一个根因）。
+ *  以后写锚点/解析一律只用 \n，不用再各自打补丁。 */
 export const loadSources = (root = '.') => {
   const paths = [
     'index.html', 'r.html', 'e.html', '404.html',
@@ -29,12 +32,12 @@ export const loadSources = (root = '.') => {
   const files = {};
   for (const p of paths) {
     const full = `${root}/${p}`;
-    if (existsSync(full)) files[p] = readFileSync(full, 'utf8');
+    if (existsSync(full)) files[p] = readFileSync(full, 'utf8').replace(/\r\n/g, '\n');
   }
   // demo 目录已移出开源仓库（设计稿归档在本机）；目录不存在时这里就是空集
   try {
     for (const f of readdirSync(`${root}/demo`)) {
-      if (/\.html$/.test(f)) files[`demo/${f}`] = readFileSync(`${root}/demo/${f}`, 'utf8');
+      if (/\.html$/.test(f)) files[`demo/${f}`] = readFileSync(`${root}/demo/${f}`, 'utf8').replace(/\r\n/g, '\n');
     }
   } catch { /* 没有 demo 目录就跳过 */ }
   return files;
@@ -822,7 +825,7 @@ export const INVARIANTS = [
     why: '在第一题点「上一题」不能没有反应——但也不能一点就把人踢回首页（老人可能只是手滑）。定稿是三段行为：第一次点出提示并高亮，再点一次才回首页，往前走一步自动解除武装。三段里缺任何一段，按钮要么变哑巴、要么误伤；回首页还必须把年龄性别带出来，不能让人重填。',
     check(f) {
       /* main.js 是 CRLF，多行锚点先归一化再比，否则 Windows 工作区必误报 */
-      const main = (f['src/main.js'] || '').replace(/\r\n/g, '\n');
+      const main = (f['src/main.js'] || '');
       const css = f['src/styles.css'] || '';
       const btn = (main.match(/<button class="back\$\{[^}]*\}"[^>]*>/) || [''])[0];
       if (!btn) return '找不到「上一题」按钮';
@@ -858,7 +861,7 @@ export const INVARIANTS = [
     id: 'upcoming-only-new-items',
     why: '老板 2026-11-24 走查：44 岁的「再过几年要加上」里出现便潜血——它就在今年的基础套餐里，同一项既"今年要做"又"过两年要加"，用户以为自己漏了什么。根修在 upcoming()：先收当前清单真实展示的项目（只认 A/B，「不必做」卡不挡将来的推荐），预告规则滤掉老面孔；全是老面孔的整条不预告；卡片只说新加的几项（肠镜后面不再挂着便潜血）。',
     check(f) {
-      const e = (f['src/engine.js'] || '').replace(/\r\n/g, '\n');
+      const e = (f['src/engine.js'] || '');
       if (!/const presentIds = new Set\(\);/.test(e)) return 'upcoming 没有收集当前已展示的项目';
       if (!/for \(const key of \['A', 'B'\]\)/.test(e)) return 'presentIds 没有只认 A/B（C「不必做」不该挡住将来的推荐）';
       if (!/const fresh = \(rule\.catalogIds \|\| \[\]\)\.filter\(\(id\) => !presentIds\.has\(canon\(id\)\)\);/.test(e)) return 'upcoming 没有过滤已展示的项目（老面孔会再次预告）';
@@ -899,8 +902,8 @@ export const INVARIANTS = [
     id: 'quiz-overflow-guide',
     why: '老板 2026-11-24 走查：家族史/既往病史这类选项多的题一屏放不下，「下一步」在屏幕外，老人以为卡死会直接关页面。G1 方案：底部渐隐＋下滑箭头。老板附加条件是闸门——**仅在内容溢出时出现**（最后一个按钮底部超出视口 8px 以上），放得下的题绝不出现；滚动只负责藏不负责显（显的时机只交给每题渲染后的测量），demo 第一版两处 bug（遮罩锚进滚动内容、类名漏前缀）都写进了注释。',
     check(f) {
-      const main = (f['src/main.js'] || '').replace(/\r\n/g, '\n');
-      const css = (f['src/styles.css'] || '').replace(/\r\n/g, '\n');
+      const main = (f['src/main.js'] || '');
+      const css = (f['src/styles.css'] || '');
       if (!/id="peek" aria-hidden="true"/.test(main)) return '问卷模板里没有溢出引导件';
       if (!/const measureOverflowGuide = \(\) => \{/.test(main)) return 'measureOverflowGuide 丢了';
       /* 老板附加条件：只在溢出时出现。这个判断是闸门，被拆掉引导会变成每题都有的装饰 */
@@ -922,8 +925,8 @@ export const INVARIANTS = [
     id: 'body-detail-harmony',
     why: '老板 2026-11-24 走查体型卡：①折叠标题「这两个数怎么算的」指代悬空——腰围只有超标时才出现在卡上，页面常常只有一个数，改定稿「BMI 这个数是怎么算的 · 界值哪来的」（BMI 大写与卡内写法一致，保留「·」分隔）；②展开内容用全局 .detail 的 15.5px，比卡内正文（13.5px）还大一号，不和谐。修正：作用域限定 .bodyc .detail 对齐 13.5px（大字 16px），不动全局——.detail 还被打印稿用着。',
     check(f) {
-      const main = (f['src/main.js'] || '').replace(/\r\n/g, '\n');
-      const css = (f['src/styles.css'] || '').replace(/\r\n/g, '\n');
+      const main = (f['src/main.js'] || '');
+      const css = (f['src/styles.css'] || '');
       if (!/<summary>BMI 这个数是怎么算的 · 界值哪来的<\/summary>/.test(main)) return '体型折叠标题不是定稿文案';
       if (main.includes('这两个数怎么算的')) return '旧标题「这两个数怎么算的」又回来了';
       if (!/\.bodyc \.detail \{ padding: 4px 0 0; font-size: 13\.5px; line-height: 1\.7; \}/.test(css)) return '.bodyc .detail 没有对齐 13.5px（展开文字又会比卡内正文大一号）';
