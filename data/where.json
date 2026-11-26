@@ -283,6 +283,26 @@
       "dept": "神经内科 或 血管外科",
       "note": "颈动脉超声在超声室做；早发心血管病家族史这件事，值得跟医生当面说一次。",
       "basis": "practice"
+    },
+    "ckd-followup": {
+      "dept": "肾内科",
+      "note": "复查方案按肾内科给的分期走；体检时至少查血肌酐和尿蛋白。",
+      "basis": "practice"
+    },
+    "intestinal-metaplasia-followup": {
+      "dept": "消化内科 · 内镜中心",
+      "note": "带上最近一次胃镜的病理报告，医生按肠化生的部位和分级定复查间隔。",
+      "basis": "guide"
+    },
+    "birads-followup": {
+      "dept": "乳腺外科 或 乳腺专科",
+      "note": "带上影像原片和报告，医生按 BI-RADS 分级决定复查还是活检。",
+      "basis": "practice"
+    },
+    "lung-nodule-followup": {
+      "dept": "呼吸科 或 胸外科",
+      "note": "带上第一次发现结节的影像原片对比大小变化，别按普通体检从头查。",
+      "basis": "practice"
     }
   },
   "vaccines": {

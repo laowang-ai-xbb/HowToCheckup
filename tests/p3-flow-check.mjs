@@ -43,7 +43,7 @@ const lead = await ev(`document.querySelector('.mind-lead')?.textContent||''`);
 check('入口卡写明不影响清单', /答不答都不影响/.test(lead), lead);
 
 // 打开
-await ev(`document.querySelector('[data-mind="open"]')?.click()`);
+await ev(`document.querySelector('[data-mind="toggle"]')?.click()`);
 await sleep(300);
 check('打开后出第 1 题', /做事情提不起劲/.test(await ev(`document.querySelector('.mind-qt')?.textContent||''`)));
 
@@ -61,30 +61,51 @@ await sleep(350);
 const crisis = await ev(`document.querySelector('.mind-crisis')?.textContent||''`);
 check('立即弹全屏求助层', /告诉.{0,3}信任的人/.test(crisis) && /别一个人待着/.test(crisis), crisis.slice(0, 60));
 check('全屏文案含定稿落款', /一个想你开心快乐的人/.test(crisis), crisis.slice(-40));
-const tels = await ev(`[...document.querySelectorAll('.mind-tel')].map(a=>a.getAttribute('href'))`);
-check('三个电话都可点击拉起', JSON.stringify(tels) === JSON.stringify(['tel:12356','tel:01082951332','tel:962525']), JSON.stringify(tels));
-check('有 12356 全国热线标注', /全国免费心理援助热线/.test(crisis));
+/* 模块内 inlineCrisis 与全屏层各有三个号码（老板 2026-11-26 定：关掉全屏后模块里仍能看到号码），
+ * 所以全页一共 6 个 href。这里只看全屏层那一份，避免把两份混为一谈。 */
+const tels = await ev(`[...document.querySelectorAll('.mind-crisis .mind-tel')].map(a=>a.getAttribute('href'))`);
+check('全屏层三个电话都可点击拉起', JSON.stringify(tels) === JSON.stringify(['tel:12356','tel:01082951332','tel:962525']), JSON.stringify(tels));
+check('有 24 小时免费心理援助热线标注', /24小时免费心理援助热线/.test(crisis));
 await shot('p3-crisis');
 // 关闭按钮
 await ev(`document.querySelector('[data-mind="close"]')?.click()`);
 await sleep(250);
 check('关闭按钮能关掉全屏层', await ev(`!document.querySelector('.mind-crisis')`));
 
-console.log('\n--- 温和路径（重新进）---');
-await send('Page.navigate', { url: BASE + '/r.html#p=' + CODE });
-await sleep(1000);
-await ev(`document.querySelector('[data-mind="open"]')?.click()`);
-await sleep(200);
-await ev(`document.querySelectorAll('[data-mind="pick"]')[0]?.click()`); // mood 几乎没有
-await sleep(200);
-await ev(`document.querySelectorAll('[data-mind="pick"]')[1]?.click()`); // selfHarm 一闪而过 → mild
-await sleep(200);
-await ev(`document.querySelectorAll('[data-mind="pick"]')[0]?.click()`); // impact 没有影响
-await sleep(300);
-const mildOut = await ev(`document.querySelector('.mind-out')?.textContent||''`);
-check('一闪而过 → 温和卡片', /找专业的人聊聊/.test(mildOut) && /12356/.test(mildOut), mildOut.slice(0, 80));
+console.log('\n--- 三条出口（重新进，各自独立）---');
+/* 三条出口互不混用：flash=安全信号单独卡 / mild=温和卡 / quiet=静默卡。
+ * 2026-11-26 老板要的专业审视：一闪而过想伤害自己，紧急程度高于心情低落，
+ * 不能再用同一句"找专业的人聊聊"带过。 */
+const run = async (picks) => {
+  await send('Page.navigate', { url: BASE + '/r.html#p=' + CODE });
+  await ev('location.reload()');
+  await sleep(1100);
+  await ev(`document.querySelector('[data-mind="toggle"]')?.click()`);
+  await sleep(150);
+  for (const i of picks) { await ev(`document.querySelectorAll('[data-mind="pick"]')[${i}]?.click()`); await sleep(160); }
+  /* 危机后模块里会常驻一张 .mind-out.crisis-inline，别把它当成答题出口。
+   * 只看 .mind-body 直属的出口卡（mild/flash/quiet 三种之一）。 */
+  return await ev(`document.querySelector('.mind-body > .mind-out:not(.crisis-inline)')?.textContent||''`);
+};
+
+// flash：mood 几乎没有(0) → selfHarm 一闪而过(1) → impact 没有影响(0)
+const flashOut = await run([0, 1, 0]);
+check('一闪而过 → 安全信号单独卡（直说伤害自己 + 立刻行动）',
+  /想过伤害自己/.test(flashOut) && /现在就拨打/.test(flashOut) && /12356/.test(flashOut), flashOut.slice(0, 90));
+check('安全卡不给诊断、不写"找专业的人聊聊"那句轻话',
+  !/抑郁|焦虑|诊断/.test(flashOut) && !/找专业的人聊聊/.test(flashOut), flashOut.slice(0, 90));
+await shot('p3-flash');
+
+// mild：mood 一半以上的日子(2) → selfHarm 没有(0) → impact 没有影响(0)
+const mildOut = await run([2, 0, 0]);
+check('心情低落 → 温和卡片', /找专业的人聊聊/.test(mildOut) && /12356/.test(mildOut), mildOut.slice(0, 80));
 check('温和出口不给诊断', !/抑郁|焦虑|诊断/.test(mildOut), mildOut.slice(0, 80));
 await shot('p3-mild');
+
+// quiet：mood 几乎没有(0) → selfHarm 没有(0) → impact 没有影响(0)
+const quietOut = await run([0, 0, 0]);
+check('全轻档 → 静默卡片（不吓人）', /这就是全部/.test(quietOut), quietOut.slice(0, 80));
+await shot('p3-quiet');
 
 console.log(`\n${pass}/${pass + fail} 通过`);
 chrome.kill();

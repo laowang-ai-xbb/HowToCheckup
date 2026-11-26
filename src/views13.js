@@ -61,7 +61,7 @@ export const evBoxHTML = (rows, opt = {}) => !rows || !rows.length ? '' : `
   <details class="evbox">
     <summary><span class="evcnt">依据 ${rows.length} 条</span><span class="evx">${esc(opt.hint || '谁说的 · 哪份文件 · 证据强度')}</span></summary>
     ${evTable(rows)}
-    ${opt.note ? `<p class="evnote2">${esc(opt.note)}</p>` : ''}
+    ${opt.note ? `<p class="${opt.noteClass || 'evnote2'}">${esc(opt.note)}</p>` : ''}
     ${opt.href ? `<a class="evall" href="${esc(opt.href)}">${esc(opt.allText || '在依据页看原文与逐字摘录 ›')}</a>` : ''}
   </details>`;
 
@@ -69,7 +69,13 @@ export const evBoxHTML = (rows, opt = {}) => !rows || !rows.length ? '' : `
 export const ruleEvBox = (rule, ctx) => {
   const n = evCount(rule);
   if (!n) return '';
-  return evBoxHTML(evRows(rule, ctx.href(rule.id)), { href: ctx.href(rule.id) });
+  /* 老板 2026-11-26：「为什么列给你」挪进依据折叠 —— 卡片只回答"做什么"，
+   * 展开依据才解释"为什么是你"。noteClass 沿用 .whyYou 的浅底细线，视觉不断档。 */
+  return evBoxHTML(evRows(rule, ctx.href(rule.id)), {
+    href: ctx.href(rule.id),
+    note: rule.whyYou ? `为什么列给你：${rule.whyYou}` : '',
+    noteClass: 'whyYou evnote2',
+  });
 };
 
 /* ---------------- 清单里的一行 ---------------- */
@@ -90,7 +96,6 @@ export const atomHTML = (rule, idx, key, ctx) => {
     <div class="an">${key ? `<span class="kn">${idx}</span>` : ''}${esc(title)}${decisionTag(rule)}</div>
     ${many ? `<p class="ids">${names.map(esc).join('、')}</p>` : ''}
     <p class="aw">${esc(rule.verdict)}</p>
-    ${rule.whyYou ? `<p class="whyYou"><b>为什么列给你：</b>${esc(rule.whyYou)}</p>` : ''}
     ${rule.decisionType === 'follow' ? '<p class="tip"><b>这是复查：</b>不是查一次就完，按医生定的间隔定期做。</p>' : ''}
     ${ctx.flagOnCard ? ctx.flagOnCard(rule).map((label) => `<p class="tip redtip"><b>你刚才勾过这条：${esc(label)} → 请尽快去医院看医生。</b></p>`).join('') : ''}
     <div class="am">
@@ -313,7 +318,7 @@ export const refHTML = (cards, ctx) => {
   });
   return `
   <section id="ref">
-    <h2 class="sh">去医院进行老年综合评估 <span>老年综合评估要医生当面做</span></h2>
+    <h2 class="sh">尽快去医院进行老年综合评估 <span>老年综合评估要医生当面做</span></h2>
     ${cards.map((c) => `<article class="ref">
       <h3>${esc(c.title)}</h3>
       <p class="rw">${esc(c.why)}</p>

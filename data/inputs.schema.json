@@ -238,7 +238,11 @@
         "dementia",
         "thyroid",
         "chronicGastric",
-        "chronicLung"
+        "chronicLung",
+        "ckd",
+        "intestinalMetaplasia",
+        "birads",
+        "lungNodule"
       ],
       "sentinelValues": [
         "unknown",

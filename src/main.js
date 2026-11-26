@@ -1493,7 +1493,6 @@ const renderResult = () => {
         ${/* 老板 2026-11-20 选的布局方案 3：按钮跟着段落走。
              刚看完"要做什么"是最想存下来的时刻，按钮就长在这儿，不在页尾。 */ ''}
         <button class="btn primary big seg-cta" data-act="share-img">存成一张图，发给家人</button>
-        <p class="seg-tip">这张单子可以直接发给家人。</p>
       </section>
 
       ${b.B.length ? `
@@ -1817,8 +1816,20 @@ app.addEventListener('click', async (ev) => {
   if (act === 'emergency-continue') { state.showEmergency = false; next(); return; }
   if (act === 'flag-fold') { app.querySelector('.flag-banner')?.classList.toggle('folded'); return; }
   if (act === 'flag-q') {
-    const el = app.querySelector('.flag-banner .flag-acts');
-    if (el) el.insertAdjacentHTML('afterend', '<p class="flag-qtext">医生只有几分钟，可以先问：我这个情况要不要马上处理？需要做哪些检查？</p>');
+    // 老板 2026-11-26：点一次插一段，点三次就是三遍同样的话。改成开关：
+    // 再点只收起已有的一段，绝不重复插入 —— 同一份话在屏幕上只该有一个副本。
+    const banner = app.querySelector('.flag-banner');
+    const acts = banner?.querySelector('.flag-acts');
+    const btn = acts?.querySelector('[data-act="flag-q"]');
+    if (!acts || !btn) return;
+    const old = banner.querySelector('.flag-qtext');
+    if (old) {
+      old.remove();
+      btn.textContent = '看要问医生的话 ›';
+    } else {
+      acts.insertAdjacentHTML('afterend', '<p class="flag-qtext">医生只有几分钟，可以先问：我这个情况要不要马上处理？需要做哪些检查？</p>');
+      btn.textContent = '收起问医生的话 ⌃';
+    }
     return;
   }
   if (act === 'restart') {

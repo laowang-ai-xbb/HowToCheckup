@@ -86,6 +86,22 @@
     "cvd-family-carotid": {
       "hash": "26804a7e1af0ff2b",
       "lean": "for"
+    },
+    "ckd-followup": {
+      "hash": "95982468bfbeef80",
+      "lean": "for"
+    },
+    "intestinal-metaplasia-followup": {
+      "hash": "72fadd99d9f58b5d",
+      "lean": "for"
+    },
+    "birads-followup": {
+      "hash": "8eaf967804a7e5ae",
+      "lean": "for"
+    },
+    "lung-nodule-followup": {
+      "hash": "86566aa8a0b48783",
+      "lean": "for"
     }
   }
 }

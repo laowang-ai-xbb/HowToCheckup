@@ -1511,10 +1511,11 @@ try {
   check('68 岁女性出 4 支疫苗（流感/肺炎/带状疱疹/乙肝，不含 HPV）', old.vacCount === 4, String(old.vacCount));
   check('疫苗区不写价格', old.hasPrice === false, old.vacText.slice(0, 40));
   check('答"摔倒过""记性差"出两张老年评估卡', old.refCount === 2, old.refTitles.join(' / '));
-  /* R6 第 2 条：这一段全站改名「去医院进行老年综合评估」并引真实出处。
-   * 老板当时否掉的是「转诊」这个说法，所以"体检中心做不了"这句解释要留着，标题不能再写"转诊"。 */
-  check('老年评估段落标题是「去医院进行老年综合评估」',
-    /去医院进行老年综合评估/.test(old.refHead) && !/转诊/.test(old.refHead), old.refHead);
+  /* 老板 2026-11-26 定稿：标题加「尽快」——这是要抓紧办的事，不是可选项。
+   * 提示文案同步精简为"老年综合评估体检中心做不了：要医生当面做、要看你的用药和家里环境"。
+   * 「转诊」这个说法仍是被否掉的，不能再出现。 */
+  check('老年评估段落标题是「尽快去医院进行老年综合评估」',
+    /尽快去医院进行老年综合评估/.test(old.refHead) && !/转诊/.test(old.refHead), old.refHead);
   check('老年评估卡片说清"体检中心做不了"', /体检中心做不了/.test(old.refText), old.refText.slice(0, 40));
   await shot('15-older');
   await evaluate(`document.querySelector('#vac').scrollIntoView({ block: 'start' })`);

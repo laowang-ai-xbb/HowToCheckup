@@ -77,7 +77,9 @@ export const mindCopies = () => {
   out.push('宝，请一定要告诉你信任的人，别一个人待着。', '或立即拨打24小时免费心理援助热线',
     '12356', '010-82951332', '962525', '一个想你开心快乐的人',
     '第 3 题 · 共 3 题');
-  out.push('如果这些感受还在，找专业的人聊聊会有帮助。',
+  out.push('你刚才说到想过伤害自己——这件事值得当回事。',
+    '现在就拨打 12356，或者告诉身边一个你信得过的人。免费、保密，不用一个人扛。',
+    '如果这些感受还在，找专业的人聊聊会有帮助。',
     '可以拨打 12356 — 免费、保密、全国心理援助热线。它不会给你贴标签，只是陪你聊聊。',
     '这里没有给你任何判断，也不影响你的体检清单。',
     '好了，这就是全部。', '无论你刚才答了什么，都不会被记下来，也不影响上面的清单。',
@@ -155,6 +157,16 @@ export const mountMind = (root) => {
     close && close.focus({ preventScroll: true });
   };
 
+  /* 老板 2026-11-26 要的专业审视结论落地：
+   * "一闪而过想伤害自己"和"心情低落"紧急程度不同，不能共用一张温和卡片——
+   * 前者是安全信号，要给更直接、可立刻执行的求助动作；但仍不弹全屏、不诊断、不留痕，
+   * 守住文件头写死的安全边界。 */
+  const flashResult = () => `
+    <div class="mind-out flash">
+      <p class="mind-out-lead">你刚才说到想过伤害自己——这件事值得当回事。</p>
+      <p>现在就拨打 <a href="tel:12356">12356</a>，或者告诉身边一个你信得过的人。免费、保密，不用一个人扛。</p>
+      <p class="mind-fine">这里没有给你任何判断，也不影响你的体检清单。</p>
+    </div>`;
   const mildResult = () => `
     <div class="mind-out mild">
       <p class="mind-out-lead">如果这些感受还在，找专业的人聊聊会有帮助。</p>
@@ -171,9 +183,14 @@ export const mountMind = (root) => {
   const renderStep = () => {
     if (st.step >= QUESTIONS.length) {
       // 出口判定：第 2 题"比较具体"已在答题时立即弹全屏，这里不会到这里。
-      // "一闪而过"或任一题"几乎每天/影响明显"→ 温和卡片；其余（含全不方便说）→ 静默。
-      const needsTalk = st.answers.selfHarm === 'flash' || st.answers.mood === 'mild' || st.answers.impact === 'mild';
-      body.innerHTML = needsTalk ? mildResult() : quietResult();
+      // "一闪而过"→ 安全信号单独一张卡；"一半以上日子/影响明显"→ 温和卡片；
+      // 其余（含全不方便说）→ 静默。三条出口互不混用，紧急程度逐级递减。
+      if (st.answers.selfHarm === 'flash') {
+        body.innerHTML = flashResult();
+      } else {
+        const needsTalk = st.answers.mood === 'mild' || st.answers.impact === 'mild';
+        body.innerHTML = needsTalk ? mildResult() : quietResult();
+      }
       return;
     }
     const q = QUESTIONS[st.step];

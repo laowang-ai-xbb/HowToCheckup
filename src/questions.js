@@ -107,7 +107,7 @@ export const questions = [
     key: 'packYears',
     kind: 'single',
     title: '大概吸了多少？',
-    hint: '「包年」= 每天几包 × 吸了几年。每天 1 包吸 20 年 = 20 包年；每天 2 包吸 10 年 = 20 包年。这是肺癌筛查最关键的一个数。',
+    hint: '「包年」= 每天几包 × 吸了几年。每天 1 包吸 20 年 = 20 包年；每天 2 包吸 10 年 = 20 包年。戒了也要填：肺癌筛查看的是一辈子累计吸了多少。',
     showIf: (p) => p.smoking === 'yes' || p.smoking === 'quit',
     // 注意：这里的数值不是真实包年数，而是"跨没跨过 20 包年这条线"的档位标记。
     // 规则里统一写 packYears >= 20，所以标记取 20 / 10 / 0。
@@ -218,6 +218,12 @@ export const questions = [
       { v: 'dementia', l: '阿尔茨海默病 / 其他痴呆' },
       { v: 'cancer', l: '癌症（任何部位）' },
       { v: 'thyroid', l: '甲状腺结节、甲减、甲亢' },
+      /* 2026-11-26 老板点名四个细分项。都按"确诊过的病=查并发症/按分级随访，不是再筛一遍"处理，
+       * 每项在 rules.json 有对应 follow 卡（ckd / intestinal-metaplasia / birads / lung-nodule）。 */
+      { v: 'ckd', l: '慢性肾病' },
+      { v: 'intestinalMetaplasia', l: '肠化生' },
+      { v: 'birads', l: '乳腺 BI-RADS 分级异常（3 类及以上）' },
+      { v: 'lungNodule', l: '肺结节' },
     ],
   },
   {
@@ -274,7 +280,7 @@ export const questions = [
      *   不确定   —— 记不清体重，回头能补；结果页留着补数据的入口。
      *   不方便说 —— 不愿意报体重，降级到方案 1（凭买衣服的感觉选一个），不是跳过。
      * 方案 1 的四个选项刻意只写衣服尺码，不出现偏瘦 / 正常 / 偏胖 / 肥胖 任何一个词。 */
-    hint: 'BMI 就是体重除以身高的平方，体检报告上都有这个数。填两个数我替你算。',
+    hint: 'BMI 就是体重除以身高的平方。填两个数我替你算。',
     /* 这一道题填的不是一个字段，是五个（身高、体重、腰围、走哪条路、降级档）。
      * 列在这里，validate 才知道这些字段"界面上填得了"，不会当成死角。 */
     fields: ['bodyMode', 'bodyHeight', 'bodyWeight', 'bodyWaist', 'bodyShape'],
