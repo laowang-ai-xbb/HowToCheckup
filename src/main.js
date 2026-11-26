@@ -1504,6 +1504,9 @@ const renderResult = () => {
       ${baseHTML({ ids: baseIds, baseRule, claimed, scaling: scalingRule }, ctx)}
       ${riskNoteHTML('oil', p)}
       ${vacHTML(vacs, ctx)}
+      ${/* 老板 2026-11-26：心情模块放在疫苗后面、不用做前面。
+          它是"身体之外"的一张可选卡，不跟在操作按钮和免责声明的页尾。 */ ''}
+      ${mindCardHTML()}
       ${refHTML(refs, ctx)}
       ${bodyCardHTML()}
       ${riskNoteHTML('ad', p)}
@@ -1521,8 +1524,6 @@ const renderResult = () => {
       </div>
     </div>
   </div>
-
-  ${mindCardHTML()}
 
   <button class="totop" data-act="totop" aria-label="回到顶部">↑<span class="totop-t">回到顶部</span></button>
 

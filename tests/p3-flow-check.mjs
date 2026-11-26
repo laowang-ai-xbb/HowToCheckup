@@ -39,6 +39,13 @@ await sleep(1200);
 
 console.log('\n--- 入口卡 ---');
 check('结果页有心情入口卡', await ev(`!!document.querySelector('#mind .mind-open')`));
+/* 老板 2026-11-26：心情模块在疫苗后面、不用做前面（原来孤零零挂在页尾）。 */
+const order = await ev(`(() => {
+  const ids = [...document.querySelectorAll('section[id]')].map(x => x.id);
+  return { mind: ids.indexOf('mind'), vac: ids.indexOf('vac'), no: ids.indexOf('no') };
+})()`);
+check('心情模块在疫苗后、不用做前',
+  order.vac >= 0 && order.mind > order.vac && order.no >= 0 && order.mind < order.no, JSON.stringify(order));
 const lead = await ev(`document.querySelector('.mind-lead')?.textContent||''`);
 check('入口卡写明不影响清单', /答不答都不影响/.test(lead), lead);
 
