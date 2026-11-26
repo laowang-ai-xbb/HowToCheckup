@@ -1430,8 +1430,8 @@ const renderResult = () => {
   const noticeN = (safety.boundaries || []).filter((x) => !x.mergesRule || !soon.some((s) => s.rule.id === x.mergesRule)).length + soon.length;
   const SECS = [
     { id: 'must', label: '必做', n: A_REST.length },
-    { id: 'maybe', label: '看你的情况', n: b.B.length },
     { id: 'yearly', label: '标准项目', n: baseIds.length },
+    { id: 'maybe', label: '看你的情况', n: b.B.length },
     { id: 'vac', label: '疫苗', n: vacs.length },
     { id: 'ref', label: '老年评估', n: refs.length },
     { id: 'no', label: '不用做', n: b.C.length },
@@ -1485,14 +1485,14 @@ const renderResult = () => {
         <p class="seg-tip">这张单子可以直接发给家人。</p>
       </section>
 
+      ${/* 老板 2026-11-26 定：标准项目放在「看你的情况」前面（先看人人都做的，再看要自己定的）。 */ ''}
+      ${baseHTML({ ids: baseIds, baseRule, claimed, scaling: scalingRule }, ctx)}
+      ${!state.snapshot ? riskNoteHTML('oil', p) : ''}
       ${b.B.length ? `
       <section id="maybe">
         <h2 class="sh">看你的情况 <span>指南没替你拍板：做不做，取决于你的年龄、家族史和身体状况。建议咨询医生。</span></h2>
         <div class="rows">${b.B.map((r) => atomHTML(r, 0, false, ctx)).join('')}</div>
       </section>` : ''}
-
-      ${baseHTML({ ids: baseIds, baseRule, claimed, scaling: scalingRule }, ctx)}
-      ${!state.snapshot ? riskNoteHTML('oil', p) : ''}
       ${vacHTML(vacs, ctx)}
       ${refHTML(refs, ctx)}
       ${!state.snapshot ? bodyCardHTML() : ''}

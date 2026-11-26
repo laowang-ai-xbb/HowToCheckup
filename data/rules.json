@@ -1706,11 +1706,7 @@
         },
         "evidenceRole": "primary",
         "conflictPolicy": "patient-doctor",
-        "followup_path": "咨询医生",
-        "decisionHelp": {
-          "heading": "这件事为什么让你自己定",
-          "text": "这张卡只按年龄和答题算，算不出你个人的风险。真要决定查不查，得看 PSA 化验值（指南临界值 4ng/ml）—— 带上体检报告去问医生，比自己拿年龄猜靠谱。本工具不替你判断，也不估算个人风险。"
-        }
+        "followup_path": "咨询医生"
       }
     },
     {

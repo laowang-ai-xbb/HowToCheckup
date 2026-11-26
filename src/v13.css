@@ -665,15 +665,6 @@
   }
   .atom-stale b { color: var(--ink-2); font-weight: 600; }
 
-  /* 卡尾「关于风险模型」小块（3.3bis demo）：标题/正文/出处三行，字号跟卡内正文一档。
-     用浅底 + 一道顶边把它和正文分段，但不是警告条 —— 不用红橙、不加粗整句。 */
-  .atom .model-ref { margin-top: 12px; padding: 10px 12px 9px;
-                     border-top: 1px solid var(--line); background: var(--teal-soft); border-radius: 0 0 9px 9px; }
-  .atom .model-ref .mr-h { margin: 0; font-size: 13px; font-weight: 600; color: var(--ink-2); }
-  .atom .model-ref .mr-b { margin: 4px 0 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.6; }
-  .atom .model-ref .mr-a { display: inline-block; margin-top: 6px; font-size: 12px; color: var(--teal); }
-  html[data-ls="big"] .model-ref .mr-h { font-size: 15px; }
-  html[data-ls="big"] .model-ref .mr-b { font-size: 15.5px; }
 
   /* ---- hover 只给真指针设备 ----
    * 触摸屏上 :hover 会"粘住"：手指抬起后那行底色还留着，用户以为还是选中的。

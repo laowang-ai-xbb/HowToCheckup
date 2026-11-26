@@ -543,6 +543,17 @@ try {
     return { n: links.length, dead: links.filter(a => !document.getElementById(a.getAttribute('href').slice(1))).map(a => a.textContent) };
   })()`);
   check('目录每一格都对应一个真段落', tocOK.n >= 5 && tocOK.dead.length === 0, JSON.stringify(tocOK));
+  /* 老板 2026-11-26 定：标准项目在「看你的情况」前面 —— 目录与页面实际顺序都要对 */
+  const orderOK = await evaluate(`(() => {
+    const toc = [...document.querySelectorAll('.toc a')].map(a => a.textContent.trim().split(' ')[0]);
+    const dom = [...document.querySelectorAll('.docbody > section[id], .docbody > .base[id]')].map(e => e.id);
+    return { toc, dom, tocYearly: toc.indexOf('标准项目'), tocMaybe: toc.indexOf('看你的情况'),
+             domYearly: dom.indexOf('yearly'), domMaybe: dom.indexOf('maybe') };
+  })()`);
+  check('标准项目排在「看你的情况」前（目录+页面一致）',
+    orderOK.tocYearly >= 0 && orderOK.tocMaybe >= 0 && orderOK.tocYearly < orderOK.tocMaybe
+      && orderOK.domYearly >= 0 && orderOK.domMaybe >= 0 && orderOK.domYearly < orderOK.domMaybe,
+    JSON.stringify(orderOK));
   /* 体型卡：要有数字、有档位、按档位给的行动建议，还要自己带依据（R8 第 1 条）。
    * 原来这里守的是"写明不参与判定"那句，老板说没价值已删 —— 别再改回去。 */
   const bodyCard = await evaluate(`(() => {
@@ -860,7 +871,7 @@ try {
     check('顶部不再有分歧模块', !disp.top, JSON.stringify(disp));
   }
 
-  // ---- 3.25 3.3bis demo：界线变化统一进「年龄到了，这些检查会变」模块 + 模型指路卡在卡尾 ----
+  // ---- 3.25 3.3bis demo：界线变化统一进「年龄到了，这些检查会变」模块 ----
   {
     // 界线提示只能挂连续输入字段（age）—— 包年/戒烟年数是档位标记，没有贴线档。
     // 老板 2026-11-26 定：卡内不再散落提示，统一进「年龄到了，这些检查会变」，和原有 upcoming 合并。
@@ -897,30 +908,6 @@ try {
       rows: [...document.querySelectorAll('#soon li')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 110)),
     }))()`);
     check('「到线要重定」也进模块（74 岁→75 岁肠癌线）', c.rows.length >= 1 && /重定/.test(c.rows.join('')) && /75 岁/.test(c.rows.join('')), JSON.stringify(c));
-    // 55 岁男 → PSA 卡（指南没拍板、要医生结合化验单定）尾部出现决策指路。
-    // 老板 2026-11-26 定：不再挂"明确该做"的糖化卡，用户看不懂。
-    const p2 = Buffer.from(JSON.stringify({
-      age: 55, gender: 'male',
-    })).toString('base64url');
-    await goto(BASE + '/');
-    await goto(`${BASE}/r.html#p=${p2}`);
-    await waitFor(`!!document.querySelector('.actions')`, 'PSA 画像结果页');
-    await sleep(200);
-    const mo = await evaluate(`(() => ({
-      notes: [...document.querySelectorAll('.model-ref')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 170)),
-      heads: [...document.querySelectorAll('.model-ref .mr-h')].map(e => e.textContent),
-      host: document.querySelector('.model-ref')?.closest('.atom')?.querySelector('.an')?.textContent || '',
-      diabetesHasNote: !!document.querySelector('.atom:has(.ids)')?.querySelector('.model-ref'),
-    }))()`);
-    check('PSA 卡尾部有决策指路、说清为什么出现', mo.notes.length >= 1 && /算不出你个人的风险/.test(mo.notes.join('')) && /带上体检报告去问医生/.test(mo.notes.join('')), JSON.stringify(mo));
-    check('指路标题说清用途、出处链可点', mo.heads.length >= 1 && /这件事为什么让你自己定/.test(mo.heads[0]), JSON.stringify(mo.heads));
-    // 糖化卡（明确该做）不该再有指路说明
-    const pDiab = Buffer.from(JSON.stringify({ age: 40, gender: 'female', familyHistory: ['diabetes'] })).toString('base64url');
-    await goto(BASE + '/');
-    await goto(`${BASE}/r.html#p=${pDiab}`);
-    await waitFor(`!!document.querySelector('.actions')`, '糖化画像结果页');
-    await sleep(200);
-    check('明确该做的糖化卡上不再出现指路说明', await evaluate(`document.querySelectorAll('.model-ref').length === 0`));
   }
 
   // ---- 3.5 换一份人群画像再验一遍排版 ----

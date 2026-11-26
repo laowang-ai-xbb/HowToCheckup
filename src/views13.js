@@ -69,21 +69,6 @@ const FREQ_BASIS = {
   doctor: '这个间隔由医生按你的情况定，指南没有给统一数字',
 };
 
-/* 3.3bis 决策指路（demo）：卡片尾部一小块，三行结构。
- * 只在「指南没有统一结论，要医生结合化验结果定」的卡上出现 —— 挂"明确该做"的卡上
- * 用户会懵（我该做的检查，跟让我问医生有什么关系）。标题先说为什么出现在这张卡，
- * 正文说清用户该干什么，最后给出处。字号跟卡内正文同一档。 */
-const modelRefHTML = (mr, ctx, rule) => {
-  if (!mr) return '';
-  const href = ctx?.href ? ctx.href(rule.id) : '';
-  return `
-  <div class="model-ref">
-    <p class="mr-h">${esc(mr.heading || '关于风险模型')}</p>
-    <p class="mr-b">${esc(mr.text)}</p>
-    ${href ? `<a class="mr-a" href="${esc(href)}">这个建议出自哪份指南 ›</a>` : ''}
-  </div>`;
-};
-
 export const atomHTML = (rule, idx, key, ctx) => {
   const names = itemNames(rule);
   const many = names.length > 3 || names.join('、').length > 30;
@@ -109,8 +94,6 @@ export const atomHTML = (rule, idx, key, ctx) => {
     ${(rule.redFlags || []).length ? `<p class="tip"><b>出现这些情况要去看医生：</b>${rule.redFlags.map(esc).join('、')}</p>` : ''}
     ${tellDoctorHTML(rule)}
     ${ruleEvBox(rule, ctx)}
-    ${/* 3.3bis 决策指路（demo）：只在「指南没拍板、要医生结合检验结果定」的卡上出现。 */ ''}
-    ${rule.clause?.decisionHelp ? modelRefHTML(rule.clause.decisionHelp, ctx, rule) : ''}
   </article>`;
 };
 
