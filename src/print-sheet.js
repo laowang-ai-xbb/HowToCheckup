@@ -141,8 +141,6 @@ const CSS = `
   /* 「问医生的问题清单」（P1-9）：用墨色+青绿，和清单同一套视觉。
    * 放在页脚上方，整块 break-inside:avoid —— 内容变多时整体挪到下一页，不拆行。 */
   .ask{margin-top:5mm;border-top:1px solid var(--line);padding-top:3mm;break-inside:avoid}
-  .ask h2{font-size:15px;font-weight:700;margin-bottom:1mm}
-  .ask .note{font-size:10.5px;color:var(--ink-3);line-height:1.6;margin-bottom:2mm}
   .ask ol{list-style:none;counter-reset:q}
   .ask li{counter-increment:q;position:relative;padding:1.3mm 0 1.3mm 7mm;border-bottom:1px dashed var(--line);font-size:11.5px;line-height:1.5;color:var(--ink-2)}
   .ask li:last-child{border-bottom:0}
@@ -268,13 +266,16 @@ const SCRIPT = `
         }).join('') + '</div>'));
     }
     if (d.C.length) blocks.push(tableBlock('建议不做', '没有证据支持获益', d.C, true));
-    /* 问医生的问题清单：只有命中卡片里预置了问句时才出现，整块装箱不拆行。 */
+    /* 问医生的问题清单：只有命中卡片里预置了问句时才出现，整块装箱不拆行。
+       2026-11-26 老板走查：标题原来自己一套（裸 h2 + note），和表格模块的 .sh 头
+       不是一种排版语言。改成和「建议做 / 你来定」同款 .sh 结构——标题靠左、
+       字号字距一致、副题挂右侧，整页只有一种模块头的写法。 */
     if (d.askDoctor && d.askDoctor.length) {
-      blocks.push(plainBlock('<div class="ask"><h2>你可以这样问医生</h2>' +
-        '<div class="note">下面这几句是从你这份清单里自动挑的，照着问就行。问完以医生的说法为准。</div>' +
+      blocks.push(plainBlock('<section class="sec ask"><div class="sh"><h2>你可以这样问医生</h2>' +
+        '<span class="c">照着问就行，以医生的说法为准</span></div>' +
         '<ol>' + d.askDoctor.map(function(q){ return '<li>' + esc(q) + '</li>'; }).join('') + '</ol>' +
         '<div class="lead"><b>' + esc(d.askLead) + '</b><p>' + esc(d.askLeadQ) + '</p></div>' +
-        '</div>'));
+        '</section>'));
     }
 
     blocks.forEach(function(b){

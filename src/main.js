@@ -98,9 +98,12 @@ const lsFromUrl = () => {
 const writeLsToUrl = () => {
   const url = new URL(location.href);
   // 结果页的 hash 里还背着清单参数，重写时必须原样带上，否则一按大字清单就没了
-  const code = new URLSearchParams((location.hash || '').replace(/^#/, '')).get('p');
+  const raw = (location.hash || '').replace(/^#/, '');
+  const code = new URLSearchParams(raw).get('p');
   const parts = [];
   if (code) parts.push('p=' + code);
+  // 「自己的清单」标记也要保住：切大字把它弄丢，下次刷新又变回"别人分享给你的"
+  if (/(^|&)m=1(&|$)/.test(raw)) parts.push('m=1');
   if (state.bigText) parts.push('ls=big');
   url.hash = parts.join('&');
   history.replaceState(null, '', url.toString());
@@ -127,7 +130,11 @@ const hasPayload = /[#?&]p=/.test(rawParam);
 if (restored) {
   Object.assign(state.profile, restored);
   state.view = 'result';
-  state.fromShare = true;
+  /* m=1 标记"这是我自己刚答完的清单"（从依据页回来 / 大字刷新等重载场景）。
+     没有它，从依据页点「回到你的清单」会被当成别人分享来的：
+     页头冒「这是别人分享给你的清单」，病友彩蛋还会再弹一次。 */
+  state.fromShare = !/[#&]m=1/.test(rawParam);
+  if (!state.fromShare) state.eggSeen = true; // 自己的清单重载，不再弹彩蛋
 } else if (isResultPage) {
   state.view = 'broken';
 }
@@ -373,14 +380,15 @@ const renderStart = () => {
  * 按百分比分五段。最后一段要长一点，因为那时人最想放弃。
  */
 const progressWord = (pct, total, step) => {
+  /* 「最后一题」看的是真实位置（step 到没到 total-1），不是进度百分比：
+   * 老板 2026-11-26 走查：80% 门槛让第 10/12 题就喊「最后一题」，用户数着还差两题，
+   * 产品却说马上揭晓 —— 信任就是这么一点点磨掉的。百分比只负责前半程的鼓励。 */
+  if (total > 0 && step >= total - 1) return '最后一题，马上揭晓您的体检项目清单';
   if (pct < 20) return '一分钟就好';
   if (pct < 40) return '你手速真快';
   if (pct < 60) return '过半了';
-  if (pct < 80) {
-    const left = Math.max(total - step - 1, 1);
-    return `只剩 ${left} 个了`;
-  }
-  return '最后一题，马上揭晓您的体检项目清单';
+  const left = Math.max(total - step - 1, 1);
+  return `只剩 ${left} 个了`;
 };
 
 /* ---------------- 体型那题（J10 方案 2） ----------------
@@ -577,10 +585,12 @@ const renderQuiz = () => {
     const arr = Array.isArray(cur) ? cur : [];
     body = `<div class="opts two-col${q.redFlag ? ' redflags' : ''}">` + q.options.map((o, i) => {
       const on = arr.includes(o.v) ? ' on' : '';
-      // 红旗题用颜色区分急诊/门诊三级——仅为视觉示意，真机上同款样式，
-      // 颜色不改变任何判定（判定只看 v 属哪组，见 engine.redFlagHits）。
-      const tone = q.redFlag && o.tone ? ` tone-${o.tone}` : '';
-      return `<button class="opt${on}${tone}" data-act="toggle" data-i="${i}" aria-pressed="${on ? 'true' : 'false'}">
+      /* 2026-11-26 老板走查：红旗题的选项长得和别的多选不一样（红橙边框、选中变红橙底）。
+       * 颜色本想标急诊/门诊，但同一屏一半红一半橙反而让人犹豫"这题和刚才那些是不是不一样"。
+       * 统一成普通多选样式 —— 真正的安全信息不靠颜色：勾急诊项当场弹 120 全屏层，
+       * 门诊项结果页顶部有橙框横幅，卡片上有红字提示，三条通道都比一个色条重。
+       * 判定只看 v 属哪组（engine.redFlagHits），与样式无关。 */
+      return `<button class="opt${on}" data-act="toggle" data-i="${i}" aria-pressed="${on ? 'true' : 'false'}">
         <span class="tick"></span><span class="opt-l">${esc(o.l)}</span>
       </button>`;
     }).join('') + `</div>
@@ -1932,7 +1942,8 @@ addEventListener('hashchange', () => {
   if (!next) return;
   state.profile = { ...emptyProfile(), ...next };
   state.view = 'result';
-  state.fromShare = true;
+  state.fromShare = !/(^|&)m=1(&|$)/.test(location.hash.replace(/^#/, ''));
+  if (!state.fromShare) state.eggSeen = true;
   render();
 });
 

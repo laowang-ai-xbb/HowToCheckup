@@ -203,7 +203,6 @@ export const soonHTML = (soon, ctx = null) => !soon || !soon.length ? '' : `
   <section class="soon" id="soon">
     <h2 class="sh">再过几年要加上 <span>到年龄再加，提前做不增加获益</span></h2>
     <ul>${soon.map(({ rule, gap }) => `<li><b class="syear">${gap} 年后</b><span>${esc(titleOf(rule))}</span></li>`).join('')}</ul>
-    <p class="tip">不提前做。提前做不增加获益，只增加假阳性。</p>
     ${ctx ? evBoxHTML(
     soon.flatMap(({ rule }) => evRows(rule, ctx.href('soon-' + rule.id))),
     { href: ctx.href('soon-all'), hint: '到年龄才加，依据哪份指南', allText: '在依据页看这些项目的原文 ›' },
@@ -355,7 +354,7 @@ export const decisionLegendHTML = () => `
 /* ---------------- 页尾：依据分类标准 ---------------- */
 export const legendHTML = () => `
   <details class="legend">
-    <summary>依据分类标准 —— 上面那些标签是什么意思</summary>
+    <summary>依据分类标签分别是什么意思</summary>
     <dl>
       <div><dt><span class="st st-strong">强推荐</span></dt><dd>指南明确建议做。有可靠证据显示做了能降低死亡率或发病率，收益明显大于代价。</dd></div>
       <div><dt><span class="st st-cond">个体化决定</span></dt><dd>指南没替所有人拍板：获益和代价接近，要看你的年龄、家族史和个人意愿。建议咨询医生。</dd></div>

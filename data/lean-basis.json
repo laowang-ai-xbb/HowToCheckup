@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-23",
+  "updatedAt": "2026-11-26",
   "why": "偏向的账：每条带 lean 的规则，在它当次被复核时依据的证据原文指纹 + 当时的偏向。指纹对不上 = 原文变了或偏向被改过，必须回去重读（npm run check:lean）。重新登记只能是人真读过原文之后跑 npm run accept:lean，别在 CI 里跑。",
   "rules": {
     "stomach-gastroscopy-average-risk": {
@@ -25,7 +25,7 @@
     },
     "pregnancy-guard": {
       "hash": "e0a2e06153bd1dc4",
-      "lean": "for"
+      "lean": "against"
     },
     "ovarian-family-history": {
       "hash": "49daa43bb60ce153",

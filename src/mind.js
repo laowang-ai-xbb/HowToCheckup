@@ -68,15 +68,15 @@ const QUESTIONS = [
  */
 export const mindCopies = () => {
   const out = [];
-  out.push('身体之外 · 想问问你最近的心情', '这不是体检项目，答不答都不影响上面的清单。',
-    '三道题，看看要不要找人聊聊 ›');
+  out.push('身体之外 · 还要多关心自己心情', '这不是体检项目，答不答都不影响上面的清单。',
+    '三道题，你要不要试试 ›', '收起 ⌃');
   for (const q of QUESTIONS) {
     out.push(q.title, q.hint);
     for (const o of q.options) out.push(o.l);
   }
-  out.push('宝，请一定要告诉你信任的人，别一个人待着。', '或立即拨打',
-    '全国免费心理援助热线', '北京 24h', '24h', '一个想你开心快乐的人',
-    '先看看上面这条 ›', '第 3 题 · 共 3 题');
+  out.push('宝，请一定要告诉你信任的人，别一个人待着。', '或立即拨打24小时免费心理援助热线',
+    '12356', '010-82951332', '962525', '一个想你开心快乐的人',
+    '第 3 题 · 共 3 题');
   out.push('如果这些感受还在，找专业的人聊聊会有帮助。',
     '可以拨打 12356 — 免费、保密、全国心理援助热线。它不会给你贴标签，只是陪你聊聊。',
     '这里没有给你任何判断，也不影响你的体检清单。',
@@ -85,32 +85,48 @@ export const mindCopies = () => {
   return out;
 };
 
-/** 入口卡：放在结果页末尾，明确"这不是体检项目，答不答都不影响清单"。 */
+/** 入口卡：放在结果页末尾，明确"这不是体检项目，答不答都不影响清单"。
+ *  按钮是开关：展开后变成「收起」，答到一半也能合上，不留一个关不掉的洞。 */
 export const mindCardHTML = () => `
   <section class="mind" id="mind">
     <div class="mind-card">
-      <p class="mind-k">身体之外 · 想问问你最近的心情</p>
+      <p class="mind-k">身体之外 · 还要多关心自己心情</p>
       <p class="mind-lead">这不是体检项目，答不答都不影响上面的清单。</p>
-      <button class="mind-open" type="button" data-mind="open">三道题，看看要不要找人聊聊 ›</button>
+      <button class="mind-open" type="button" data-mind="toggle" aria-expanded="false">三道题，你要不要试试 ›</button>
       <div class="mind-body" hidden></div>
     </div>
   </section>`;
 
-/** 全屏求助层：老板定稿文案，电话可点，有关闭按钮。 */
+/** 全屏求助层：老板 2026-11-26 定稿文案。
+ *  电话按钮只留号码本身——"全国免费/北京/24h"那些副标是给运营看的，不是给此刻的人看的。 */
 const crisisSheet = () => `
   <div class="mind-crisis" role="alertdialog" aria-modal="true" aria-label="寻求帮助">
     <div class="mind-crisis-card">
       <button class="mind-close" type="button" data-mind="close" aria-label="关闭">×</button>
       <p class="mind-crisis-main">宝，请一定要告诉你信任的人，别一个人待着。</p>
-      <p class="mind-crisis-sub">或立即拨打</p>
+      <p class="mind-crisis-sub">或立即拨打24小时免费心理援助热线</p>
       <div class="mind-tels">
-        <a href="tel:12356" class="mind-tel primary">12356<span>全国免费心理援助热线</span></a>
-        <a href="tel:01082951332" class="mind-tel">010-82951332<span>北京 24h</span></a>
-        <a href="tel:962525" class="mind-tel">962525<span>24h</span></a>
+        <a href="tel:12356" class="mind-tel primary">12356</a>
+        <a href="tel:01082951332" class="mind-tel">010-82951332</a>
+        <a href="tel:962525" class="mind-tel">962525</a>
       </div>
       <p class="mind-sign">一个想你开心快乐的人</p>
     </div>
   </div>`;
+
+/* 关掉全屏层后，模块里留下的就是同样的求助内容——不是一行"先看看上面那条"的弱提示。
+   老板 2026-11-26：用户不该为了再看一遍号码还得重新触发全屏。 */
+const inlineCrisis = () => `
+    <div class="mind-out crisis-inline">
+      <p class="mind-crisis-main">宝，请一定要告诉你信任的人，别一个人待着。</p>
+      <p class="mind-crisis-sub">或立即拨打24小时免费心理援助热线</p>
+      <div class="mind-tels">
+        <a href="tel:12356" class="mind-tel primary">12356</a>
+        <a href="tel:01082951332" class="mind-tel">010-82951332</a>
+        <a href="tel:962525" class="mind-tel">962525</a>
+      </div>
+      <p class="mind-sign">一个想你开心快乐的人</p>
+    </div>`;
 
 /**
  * 把交互挂到结果页那张卡上。每次 renderResult 重绘后会重新调用一次，
@@ -177,11 +193,14 @@ export const mountMind = (root) => {
     const t = e.target.closest('[data-mind]');
     if (!t) return;
     const act = t.dataset.mind;
-    if (act === 'open') {
-      openBtn.hidden = true;
-      body.hidden = false;
-      st.step = 0;
-      renderStep();
+    /* 开关（老板 2026-11-26：模块展开后无法折叠）。
+       答到一半收起不丢答案——st 保留，重新展开接着答。 */
+    if (act === 'toggle') {
+      const open = !body.hidden;
+      body.hidden = open;
+      openBtn.setAttribute('aria-expanded', String(!open));
+      openBtn.textContent = open ? '三道题，你要不要试试 ›' : '收起 ⌃';
+      if (!open && st.step === 0 && !Object.keys(st.answers).length) renderStep();
       return;
     }
     if (act !== 'pick') return;
@@ -189,8 +208,10 @@ export const mountMind = (root) => {
     const opt = q.options[Number(t.dataset.i)];
     st.answers[q.key] = opt.v;
     // 关键：第 2 题的"比较具体"立刻弹全屏求助，不等答完，不给单独停留。
+    // 全屏层关掉后，模块里留下的就是同样的求助内容（inlineCrisis）——
+    // 不用"先看看上面那条 ›"让用户重新点一遍才能再看到号码。
     if (q.critical && opt.v === 'crisis') {
-      body.innerHTML = '<p class="mind-paused">先看看上面这条 ›</p>';
+      body.innerHTML = inlineCrisis();
       showCrisis();
       return;
     }

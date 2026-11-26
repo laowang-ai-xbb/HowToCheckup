@@ -1101,10 +1101,8 @@ html[data-ls="big"] .rsum { font-size: 18px; }
 /* ---------------- 红旗症状（P0-1） ----------------
  * 安全分流只用三种已有语义色（红=急诊、琥珀=门诊、青绿=正常交互），不新造调色板。
  * 颜色只是示意，判定只看选项值，见 engine.redFlagHits。 */
-.opts.redflags .opt.tone-emergency { border-left: 4px solid #a32d2d; }
-.opts.redflags .opt.tone-clinic { border-left: 4px solid #d9974a; }
-.opts.redflags .opt.on.tone-emergency { background: #fcebeb; border-color: #a32d2d; }
-.opts.redflags .opt.on.tone-clinic { background: #fdf3e4; border-color: #d9974a; }
+/* 红旗题的急诊/门诊色条已删（2026-11-26 老板走查：和其他多选统一）。
+   安全信息走三条更重的通道：急诊当场弹 120 层、门诊结果页横幅、卡片红字提示。 */
 
 /* 急诊全屏弹层：盖住整屏，逼人看见 120；但"继续填"永远在，不强迫。 */
 .emergency-mask {

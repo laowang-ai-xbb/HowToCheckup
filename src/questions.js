@@ -153,7 +153,7 @@ export const questions = [
     key: 'occupationTypes',
     kind: 'multi',
     title: '具体是哪一类？',
-    hint: '只用于给你提示，不改变结论。可多选。',
+    hint: '这道题不影响清单，是帮你把接触史记清楚，看医生时可以直接说。可多选。',
     optional: true,
     showIf: (p) => p.occupationDust === 'yes',
     options: [
@@ -248,7 +248,7 @@ export const questions = [
      *   ③ 多选题只渲染 l，不渲染 sub（见 main.js 的 multi 分支）。时间窗口必须写进 l，
      *      否则写了也看不见 —— 这一版就是踩了这个坑才让「最近」变成一句空话。
      * 括号里的数字就是「最近」，不再另行解释；医学名词就地解释，别堆在提示里占半屏。 */
-    hint: '选你确定做过、而且还在选项写的年限内的；拿不准就不选。选了会在清单上标一句，要不要跳过仍请听医生的。',
+    hint: '注意选项标注的年限；拿不准就不选。',
     optional: true,
     noneLabel: '最近都没做过',
     unknownLabel: '记不清',

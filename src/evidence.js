@@ -135,6 +135,18 @@ function render() {
         <ul class="evwhy-l">${rest.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
       </details></div>`;
   };
+  /**
+   * 依据页模块定位表（内容全部来自 data/rules.json，逐项独立维护，不做全局拼接）：
+   * ┌ verdict  结论句    —— 一句话回答"这条对你是什么安排"，唯一允许出现"你"的判定文案
+   * ├ lean     指南态度  —— 各指南/共识分歧时的诚实标注（如美国/start vs 中国指南差异），无分歧则不渲染
+   * ├ where    去哪做    —— 挂号科室 + 检查地点，用户来这页最常找的信息，排第二位
+   * ├ reason   判定道理  —— 为什么这么判（谁该查、为什么是这个人群），通用医学道理，不提"你"
+   * ├ findings 能查出什么 —— 该检查的能力与边界（查得出什么、查不出什么）
+   * ├ inner    附加模块  —— 个性化附注（如问医生清单、频率表），按规则条件渲染
+   * └ evidence 依据卡    —— 指南原文摘录 + 来源 + 链接，数字由 check-reason-source.mjs 对快照校验
+   * 防重复/防冲突：verdict 只写安排不写道理，reason 只写道理不写安排；
+   * 通用 whyYou（"为什么列给你"）已删，理由并进 reason，避免卡片与依据页说两遍。
+   */
   const sec = (id, title, verdict, why, inner, findings, where, lean = '') => `
     <section class="evsec" id="${id}">
       <h2>${esc(title)}</h2>
@@ -278,7 +290,11 @@ function wire() {
     const raw = (location.hash || location.search).replace(/^[?#]/, '');
     const code = new URLSearchParams(raw).get('p');
     const url = new URL('r.html', location.href);
-    if (code) url.hash = 'p=' + code;
+    /* m=1 = 这是"我自己的清单"，不是别人分享来的（2026-11-26 老板走查）：
+       从依据页回清单，r.html 会重新加载，没有这个标记它就把 #p= 当分享链接，
+       页头冒出「这是别人分享给你的清单」、彩蛋还会再弹一次。
+       分享链接（buildShareUrl）不带 m=，收到的人看到的还是"别人的清单"。 */
+    if (code) url.hash = 'p=' + code + '&m=1';
     location.href = url.toString();
   };
 
