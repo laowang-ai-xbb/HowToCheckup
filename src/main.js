@@ -1553,9 +1553,14 @@ const renderResult = () => {
     </header>
 
     ${tocHTML(SECS)}
-    ${safetyHTML}
 
     <div class="docbody">
+      ${/* 安全闸门提示必须待在正文这一栏里（老板 2026-11-27 走查）：
+          原先它是 .doc 的直接子元素，而 PC 上 .doc 是"左目录/右正文"的网格，
+          它没分到网格区域就被浏览器塞到第 3 行左列 —— 看着像在左下角；
+          移动端 .doc 是普通块级流，又老老实实落在页头下 —— 同一个 DOM 两套位置。
+          挪进 .docbody 后，两端都稳定落在正文顶部、紧跟页头。 */ ''}
+      ${safetyHTML}
       <section id="must">
         <h2 class="sh">必做 <span>有明确证据支持：做了能少得病、少死人</span></h2>
         <div class="rows">${A_REST.map((r, i) => atomHTML(r, i + 1, i < 3, ctx)).join('')}</div>

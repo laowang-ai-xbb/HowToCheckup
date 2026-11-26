@@ -525,6 +525,18 @@ export const INVARIANTS = [
     },
   },
   {
+    id: 'gate-inside-docbody',
+    why: '老板 2026-11-27 走查：症状提示在 PC 上跑到左下角、移动端却在顶部。根因是 safetyHTML 作为 .doc 的直接子元素，而 PC 上 .doc 是"左目录/右正文"网格，未分配 grid-area 就被塞到第 3 行左列。必须待在 .docbody（正文栏）开头，两端才一致。',
+    check(f) {
+      const m = f['src/main.js'] || '';
+      const bodyAt = m.indexOf('<div class="docbody">');
+      const gateAt = m.indexOf('${safetyHTML}');
+      if (bodyAt < 0 || gateAt < 0) return '找不到正文容器或安全提示的插入点';
+      if (gateAt < bodyAt) return '安全提示又跑到 .docbody 外面了（PC 上会掉到左下角）';
+      return null;
+    },
+  },
+  {
     id: 'claimed-from-catalog-not-shown',
     why: '2026-11-23 老板第二次追问虚线：「我并未看到带虚线的项目」。根因是 claimed 取了 shownIds —— 那是"归一之后还要展示的"，基础套餐优先认领完，专项那边就成了 mergedInto，claimed 恒空。只留一句提示等于骗人。',
     check(f) {

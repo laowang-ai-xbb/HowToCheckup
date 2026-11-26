@@ -324,7 +324,7 @@ export const refHTML = (cards, ctx) => {
   });
   return `
   <section id="ref">
-    <h2 class="sh">去医院进行老年综合评估 <span>老年综合评估要医生当面做</span></h2>
+    <h2 class="sh">尽快去医院进行老年综合评估 <span>老年综合评估要医生当面做</span></h2>
     ${cards.map((c) => `<article class="ref">
       <h3>${esc(c.title)}</h3>
       <p class="rw">${esc(c.why)}</p>

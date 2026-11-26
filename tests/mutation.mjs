@@ -183,8 +183,8 @@ const MUTATIONS = [
   {
     inv: 'no-glossary-on-result',
     file: 'src/main.js',
-    from: '    <div class="docbody">\n      <section id="must">',
-    to: '    <div class="docbody">\n      ${glossHTML(b)}\n      <section id="must">',
+    from: '      ${safetyHTML}\n      <section id="must">',
+    to: '      ${safetyHTML}\n      ${glossHTML(b)}\n      <section id="must">',
     desc: '把术语说明模块接回结果页',
   },
   {
@@ -256,6 +256,13 @@ const MUTATIONS = [
     from: "${dup ? '<p class=\"tip\">带虚线的几项在上面专项里已经说过 —— 同一项只说一次。</p>' : ''}",
     to: "'<p class=\"tip\">带虚线的几项在上面专项里已经说过 —— 同一项只说一次。</p>'",
     desc: '虚线提示改回无条件出现',
+  },
+  {
+    inv: 'gate-inside-docbody',
+    file: 'src/main.js',
+    from: '    ${tocHTML(SECS)}\n\n    <div class="docbody">',
+    to: '    ${tocHTML(SECS)}\n    ${safetyHTML}\n\n    <div class="docbody">',
+    desc: '把安全提示挪回 .docbody 外面（PC 上会掉到左下角）',
   },
   {
     inv: 'unlisted-no-manual-numbers',

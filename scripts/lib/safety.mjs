@@ -20,6 +20,25 @@ const clone = (r) => ({ ...r, shownIds: r.shownIds ? [...r.shownIds] : undefined
 
 const sameItem = (a, b, canon) => canon(a) === canon(b);
 
+/**
+ * 筛查前提不满足时，哪些规则要压下？
+ *
+ * 老板 2026-11-27 走查定的口径：症状闸和衰弱/年龄闸**不是一回事**。
+ *  - 有症状（咳嗽/胸痛/体重下降等）：人还能正常生活，基础项目（血压、血常规、
+ *    洗牙、幽门螺杆菌、疫苗）照做无碍，只是"没症状时的癌症早筛"不能照清单办 ——
+ *    所以只压 decisionType=screen，保留 prevent/follow，疫苗也不拦。
+ *    否则页面上连"每年都做的基础项目"都没有，用户以为网站坏了（走查原话）。
+ *  - 衰弱 / 年龄超范围：身体可能耐受不了检查和后续治疗，全部 A/B + 疫苗一刀切。
+ *
+ * 决策类型来自规则数据 decisionType（prevent/screen/follow），不硬编码 id 白名单 ——
+ * 以后加新规则自动归类，不会漏。
+ */
+const shouldHideForGate = (rule, gate) => {
+  if (gate.frailDowngrade || gate.ageOutOfScope) return true;
+  if (gate.symptomStop) return rule.decisionType === 'screen';
+  return false;
+};
+
 /** 输出一段给用户看的闸门说明；没有触发就返回 '' */
 export const gateMessage = (meta) => {
   if (!meta || !meta.gate) return '';
@@ -39,7 +58,8 @@ export const gateMessage = (meta) => {
 /** 老分享链接/新画像都走这里；疫苗要不要出也由同一道闸决定 */
 export const vaccinesDeferred = (meta) => {
   const g = meta?.gate;
-  return !!(g && (g.ageOutOfScope || g.frailDowngrade || g.symptomStop));
+  // 2026-11-27：症状就不再拦疫苗了（打疫苗和"按无症状清单筛癌"是两件事）。
+  return !!(g && (g.ageOutOfScope || g.frailDowngrade));
 };
 
 /**
@@ -73,14 +93,16 @@ export const applySafety = (profile, raw, opts = {}) => {
     .find((x) => x.r.id === id);
 
   // ---- 闸一：筛查前提（症状 / 衰弱 / 年龄范围）----
-  // 把 A/B 全数压下；C 档"不推荐"保留，让页面还能回答"哪些不用做"。
-  if (gate.ageOutOfScope || gate.frailDowngrade || gate.symptomStop) {
-    for (const k of ['A', 'B']) {
-      for (const r of buckets[k]) {
-        r.hidden = true;
-        r.suppressedBy = 'screen-gate';
-        meta.suppressed.push({ id: r.id, reason: '筛查前提不满足' });
-      }
+  // 症状：只压 screen（早筛），prevent/follow 保留 —— 有症状的人照样要量血压、
+  // 洗牙、打疫苗；不能把整个清单清空（老板 2026-11-27 走查发现的空页面）。
+  // 衰弱/超龄：A/B 全压（身体可能耐受不了检查和后续治疗）。
+  // C 档"不推荐"始终保留，让页面还能回答"哪些不用做"。
+  for (const k of ['A', 'B']) {
+    for (const r of buckets[k]) {
+      if (!shouldHideForGate(r, gate)) continue;
+      r.hidden = true;
+      r.suppressedBy = 'screen-gate';
+      meta.suppressed.push({ id: r.id, reason: gate.symptomStop ? '有症状，不走无症状早筛' : '筛查前提不满足' });
     }
   }
 

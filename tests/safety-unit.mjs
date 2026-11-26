@@ -86,7 +86,13 @@ const ids = (b, cat) => b[cat].filter((r) => !r.hidden).map((r) => r.id);
 }
 {
   const [b, meta] = evaluateDetailed(P({ symptomFlags: ['cough2w'] }));
-  check('有症状 → 不走无症状筛查清单', b.A.every((r) => r.hidden) && b.B.every((r) => r.hidden));
+  // 2026-11-27 老板走查改口径：症状闸只压早筛（screen），基础项（prevent/follow）保留 ——
+  // 不能把整个清单清空，否则用户以为网站坏了。
+  const visible = ['A', 'B'].flatMap((k) => b[k].filter((r) => !r.hidden));
+  check('有症状 → screen 早筛一律不走', visible.every((r) => r.decisionType !== 'screen'),
+    `漏网=${visible.filter((r) => r.decisionType === 'screen').map((r) => r.id).join(',')}`);
+  check('有症状 → 基础项仍在（不是空页面）', visible.some((r) => r.decisionType === 'prevent'));
+  check('有症状 → 疫苗不拦（打疫苗≠早筛）', !vaccinesDeferred(meta));
   check('有症状 → 明确提示去门诊', /门诊看病/.test(gateMessage(meta)));
 }
 {
@@ -239,12 +245,22 @@ const ids = (b, cat) => b[cat].filter((r) => !r.hidden).map((r) => r.id);
 
 // ---- 6E. 筛查前提三闸：症状 / 衰弱 / 年龄 ----
 {
-  const gated = [
+  // 2026-11-27 老板走查：症状闸只压早筛、保留基础项；衰弱/年龄闸仍一刀切。
+  const symptomatic = [
     ['有咳嗽症状', { symptomFlags: ['cough2w'] }],
     ['有咯血症状', { symptomFlags: ['hemoptysis'] }],
     ['有胸痛症状', { symptomFlags: ['chestPain'] }],
     ['有体重下降症状', { symptomFlags: ['weightLoss'] }],
     ['有气短症状', { symptomFlags: ['breathless'] }],
+  ];
+  for (const [name, over] of symptomatic) {
+    const [b, meta] = evaluateDetailed(P(over));
+    const visible = ['A', 'B'].flatMap((k) => b[k].filter((r) => !r.hidden));
+    check('症状闸·' + name + ' 只压早筛、留基础项',
+      visible.every((r) => r.decisionType !== 'screen') && visible.some((r) => r.decisionType === 'prevent') && !vaccinesDeferred(meta),
+      `可见=${visible.map((r) => r.id).join(',')}`);
+  }
+  const gated = [
     ['衰弱', { frailty: 'yes' }],
     ['近期住院≥2 次', { recentHospital: 'ge2' }],
     ['年龄 101', { age: 101 }],

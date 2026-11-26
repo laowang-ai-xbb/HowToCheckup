@@ -94,6 +94,8 @@ try {
     ['p55', { age: 55, gender: 'male', familyHistory: ['diabetes'] }],
     ['p74', { age: 74, gender: 'male' }],
     ['p80', { age: 80, gender: 'female' }],
+    // 2026-11-27 走查：勾症状后不能只剩"不用做"，基础项目要留着
+    ['p-symptom', { age: 55, gender: 'male', symptomFlags: ['weightLoss'] }],
   ];
   for (const [name, profile] of profiles) {
     const code = btoa(JSON.stringify(profile)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
