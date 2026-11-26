@@ -620,16 +620,20 @@ for (const r of rulesFile.rules) {
       }
     }
   }
-  // 3.3bis 模型指路卡（可选）：tool 必须能在证据出处文本里找到（防编造模型名）
-  if (c.modelReferral !== undefined) {
-    const mr = c.modelReferral;
-    if (!mr || typeof mr.tool !== 'string' || !mr.tool.trim() || typeof mr.text !== 'string' || !mr.text.trim())
-      err(`[${tag}] clause.modelReferral 必须是非空 { tool, text }`);
+  // 3.3bis 决策指路（可选）：只在「指南没拍板、要医生结合检验结果定」的卡上写。
+  // 文案里的数字（如 4ng/ml 的 4）必须能在证据出处文本里回读 —— 不发明数字。
+  if (c.decisionHelp !== undefined) {
+    const dh = c.decisionHelp;
+    if (!dh || typeof dh.heading !== 'string' || !dh.heading.trim()
+      || typeof dh.text !== 'string' || !dh.text.trim())
+      err(`[${tag}] clause.decisionHelp 必须是非空 { heading, text }`);
     else {
       const hay = normalizeText((r.evidence || []).map((e) => `${e.org} ${e.point || ''}`).join(' ')
         + ' ' + normalizeText((r.evidence || []).flatMap((e) => e.quotes || (e.quote ? [e.quote] : [])).join(' ')));
-      if (!hay.includes(normalizeText(mr.tool)))
-        err(`[${tag}] clause.modelReferral.tool「${mr.tool}」在证据出处文本里找不到（模型名不能凭空写）`);
+      for (const num of String(dh.text).match(/\d+/g) || []) {
+        if (!hay.includes(num))
+          err(`[${tag}] clause.decisionHelp 文案里的数字 ${num} 在本规则引文里没有出处（不发明数字）`);
+      }
     }
   }
   // 语义复核闭环：没有 supported 记录就提醒（不阻塞——先让闭环跑起来）

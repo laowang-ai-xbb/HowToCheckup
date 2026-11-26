@@ -1706,7 +1706,11 @@
         },
         "evidenceRole": "primary",
         "conflictPolicy": "patient-doctor",
-        "followup_path": "咨询医生"
+        "followup_path": "咨询医生",
+        "decisionHelp": {
+          "heading": "这件事为什么让你自己定",
+          "text": "这张卡只按年龄和答题算，算不出你个人的风险。真要决定查不查，得看 PSA 化验值（指南临界值 4ng/ml）—— 带上体检报告去问医生，比自己拿年龄猜靠谱。本工具不替你判断，也不估算个人风险。"
+        }
       }
     },
     {
@@ -3192,12 +3196,7 @@
         },
         "evidenceRole": "primary",
         "conflictPolicy": "single-guideline",
-        "followup_path": "复查",
-        "modelReferral": {
-          "tool": "中国糖尿病风险评分表",
-          "text": "这类决策国内指南建议用 China-PAR 等工具（需检验结果，由医生完成）；本工具不估算个人风险数值。"
-        },
-        "_modelNote": "评分名称来自《中国糖尿病防治指南（2024版）》高危人群筛查路径（风险评分达标者查血糖）；validate 校验 tool 必须出现在证据出处文本里。"
+        "followup_path": "复查"
       }
     },
     {

@@ -897,20 +897,30 @@ try {
       rows: [...document.querySelectorAll('#soon li')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 110)),
     }))()`);
     check('「到线要重定」也进模块（74 岁→75 岁肠癌线）', c.rows.length >= 1 && /重定/.test(c.rows.join('')) && /75 岁/.test(c.rows.join('')), JSON.stringify(c));
-    // 40 岁女、糖尿病家族史 → 糖化卡尾部出现模型指路说明（老板定的 China-PAR 固定说法）
+    // 55 岁男 → PSA 卡（指南没拍板、要医生结合化验单定）尾部出现决策指路。
+    // 老板 2026-11-26 定：不再挂"明确该做"的糖化卡，用户看不懂。
     const p2 = Buffer.from(JSON.stringify({
-      age: 40, gender: 'female', familyHistory: ['diabetes'],
+      age: 55, gender: 'male',
     })).toString('base64url');
     await goto(BASE + '/');
     await goto(`${BASE}/r.html#p=${p2}`);
-    await waitFor(`!!document.querySelector('.actions')`, '糖化画像结果页');
+    await waitFor(`!!document.querySelector('.actions')`, 'PSA 画像结果页');
     await sleep(200);
     const mo = await evaluate(`(() => ({
-      notes: [...document.querySelectorAll('.model-ref')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 130)),
+      notes: [...document.querySelectorAll('.model-ref')].map(e => e.textContent.replace(/\\s+/g, ' ').slice(0, 170)),
       heads: [...document.querySelectorAll('.model-ref .mr-h')].map(e => e.textContent),
+      host: document.querySelector('.model-ref')?.closest('.atom')?.querySelector('.an')?.textContent || '',
+      diabetesHasNote: !!document.querySelector('.atom:has(.ids)')?.querySelector('.model-ref'),
     }))()`);
-    check('糖化卡尾部有结构化的「关于风险模型」说明', mo.notes.length >= 1 && /China-PAR.*不估算个人风险数值/.test(mo.notes.join('')), JSON.stringify(mo));
-    check('模型说明标题/正文/出处三行结构', mo.heads.length >= 1 && mo.heads[0].includes('关于风险模型'), JSON.stringify(mo.heads));
+    check('PSA 卡尾部有决策指路、说清为什么出现', mo.notes.length >= 1 && /算不出你个人的风险/.test(mo.notes.join('')) && /带上体检报告去问医生/.test(mo.notes.join('')), JSON.stringify(mo));
+    check('指路标题说清用途、出处链可点', mo.heads.length >= 1 && /这件事为什么让你自己定/.test(mo.heads[0]), JSON.stringify(mo.heads));
+    // 糖化卡（明确该做）不该再有指路说明
+    const pDiab = Buffer.from(JSON.stringify({ age: 40, gender: 'female', familyHistory: ['diabetes'] })).toString('base64url');
+    await goto(BASE + '/');
+    await goto(`${BASE}/r.html#p=${pDiab}`);
+    await waitFor(`!!document.querySelector('.actions')`, '糖化画像结果页');
+    await sleep(200);
+    check('明确该做的糖化卡上不再出现指路说明', await evaluate(`document.querySelectorAll('.model-ref').length === 0`));
   }
 
   // ---- 3.5 换一份人群画像再验一遍排版 ----
