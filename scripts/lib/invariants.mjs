@@ -583,6 +583,20 @@ export const INVARIANTS = [
     },
   },
   {
+    id: 'org-abbrev-has-cn',
+    why: '老板 2026-11-27 走查：所有机构英文简写旁都要附中文名，不认识英文的老人也能看懂是谁说的。结果页折叠表、依据页卡片、依据页页头共用 splitOrg，一处补名三处生效。',
+    check(f) {
+      const e = f['src/evfmt.js'] || '';
+      if (!/ORG_CN\s*=\s*\{/.test(e)) return '没有机构简写→中文名映射表';
+      if (!/USPSTF:\s*'美国预防服务工作组'/.test(e)) return 'USPSTF 没配中文名';
+      if (!/withCn\(t\)/.test(e)) return '只有机构名的依据（如 USPSTF）没走补名';
+      if (!/withCn\(m\[1\]/.test(e)) return '带书名号的依据（如 USPSTF《BRCA…》）没走补名';
+      if (!/美国核医学与分子影像学会/.test(e) || !/（\$\{m2\[1\]\.trim\(\)\}）/.test(e))
+        return 'SNMMI 这种「英文（中文）文件名」的写法没把中文名放进 who 列';
+      return null;
+    },
+  },
+  {
     id: 'restart-scroll-to-top',
     why: '老板 2026-11-27 走查：结果页滚到最底下点「重填一遍」，新首页有时停在页底，看不到年龄/性别输入框，以为页面坏了。根因是浏览器默认的 scrollRestoration 把旧滚动位置还回来；单页重绘也不重置滚动。两处都得显式管住。',
     check(f) {

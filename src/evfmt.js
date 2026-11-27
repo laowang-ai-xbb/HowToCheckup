@@ -24,16 +24,38 @@ export const isDocTitle = (x) => /指南|共识|清单|方案|目录|标准|规�
  *   ③ 只有机构名：`USPSTF`
  * 第三种不能替它编一个文件名 —— 依据页上有原文链接，让他自己点。
  */
+/**
+ * 机构英文简写 → 中文全称（老板 2026-11-27 走查：所有英文简写旁都要附中文名）。
+ * 放在渲染层而不是改 rules.json：结果页折叠表 / 依据页卡片 / 依据页页头三处共用
+ * splitOrg，一处补名三处生效；改数据会连带动 fingerprint 和快照 hash，风险大得多。
+ * 补的是纯文本，继承所在位置原有的字号/颜色，不新加样式 —— 和板块排版自然一致。
+ */
+export const ORG_CN = {
+  USPSTF: '美国预防服务工作组',
+};
+
+const withCn = (who) => {
+  const w = String(who || '').trim();
+  return ORG_CN[w] ? `${ORG_CN[w]}（${w}）` : w;
+};
+
 export const splitOrg = (org) => {
   const t = String(org || '').trim();
   if (!t) return { who: '—', doc: '' };
   const m = t.match(/^(.*?)《(.+?)》\s*$/);
-  if (m) return { who: m[1].replace(/[，,、\s]+$/, '') || m[1], doc: `《${m[2]}》` };
+  if (m) return { who: withCn(m[1].replace(/[，,、\s]+$/, '') || m[1]), doc: `《${m[2]}》` };
   if (isDocTitle(t)) {
+    const m2 = t.match(/^([^（(]+)（([^）)]+)）\s*(.*)$/);
+    // 机构名自带「英文简写（中文全称）」时（如 SNMMI（美国核医学与分子影像学会）Choosing Wisely），
+    // 别把中文名切到文件名那一列去 —— who 里就已经是「中文+英文」的完整写法，doc 只留文件编号。
+    if (m2 && /\b[A-Z]{2,}\b/.test(m2[1])) {
+      const doc = m2[3].trim();
+      return { who: `${m2[2]}（${m2[1].trim()}）`, doc: doc || t };
+    }
     const head = t.split(/[（(]/)[0].trim();
-    return { who: head !== t && !isDocTitle(head) ? head : '—', doc: t };
+    return { who: withCn(head !== t && !isDocTitle(head) ? head : '—'), doc: t };
   }
-  return { who: t, doc: '' };
+  return { who: withCn(t), doc: '' };
 };
 
 /** 证据强度 → 人话标签 + 药丸配色。没有 strength 但有 status=pending 的，标成待核实 */
