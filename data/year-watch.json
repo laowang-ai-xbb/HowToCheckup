@@ -1,0 +1,19 @@
+{
+  "note": "年份岗哨配置（2026-11-27 任务2 第一步）。每个源配一个 pattern：从原文提取『现行版年份』，捕获组必须是四位年份。USPSTF 的 A/B 级主题不需要在这里配——巡检自动抓官方 A&B 清单页；D/I 级主题自动抓主题页 JSON-LD datePublished。这里只配『既不是 USPSTF、也没有 A&B 清单』的源：主要靠文档标题里的版本年份，取全文命中的最大值（版本号只增不减）。加源时先用快照文本实测 pattern 能命中再进来。",
+  "sources": [
+    {
+      "id": "nhc-2025-checkup-guideline",
+      "org": "国家卫生健康委办公厅",
+      "url": "https://www.nhc.gov.cn/yzygj/c100068/202511/4feaeb6de63e44cb9fd4ac8f579ca279/files/2.%E5%9F%BA%E6%9C%AC%E4%BD%93%E6%A3%80%E9%A1%B9%E7%9B%AE%EF%BC%882025%E5%B9%B4%E7%89%88%EF%BC%89.docx",
+      "pattern": "[（\\(](20[0-9][0-9])年版[）\\)]",
+      "note": "《成人健康体检项目推荐指引（2025年版）》附件2；2026-11-27 实测快照是半角括号「(2025年版)」，pattern 兼容全/半角。"
+    },
+    {
+      "id": "cancer-center-anti-cancer",
+      "org": "国家癌症中心",
+      "url": "https://www.guidelines-registry.org/pp/uploads/2025/09/01/%E5%81%A5%E5%BA%B7%E4%BD%93%E6%A3%80%E6%9C%BA%E6%9E%84%E9%98%B2%E7%99%8C%E4%BD%93%E6%A3%80%E6%8C%87%E5%8D%972025%E7%89%88_%E6%B3%A8%E5%86%8C%E7%89%88%E6%9C%AC.docx",
+      "pattern": "[（\\(](20[0-9][0-9])年版[）\\)]",
+      "note": "《健康体检机构防癌体检指南（2025年版）》注册版本 docx；2026-11-27 实测快照命中「(2025年版)」与「(2024年版)」，取最大即 2025。"
+    }
+  ]
+}

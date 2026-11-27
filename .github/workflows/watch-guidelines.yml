@@ -149,3 +149,26 @@ jobs:
           npx vite preview --port 4173 --strictPort >/dev/null 2>&1 &
           for i in $(seq 1 30); do curl -sf http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
           NO_BUILD=1 npm run check:ui || echo '::warning::浏览器验收未通过，请查看日志'
+
+      # 心跳（2026-11-27 任务2 第一步）：巡检成功跑完会写 reports/heartbeat.json。
+      # 但"巡检本身静默死掉"（Actions 配额、依赖失效、触发器被关）时，workflow 根本不会跑。
+      # 所以每次成功运行都回头检查上次的心跳存档（heartbeat-last.json，随仓库提交）：
+      # 超过 14 天没有成功记录就开 issue 报警——"没人盯"不许变成"没人知道坏了"。
+      - name: 心跳检查（防整套巡检静默死亡）
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/heartbeat.mjs
+
+      # 把心跳存档提交回仓库：下周一的运行靠它判断"上次成功是多久以前"。
+      - name: 提交心跳存档
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain reports/heartbeat-last.json)" ]; then
+            git add reports/heartbeat-last.json
+            git commit -m "巡检心跳存档 $(date -u '+%Y-%m-%d')"
+            git push
+          fi

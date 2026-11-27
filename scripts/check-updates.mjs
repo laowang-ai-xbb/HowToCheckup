@@ -22,6 +22,9 @@ import { fetchSource, sha, squash } from './lib/source-fetch.mjs';
 import { summarize } from './lib/diff-text.mjs';
 import { newTitles, extractTitles, snapshotOf } from './lib/catalog-watch.mjs';
 import { nextFailures, bumpFailure, longUnreachable, isTruncated } from './lib/watch-health.mjs';
+import {
+  parseAbList, extractDatePublished, maxPatternYear, sentinelDecide, heartbeatStale,
+} from './lib/year-sentinel.mjs';
 
 const INDEX = 'data/snapshots/_index.json';
 const argv = process.argv.slice(2);
@@ -52,6 +55,84 @@ const same = [];
 const quoteBroken = []; // 最重要的一类：新正文里找不到我们引的那句
 const numsTouched = []; // 关键数字变了的来源
 const cosmetic = [];    // 只是版式/段落变了、数字没动的来源
+
+/* ---- 第三层：年份岗哨（2026-11-27 任务2 第一步）----
+ * 老巡检核"引文还在不在"，目录雷达盯"发没发新文件"，这里补第三只眼：
+ * 官方现行版年份 vs 我们 rules.json 里标的年份。官网换版而旧页还挂着时，
+ * 内容层看不见，年份层看得见。
+ * USPSTF 走 A&B 清单页（A/B 级一行一条带月份）+ 主题页 JSON-LD datePublished（D/I 级）；
+ * 中文指南按配置里的 pattern 从原文抓「（2025年版）」这类版本年份，取最大值当现行版。 */
+const AB_URL = 'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation-topics/uspstf-a-and-b-recommendations';
+const officialYears = {};   // key = slug 或 url → 'YYYY'
+const sentinelFails = [];
+let abParsed = {};
+
+// 收集"每条依据该用哪个岗哨源"：USPSTF 用 slug，pattern 源用 url 本身
+const sentinelCites = [];
+const yearPatternOf = new Map(); // url → pattern（由 data/year-watch.json 配置）
+const YEAR_WATCH_FILE = 'data/year-watch.json';
+let yearWatch = { sources: [] };
+try { yearWatch = JSON.parse(readFileSync(YEAR_WATCH_FILE, 'utf8')); } catch { /* 没有配置就只盯 USPSTF */ }
+for (const s of yearWatch.sources || []) {
+  if (s.pattern) yearPatternOf.set(s.url, s.pattern);
+}
+for (const rule of rules) {
+  for (const ev of rule.evidence || []) {
+    if (!ev.url || !ev.year) continue;
+    const slug = ev.url.match(/uspreventiveservicestaskforce\.org\/uspstf\/recommendation\/([a-z-]+)/)?.[1];
+    if (slug) sentinelCites.push({ ruleId: rule.id, key: slug, url: ev.url, year: ev.year });
+    else if (yearPatternOf.has(ev.url)) sentinelCites.push({ ruleId: rule.id, key: ev.url, url: ev.url, year: ev.year });
+  }
+}
+const sentinelNeeded = { ab: sentinelCites.some((c) => !c.key.includes('/')), patterns: [...yearPatternOf.keys()] };
+
+// A&B 清单页：一次抓全，覆盖所有 A/B 级主题
+if (sentinelCites.length) {
+  try {
+    const { text } = await fetchSource(AB_URL);
+    abParsed = parseAbList(text);
+    Object.assign(officialYears, abParsed);
+  } catch (e) {
+    sentinelFails.push({ source: 'uspstf-ab-list', url: AB_URL, error: String(e.message || e).slice(0, 120) });
+  }
+}
+// D/I 级主题（A&B 清单里没有的 slug）→ 抓主题页 JSON-LD datePublished。
+// 只补 USPSTF 域名的 slug；pattern 源的 key 是完整 URL，有自己的提取循环，别混进来。
+const missingSlugs = [...new Set(sentinelCites
+  .filter((c) => !c.key.includes('/') && !officialYears[c.key])
+  .map((c) => c.key))];
+for (const slug of missingSlugs) {
+  try {
+    const { text } = await fetchSource(`https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/${slug}`);
+    const iso = extractDatePublished(text);
+    if (iso) officialYears[slug] = iso.slice(0, 4);
+  } catch (e) {
+    sentinelFails.push({ source: 'uspstf-topic', url: slug, error: String(e.message || e).slice(0, 120) });
+  }
+}
+// 中文/其它 pattern 源：从原文（复用快照或现抓）提取版本年份
+for (const [url, pattern] of yearPatternOf) {
+  if (!urls.has(url) && !sentinelFails.some((f) => f.url === url)) {
+    try {
+      const { text } = await fetchSource(url);
+      const y = maxPatternYear(text, pattern);
+      if (y) officialYears[url] = y;
+    } catch (e) {
+      sentinelFails.push({ source: 'pattern', url, error: String(e.message || e).slice(0, 120) });
+    }
+  } else if (urls.has(url)) {
+    // 主巡检循环已经抓过这个 URL 了——等它跑完从 same/changed 里拿不到正文，
+    // 所以这里单独再抓一次的成本（每源一次 HTTP）换结构简单，值得。
+    try {
+      const { text } = await fetchSource(url);
+      const y = maxPatternYear(text, pattern);
+      if (y) officialYears[url] = y;
+    } catch (e) {
+      sentinelFails.push({ source: 'pattern', url, error: String(e.message || e).slice(0, 120) });
+    }
+  }
+}
+const yearDrift = sentinelCites.length ? sentinelDecide(sentinelCites, officialYears) : [];
 
 for (const [url, info] of urls) {
   const rec = index[url];
@@ -227,9 +308,27 @@ if (catalog.sources) {
   }
 }
 
-if (!changed.length && !broken.length && !quoteBroken.length) {
+/* 年份岗哨的输出：漂移要亮红，抓取失败只记录（抓取失败走 broken 通道的意思） */
+const sentinelOk = officialYears && Object.keys(officialYears).length;
+if (sentinelCites.length) {
+  console.log(`\n【年份岗哨】盯 ${new Set(sentinelCites.map((c) => c.key)).size} 个来源的现行版年份：`);
+  if (yearDrift.length) {
+    console.log(`· 年份漂移 ${yearDrift.length} 条（官网现行版 ≠ 我们标注，需要走升级核对）：`);
+    for (const d of yearDrift) {
+      console.log(`  ! ${d.ruleId}：我们标 ${d.citedYear}，官网现行 ${d.officialYear}（${d.direction}）\n    ${d.url}`);
+    }
+  } else if (sentinelOk) {
+    console.log('· 全部来源的现行版年份与我们的标注一致。');
+  }
+  if (sentinelFails.length) {
+    console.log(`· ${sentinelFails.length} 个年份源没抓到（不影响内容层巡检，下周再试）：`);
+    for (const f of sentinelFails) console.log(`  - ${f.source} ${f.url}：${f.error}`);
+  }
+}
+
+if (!changed.length && !broken.length && !quoteBroken.length && !yearDrift.length) {
   const quoteTotal = [...urls.values()].reduce((n, v) => n + v.quotes.length, 0);
-  console.log(`\n全部来源的关键数字都没变，${quoteTotal} 句引用全部仍能在原文里找到。`);
+  console.log(`\n全部来源的关键数字都没变，${quoteTotal} 句引用全部仍能在原文里找到，现行版年份全部一致。`);
 }
 
 if (jsonArg) {
@@ -239,12 +338,14 @@ if (jsonArg) {
       sources: urls.size, same: same.length, changed: changed.length,
       cosmetic: cosmetic.length, broken: broken.length, quoteBroken: quoteBroken.length,
       catalogSources: catalog.sources, newGuidelines: catalog.newGuidelines.length,
+      yearDrift: yearDrift.length, sentinelFails: sentinelFails.length,
     },
     quoteBroken,
     changed,
     cosmetic,
     broken,
     catalogWatch: catalog,
+    yearSentinel: { citations: sentinelCites.length, drift: yearDrift, fails: sentinelFails, officialYears },
   };
   const out = jsonArg === 'true' ? 'reports/updates.json' : jsonArg;
   mkdirSync(dirname(out), { recursive: true });
@@ -252,6 +353,19 @@ if (jsonArg) {
   console.log(`\n机器可读报告已写入 ${out}`);
 }
 
-// 只有要动手的三种情况才亮红：引用失效、关键数字变了、来源抓不到。
+/* 心跳：巡检跑到这里=主体流程走完了，写时间戳。
+ * 写在报告目录旁边，git 忽略（心跳是"最近一次成功"的活数据，不该进版本库）。
+ * workflow 里的"心跳检查"步骤读它判断整套自动化是否静默死亡。 */
+try {
+  mkdirSync('reports', { recursive: true });
+  writeFileSync('reports/heartbeat.json', JSON.stringify({
+    lastOkAt: new Date().toISOString(),
+    sources: urls.size,
+    drift: yearDrift.length,
+    broken: broken.length + sentinelFails.length,
+  }, null, 2) + '\n', 'utf8');
+} catch { /* 心跳写不进去不该让巡检本身失败 */ }
+
+// 只有要动手的情况才亮红：引用失效、关键数字变了、来源抓不到、年份漂移。
 // 单纯版式改版不算 —— 否则每周都亮红，人就不看了。
-if (failOnChange && (quoteBroken.length || changed.length || broken.length || catalog.newGuidelines.length)) process.exit(2);
+if (failOnChange && (quoteBroken.length || changed.length || broken.length || catalog.newGuidelines.length || yearDrift.length)) process.exit(2);

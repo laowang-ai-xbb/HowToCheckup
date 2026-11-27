@@ -2,21 +2,21 @@
   "cicams": {
     "id": "cicams",
     "url": "https://www.cicams.ac.cn/",
-    "checkedAt": "2026-11-24T18:54:35.623Z",
+    "checkedAt": "2026-11-27T14:13:11.781Z",
     "chars": 307,
     "titles": []
   },
   "cma-guideline": {
     "id": "cma-guideline",
     "url": "https://www.cma.org.cn/col/col42/index.html",
-    "checkedAt": "2026-11-24T18:54:35.905Z",
+    "checkedAt": "2026-11-27T14:13:12.786Z",
     "chars": 131,
     "titles": []
   },
   "yiigle-diabetes": {
     "id": "yiigle-diabetes",
     "url": "https://zhtnbzz.yiigle.com/topic/62.jspx",
-    "checkedAt": "2026-11-24T18:54:36.519Z",
+    "checkedAt": "2026-11-27T14:13:13.517Z",
     "chars": 10673,
     "titles": [
       "1型糖尿病管理相关技术应用中国专家共识(2025版)",
@@ -74,19 +74,19 @@
       "中华糖尿病杂志2026,18(05):417-432 DOI: 10.3760/cma.j.cn115791-20251230-00675",
       "中华糖尿病杂志2026,18(07):597-610 DOI: 10.3760/cma.j.cn115791-20260302-00105",
       "中国1型糖尿病患者在校管理手册",
-      "中国1型糖尿病诊治指南(2021版)(40936)",
+      "中国1型糖尿病诊治指南(2021版)(41001)",
       "中国1型糖尿病高危人群筛查、监测与管理专家共识(2024版)",
       "中国2型糖尿病运动治疗指南(2024版)",
-      "中国2型糖尿病防治指南(2017年版)(69706)",
-      "中国2型糖尿病防治指南(2020年版)(218686)",
+      "中国2型糖尿病防治指南(2017年版)(69719)",
+      "中国2型糖尿病防治指南(2020年版)(218842)",
       "中国与国际寒冷地区2型糖尿病临床特征及管理模式差异专家共识(2026版)",
       "中国妊娠期糖尿病母儿共同管理指南(2024版)",
       "中国寒冷地区2型糖尿病患者管理多学科专家共识",
       "中国成人糖尿病前期干预的专家共识(2023版)",
-      "中国糖尿病足防治指南(2019版)(Ⅰ)(45630)",
+      "中国糖尿病足防治指南(2019版)(Ⅰ)(45658)",
       "中国糖尿病防治指南(2024版)",
-      "中国糖尿病防治指南(2024版)(259545)",
-      "中国老年糖尿病诊疗指南(2021年版)(182124)",
+      "中国糖尿病防治指南(2024版)(260187)",
+      "中国老年糖尿病诊疗指南(2021年版)(182137)",
       "中国老年糖尿病诊疗指南(2024版)",
       "中国胰岛素泵院内护理质量控制专家共识",
       "中国高海拔地区血糖监测临床应用专家共识(2024版)",
@@ -129,8 +129,8 @@
   "chinacdc": {
     "id": "chinacdc",
     "url": "https://www.chinacdc.cn/",
-    "checkedAt": "2026-11-24T18:54:36.681Z",
-    "chars": 8439,
+    "checkedAt": "2026-11-27T14:13:13.754Z",
+    "chars": 8342,
     "titles": [
       "疫苗和预防接种 |"
     ]
@@ -138,7 +138,7 @@
   "uspstf": {
     "id": "uspstf",
     "url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation-topics/uspstf-a-and-b-recommendations",
-    "checkedAt": "2026-11-24T18:54:37.499Z",
+    "checkedAt": "2026-11-27T14:13:14.836Z",
     "chars": 23214,
     "titles": [
       "(Screening refers to asking questions about unhealthy drug use, not testing biological specimens.)",
@@ -205,7 +205,7 @@
   "cdc-acip": {
     "id": "cdc-acip",
     "url": "https://www.cdc.gov/acip/vaccine-recommendations/index.html",
-    "checkedAt": "2026-11-24T18:54:39.121Z",
+    "checkedAt": "2026-11-27T14:13:21.351Z",
     "chars": 14497,
     "titles": [
       "*This is an interim recommendation that ACIP will revisit in 2-3 years",
@@ -250,7 +250,7 @@
   "cdc-adult-imz": {
     "id": "cdc-adult-imz",
     "url": "https://www.cdc.gov/vaccines/hcp/imz-schedules/adult.html",
-    "checkedAt": "2026-11-24T18:54:39.959Z",
+    "checkedAt": "2026-11-27T14:13:24.143Z",
     "chars": 8089,
     "titles": [
       "Adult Immunization Schedule",
@@ -284,7 +284,7 @@
   "liver-pdf-landing": {
     "id": "liver-pdf-landing",
     "url": "https://xhyxzz.pumch.cn/cn/article/doi/10.12290/xhyxzz.2024-0304",
-    "checkedAt": "2026-11-24T18:54:40.280Z",
+    "checkedAt": "2026-11-27T14:13:26.190Z",
     "chars": 4032,
     "titles": [
       "原发性肝癌诊疗指南(2024年版)"
@@ -297,6 +297,15 @@
     "chars": 1867,
     "titles": [
       "中国糖尿病防治指南(2024版) - 中华糖尿病杂志"
+    ]
+  },
+  "nhc-2025-checkup-guideline": {
+    "id": "nhc-2025-checkup-guideline",
+    "url": "https://www.nhc.gov.cn/yzygj/c100068/202511/4feaeb6de63e44cb9fd4ac8f579ca279/files/2.%E5%9F%BA%E6%9C%AC%E4%BD%93%E6%A3%80%E9%A1%B9%E7%9B%AE%EF%BC%882025%E5%B9%B4%E7%89%88%EF%BC%89.docx",
+    "checkedAt": "2026-11-27T14:13:42.882Z",
+    "chars": 595,
+    "titles": [
+      "基本体检项目(2025年版)"
     ]
   }
 }

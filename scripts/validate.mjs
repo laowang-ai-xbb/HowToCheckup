@@ -130,6 +130,16 @@ for (const r of rulesFile.rules) {
     if (!['verified', 'pending', 'stale'].includes(e.status)) err(`[${tag}] evidence[${i}].status 必须是 verified/pending/stale`);
     if (e.url && !/^https?:\/\//.test(e.url)) err(`[${tag}] evidence[${i}].url 必须以 http(s):// 开头`);
     if (e.status === 'stale') warn(`[${tag}] evidence[${i}] 已标记过期，建议复核`);
+    /* 强度标签防漏（2026-11-27 老板走查发现 16 条中文指南依据漏标，页面上全是灰色"见原文"）：
+     * verified 的证据必须给出 strength，除非是 absence（"权威清单里没有它"的反向证明，
+     * 本来就不套四档标签）或 status=pending（还没核过，标"待核实"）。
+     * strength 枚举与 src/evfmt.js 的 ST 词表一致。 */
+    if (e.status === 'verified' && !e.strength && !e.absence) {
+      err(`[${tag}] evidence[${i}]（${e.org}）verified 但缺 strength —— 结果页会显示兜底"见原文"。可选：strong/conditional/against/insufficient`);
+    }
+    if (e.strength && !['strong', 'conditional', 'against', 'insufficient', 'guide', 'consensus', 'standard', 'norm'].includes(e.strength)) {
+      err(`[${tag}] evidence[${i}].strength "${e.strength}" 不在词表里（strong/conditional/against/insufficient/guide/consensus/standard/norm）`);
+    }
   }
   /* 同一份文件只能占一条证据：拆成多条后，结果页四列表（谁/文件/强度/原文）
    * 看起来就是几行一模一样的东西，老板 2026-11-22 走查洁牙时发现的。
