@@ -280,7 +280,7 @@ export const baseHTML = ({ ids, baseRule, claimed, scaling }, ctx) => {
     <h2 class="sh">每年都做的标准 ${ids.length} 项 <span>这是每个人每年最基础的检查项目</span></h2>
     ${gs.map((g) => `<div class="bgrp"><h3>${esc(g.t)}<span>${g.ids.length}</span></h3><div class="chips">${g.ids.map(chip).join('')}</div></div>`).join('')}
     ${other.length ? `<div class="bgrp"><h3>其他<span>${other.length}</span></h3><div class="chips">${other.map(chip).join('')}</div></div>` : ''}
-    ${dup ? '<p class="tip">带虚线的几项在上面专项里已经说过 —— 同一项只说一次。</p>' : ''}
+    ${dup ? '<p class="tip">带虚线的项目在专项里已经说过，同一项只做一次。</p>' : ''}
     ${evBoxHTML(rows, { href: ctx.href('base-all'), hint: '为什么"人人每年都查"', allText: '在依据页看这份目录的原文 ›' })}
     ${scalingHTML(scaling, ctx)}
   </section>`;
@@ -370,9 +370,9 @@ export const legendHTML = () => `
       <div><dt><span class="st st-strong">强推荐</span></dt><dd>指南明确建议做。有可靠证据显示做了能降低死亡率或发病率，收益明显大于代价。</dd></div>
       <div><dt><span class="st st-cond">个体化决定</span></dt><dd>指南没替所有人拍板：获益和代价接近，要看你的年龄、家族史和个人意愿。建议咨询医生。</dd></div>
       <div><dt><span class="st st-against">不推荐</span></dt><dd>指南明确不建议作为常规筛查：对健康人弊大于利，或根本没有获益。</dd></div>
-      <div><dt><span class="st st-ins">证据不足</span></dt><dd>缺少可靠研究，谁都说不准 —— 我们也不替你猜。</dd></div>
+      <div><dt><span class="st st-ins">证据不足</span></dt><dd>缺少可靠研究，谁都说不准。</dd></div>
       <div><dt><span class="st st-guide">官方指南</span></dt><dd>国家机构发布的技术文件，比如中国疾控中心的疫苗接种技术指南。</dd></div>
-      <div><dt><span class="st st-guide">专家共识</span></dt><dd>学会组织专家讨论形成的共识文件。它<b>不等于指南</b>，我们也不把它写成"强推荐"。</dd></div>
+      <div><dt><span class="st st-guide">专家共识</span></dt><dd>学会组织专家讨论形成的共识文件。它<b>不等于指南</b>。所以未标注为“强推荐”。</dd></div>
       <div><dt><span class="st st-guide">团体标准</span></dt><dd>行业协会发布的规范，约束的是机构怎么建、怎么做（比如体检中心该设哪些科室）。它不评价"你该不该查"。</dd></div>
       <div><dt><span class="st st-guide">工作规范</span></dt><dd>国家部门定的业务流程规范，说"谁来做、在哪做"（比如疫苗在接种单位打），同样不是筛查证据。</dd></div>
     </dl>

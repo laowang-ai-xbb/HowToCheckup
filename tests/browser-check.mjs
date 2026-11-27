@@ -1485,8 +1485,33 @@ try {
 
     await goto(BASE + '/e.html');
     await waitFor(`!!document.querySelector('h1')`, '依据页残缺链接');
-    const evBroken = await evaluate(`document.querySelector('h1').innerText`);
-    check('依据页没有清单时给说明（不白屏）', /需要一份清单/.test(evBroken), evBroken);
+    /* 老板 2026-11-27 走查：降级页原来有个裸 href="./r.html" 的「回到清单页」，
+     * 点过去就是空清单页（"这里还没有清单"），看着像网站坏了。清单信息都丢了，
+     * 回不去原清单 —— 只能引导重填，不给他必然跳空页的链接。 */
+    const evBroken = await evaluate(`(() => ({
+      h1: (document.querySelector('h1') || {}).innerText || '',
+      bareR: !!document.querySelector('a[href="./r.html"]'),
+      restart: !!document.querySelector('a[href="./index.html"]'),
+    }))()`);
+    check('依据页没有清单时给说明（不白屏）', /需要一份清单/.test(evBroken.h1), evBroken.h1);
+    check('依据页无清单时不给跳空页的裸 r.html 链接',
+      !evBroken.bareR && evBroken.restart, JSON.stringify(evBroken));
+  }
+
+  /* 老板 2026-11-27 走查：结果页最底下点「重填一遍」，回到首页却停在页尾，
+   * 看不到年龄/性别输入框，以为页面坏了。整页跳转由 scrollRestoration=manual
+   * 保证回顶；单页重绘（首页里点重填）由代码显式 scrollTo(0,0)。两条路都走一遍。 */
+  {
+    const p = btoa(JSON.stringify({ age: 55, gender: 'male' })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    await goto(`${BASE}/r.html#p=${p}`);
+    await waitFor(`!!document.querySelector('[data-act=restart]')`, '结果页（重填验收）');
+    await evaluate(`scrollTo(0, document.documentElement.scrollHeight)`);
+    await sleep(200);
+    await evaluate(`(() => { const bs=[...document.querySelectorAll('[data-act=restart]')]; bs[bs.length-1]?.click(); })()`);
+    await waitFor(`!!document.querySelector('#ageHome')`, '重填后首页', 6000);
+    await sleep(300);
+    const y = await evaluate(`Math.round(scrollY)`);
+    check('结果页底部点「重填一遍」后回到首页顶部（不是停在页尾）', y < 60, `scrollY=${y}`);
   }
 
   // ---- 3.6 旧链接与残缺链接 ----

@@ -59,7 +59,7 @@ if (!profile && !snap) {
         <h1>这一页需要一份清单</h1>
         <p class="sub">依据是按你的清单排的。这个链接里没有完整的清单信息（可能被截断了）。</p>
       </header>
-      <p class="tip"><a href="./r.html">回到清单页 ›</a>　<a href="./index.html">重新填一份 ›</a></p>
+      <p class="tip">这个链接里的清单信息已经不完整，没法回到原来那份清单。<a href="./index.html">重新填一份 ›</a></p>
     </main>`;
 } else {
   render();

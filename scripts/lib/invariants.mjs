@@ -516,11 +516,11 @@ export const INVARIANTS = [
   },
   {
     id: 'dashed-tip-only-when-dashed',
-    why: '「带虚线的几项…」原先无条件出现，老板走查时页面上根本没有虚线项 —— 一句话在解释一个不存在的记号。',
+    why: '「带虚线的项目…」原先无条件出现，老板走查时页面上根本没有虚线项 —— 一句话在解释一个不存在的记号。文案 2026-11-27 按老板意见改「几项」→「项目」。',
     check(f) {
       const v = f['src/views13.js'] || '';
       if (!/const dup = ids\.filter\(\(id\) => claimedKeys\.has\(canon\(id\)\)\)\.length;/.test(v)) return '没有统计实际被认领的标准项';
-      if (!/\$\{dup \? '<p class="tip">带虚线的几项/.test(v)) return '虚线提示又在无条件出现';
+      if (!/\$\{dup \? '<p class="tip">带虚线的项目/.test(v)) return '虚线提示又在无条件出现';
       return null;
     },
   },
@@ -575,6 +575,24 @@ export const INVARIANTS = [
       if (!/你体检该做什么项目，来这免费查（依据国家权威指南），点击>> \$\{url\}  一个想让你长命百岁的人/.test(e)) return '剪贴板文案不是定稿原句';
       if (/体检做什么项目，来这查：/.test(e)) return '旧剪贴板文案又回来了';
       if (!/new URL\('\.\/', location\.href\)/.test(e)) return '分享的不再是产品入口';
+      // 2026-11-27 老板走查：降级页曾有个裸 href="./r.html" 的「回到清单页」，
+      // 点过去就是空清单页（没有 p=），看着像网站坏了。清单信息都丢了，回不去原清单，
+      // 只能引导重填 —— 绝不给他一条必然跳空页的链接。
+      if (/href="\.\/r\.html"/.test(e)) return '降级页又出现裸的 r.html 链接（必然跳空清单页）';
+      return null;
+    },
+  },
+  {
+    id: 'restart-scroll-to-top',
+    why: '老板 2026-11-27 走查：结果页滚到最底下点「重填一遍」，新首页有时停在页底，看不到年龄/性别输入框，以为页面坏了。根因是浏览器默认的 scrollRestoration 把旧滚动位置还回来；单页重绘也不重置滚动。两处都得显式管住。',
+    check(f) {
+      const m = f['src/main.js'] || '';
+      if (!/if \('scrollRestoration' in history\) history\.scrollRestoration = 'manual'/.test(m))
+        return '没有关掉浏览器滚动恢复（跳转后会被塞回旧页的 scrollY）';
+      const at = m.indexOf("if (act === 'restart')");
+      if (at < 0) return '找不到 restart 分支';
+      const seg = m.slice(at, m.indexOf('\n  }', at) > at ? m.indexOf('\n  }', at) : undefined);
+      if (!/window\.scrollTo\(0, 0\)/.test(seg)) return '单页重填后没有主动回页首';
       return null;
     },
   },

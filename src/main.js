@@ -128,6 +128,11 @@ document.documentElement.dataset.v = fp.id;
  * 回落到 search 只是为了不让旧链接（?p=xxx）失效。
  */
 const isResultPage = /\/r\.html$/.test(location.pathname);
+/* 重回首页必须停在页首。老板 2026-11-27 走查：结果页滚到最底下点「重填一遍」，
+ * 新首页有时停在页底，看不到年龄/性别输入框，以为页面坏了。根因是浏览器的
+ * 滚动恢复（scrollRestoration=auto）在 location.replace 之后把旧页的 scrollY 又还回来。
+ * 关掉它，改由代码在每次换页/换题时显式 scrollTo(0,0) —— 本文件里这些调用已经齐全。 */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 const rawParam = location.hash || location.search;
 /* 快照优先：#v=2&s=... 是脱敏结果，只带规则 ID；老 #p= 是画像，继续重算。
  * 两者不会同时出现（buildShareUrl 二选一），这里先认快照再认画像。 */
@@ -1430,7 +1435,7 @@ const renderResult = () => {
   const baseIds = baseRules.flatMap((r) => r.catalogIds || []);
   /* 上面已经说过的项目，在「标准项目」里打虚线点 —— 同一项只说一次，但也不假装它不存在。
    *
-   * 2026-11-23 老板走查：「带虚线的几项…」这句提示在，虚线从来没有出现过。
+   * 2026-11-23 老板走查：「带虚线的项目…」这句提示在，虚线从来没有出现过。
    * 根因不是样式，是口径：这里原先只取 `shownIds`，而 shownIds 是**归一之后还要展示的**
    * 项目 —— 基础套餐优先级最高，先把「便潜血」「腹部超声」认领走了，专项规则那两项
    * 就变成 mergedInto，于是 claimed 恒空，虚线提示成了一句空话。
@@ -1929,6 +1934,9 @@ app.addEventListener('click', async (ev) => {
     state.touched.clear();
     writeLsToUrl(); // 保留大字偏好，只清掉清单参数
     render();
+    // 单页重绘不会重置滚动位置。不显式回顶，从结果页底部走过来的人
+    // 会停在新首页的页尾，看不到年龄/性别输入框 —— 老板 2026-11-27 走查。
+    window.scrollTo(0, 0);
     return;
   }
   if (act === 'share') {

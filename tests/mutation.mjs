@@ -253,8 +253,8 @@ const MUTATIONS = [
   {
     inv: 'dashed-tip-only-when-dashed',
     file: 'src/views13.js',
-    from: "${dup ? '<p class=\"tip\">带虚线的几项在上面专项里已经说过 —— 同一项只说一次。</p>' : ''}",
-    to: "'<p class=\"tip\">带虚线的几项在上面专项里已经说过 —— 同一项只说一次。</p>'",
+    from: "${dup ? '<p class=\"tip\">带虚线的项目在专项里已经说过，同一项只做一次。</p>' : ''}",
+    to: "'<p class=\"tip\">带虚线的项目在专项里已经说过，同一项只做一次。</p>'",
     desc: '虚线提示改回无条件出现',
   },
   {
@@ -277,6 +277,27 @@ const MUTATIONS = [
     from: '你体检该做什么项目，来这免费查（依据国家权威指南），点击>> ${url}  一个想让你长命百岁的人',
     to: '体检做什么项目，来这查：${url}',
     desc: '把依据页剪贴板文案改回旧句',
+  },
+  {
+    inv: 'evidence-return-and-share',
+    file: 'src/evidence.js',
+    from: '这个链接里的清单信息已经不完整，没法回到原来那份清单。',
+    to: '<a href="./r.html">回到清单页 ›</a>',
+    desc: '把降级页改回裸 r.html 的「回到清单页」',
+  },
+  {
+    inv: 'restart-scroll-to-top',
+    file: 'src/main.js',
+    from: "if ('scrollRestoration' in history) history.scrollRestoration = 'manual';",
+    to: "void 0;",
+    desc: '恢复浏览器滚动位置记忆（重填后会被塞回页底）',
+  },
+  {
+    inv: 'restart-scroll-to-top',
+    file: 'src/main.js',
+    from: "    writeLsToUrl(); // 保留大字偏好，只清掉清单参数\n    render();\n    // 单页重绘不会重置滚动位置。不显式回顶，从结果页底部走过来的人\n    // 会停在新首页的页尾，看不到年龄/性别输入框 —— 老板 2026-11-27 走查。\n    window.scrollTo(0, 0);\n    return;",
+    to: "    writeLsToUrl(); // 保留大字偏好，只清掉清单参数\n    render();\n    return;",
+    desc: '单页重填后不回页首',
   },
   {
     inv: 'soon-has-evidence',
