@@ -20,6 +20,47 @@ const esc = (s = '') => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
+/* ---------------- 长页面下滑引导（老板 2026-11-28）----------------
+ * 结果页/依据页在手机上是三四屏长文，老年用户可能不知道往下滑。
+ * 视觉完全复用问卷页的 .peek 零件（渐隐遮罩 + 青色跳动箭头 + 同款字号），
+ * 保证"问卷里见过一次，结果页再见到就认识"。
+ *
+ * 触发闸门（三条都满足才出现，缺一不弹）：
+ *   ① 手机视口（<600px，与 CSS 的 display:none 阈值一致）
+ *   ② 页面确实长：可滚动高度超过 2 屏 —— 短页面没有"忘了往下"这回事
+ *   ③ 本会话这一页还没弹过：sessionStorage 记账，刷了不重弹
+ *      （骚扰一次就够；老年用户被反复闪反而慌）
+ * 消失：滚动超过 140px（证明他会往下翻）或触底。
+ * 减速动效：箭头不跳（CSS media query 管），文字保留。 */
+export const mountScrollHint = (pageKey, text = '往下滑 · 下面还有内容') => {
+  const KEY = `scrollhint-${pageKey}`;
+  try {
+    if (sessionStorage.getItem(KEY)) return;
+  } catch { /* 隐私模式拿不到 sessionStorage 就当没弹过，宁可多弹一次别静默失效 */ }
+  if (window.innerWidth >= 600) return;
+  // 等首屏渲染稳定再量：太早量 scrollHeight 会拿渲染前的值
+  requestAnimationFrame(() => setTimeout(() => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    if (scrollable < window.innerHeight * 1.5) return; // 不足两屏半，没有引导的必要
+    const el = document.createElement('div');
+    el.className = 'scrollhint';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = `<div class="peek-in"><div class="peek-chev">↓</div><div class="peek-t">${esc(text)}</div></div>`;
+    document.body.appendChild(el);
+    try { sessionStorage.setItem(KEY, '1'); } catch { /* 同上 */ }
+    const off = () => {
+      el.classList.add('off');
+      setTimeout(() => el.remove(), 500);
+      window.removeEventListener('scroll', off);
+    };
+    window.addEventListener('scroll', () => {
+      const nearBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80;
+      if (window.scrollY > 140 || nearBottom) off();
+    }, { passive: true });
+  }, 600));
+};
+
+
 /** 卡片的标题：统一走引擎里的规则短名。
  *  以前这里自己算一遍，分享文字又算一遍，两处兜底不一样就漏出了括号里的解释。 */
 export const titleOf = ruleLabel;
@@ -56,11 +97,103 @@ export const evBoxHTML = (rows, opt = {}) => !rows || !rows.length ? '' : `
     ${opt.href ? `<a class="evall" href="${esc(opt.href)}">${esc(opt.allText || '在依据页看原文与逐字摘录 ›')}</a>` : ''}
   </details>`;
 
-/** 一条规则的依据框：表格指到依据页对应锚点 */
+/** 一条规则的依据框：表格指到依据页对应锚点。
+ * 触发原因只给 B 档（老板 2026-11-28）：A 档"必做"不需要解释为什么是你——
+ * 它对所有人都成立；C 档"不用做"的解释在 foldHTML 的板块层面。
+ * B 档"看你的情况"才是"你的信息改变了清单"的地方，点名触发原因最有价值。 */
 export const ruleEvBox = (rule, ctx) => {
   const n = evCount(rule);
   if (!n) return '';
-  return evBoxHTML(evRows(rule, ctx.href(rule.id)), { href: ctx.href(rule.id) });
+  const isB = rule.category === 'B';
+  return evBoxHTML(evRows(rule, ctx.href(rule.id)), {
+    href: ctx.href(rule.id),
+    /* 老板 2026-11-28：B 档卡的依据折叠里要点名触发原因——
+     * "因为你勾了糖尿病家族史、你 35 岁以上"，让用户看到问卷没白填。
+     * 文案由 triggerReason 生成，只在 B 档且有 profile 时出。 */
+    note: isB && ctx.triggerReason ? ctx.triggerReason(rule) : '',
+  });
+};
+
+/* ---------------- B 档触发原因 ----------------
+ * 为什么放依据折叠里（老板定的）：卡片正文已经够满了，触发原因属于
+ * "为什么列给你"的解释层，和"谁说的"放一起最自然。样式走 .evnote2，
+ * 与折叠表里其他说明文字同字号同色，不另起炉灶。
+ *
+ * 文案规则：只说"已用上的信息"（你勾了什么/你的年龄性别），
+ * 不说"取决于"——那句话现在已经写进副标题了，两处都说会显得没说完。 */
+const FH_LABEL = {
+  colorectal: '结直肠癌家族史',
+  stomach: '胃癌或食管癌家族史',
+  lung: '肺癌家族史',
+  liver: '肝癌家族史',
+  breast: '乳腺癌家族史',
+  ovarian: '卵巢癌家族史',
+  prostate: '前列腺癌家族史',
+  thyroid: '甲状腺癌家族史',
+  diabetes: '糖尿病家族史',
+  prematureCvd: '早发心血管病家族史',
+  dementia: '痴呆家族史',
+};
+const PH_LABEL = {
+  diabetes: '确诊过糖尿病',
+  hypertension: '确诊过高血压',
+  cvd: '确诊过心脑血管病',
+  cancer: '有癌症病史',
+  thyroid: '确诊过甲状腺疾病',
+  ckd: '确诊过慢性肾病',
+  intestinalMetaplasia: '有肠化生',
+  birads: '乳腺 BI-RADS 分级异常',
+  lungNodule: '查出过肺结节',
+};
+
+/** 从规则 when + 用户 profile 生成"为什么在你这"的一句话；生成不了就返回空串 */
+export const triggerReason = (rule, profile) => {
+  if (!rule || !profile) return '';
+  const w = rule.when || {};
+  const parts = [];
+
+  // 家族史/既往史：when 引用的值用户真的勾了才提（否则这条根本不会命中，也不该提）
+  if (w.familyHistory) {
+    const picked = Array.isArray(profile.familyHistory) ? profile.familyHistory : [];
+    const v = typeof w.familyHistory === 'string' ? w.familyHistory : null;
+    if (v && picked.includes(v) && FH_LABEL[v]) parts.push(`你填了${FH_LABEL[v]}`);
+  }
+  if (w.pastHistory) {
+    const picked = Array.isArray(profile.pastHistory) ? profile.pastHistory : [];
+    const v = typeof w.pastHistory === 'string' ? w.pastHistory : null;
+    if (v && picked.includes(v) && PH_LABEL[v]) parts.push(`你填了「${PH_LABEL[v]}」`);
+  }
+  if (w.pregnant === 'yes' && profile.pregnant === 'yes') parts.push('你填了「怀孕中」');
+
+  const age = Number(profile.age);
+  const ageIn = age > 0
+    && (w.ageMin == null || age >= w.ageMin)
+    && (w.ageMax == null || age <= w.ageMax);
+
+  // when 里有家族史/既往史要求但用户没勾对应项时，这条规则不会命中、本函数不会被调；
+  // 但防将来 when 结构变化（如家族史改成数组语义）导致"纯年龄文案"误述触发原因，
+  // 这里加一道保险：when 引用了个人史字段但没凑出触发点，就宁可不解释。
+  const referencesPersonalHistory = w.familyHistory != null || w.pastHistory != null || w.pregnant != null;
+
+  // 年龄区间的人话：只有下限→"35 岁以上"；只有上限→"74 岁及以下"；双限→"50–69 岁"
+  const ageText = (w.ageMin != null || w.ageMax != null) && ageIn
+    ? w.ageMin != null && w.ageMax != null
+      ? `${w.ageMin}–${w.ageMax} 岁`
+      : w.ageMin != null ? `${w.ageMin} 岁以上` : `${w.ageMax} 岁及以下`
+    : '';
+
+  // 有个人史触发条件时，年龄只是辅助条件，放句尾；没有时年龄就是主因
+  if (parts.length) {
+    if (ageText) parts.push(`你 ${ageText}`);
+    return `出现在这里，因为${parts.join('，')}。`;
+  }
+  if (referencesPersonalHistory) return ''; // 见上：个人史条件没凑出触发点，宁可不解释
+  // 纯年龄/性别触发：点明"你已经告诉过我们"这件事
+  if (ageText) {
+    const g = w.gender === 'male' && profile.gender === 'male' ? '、男性' : w.gender === 'female' && profile.gender === 'female' ? '、女性' : '';
+    return `出现在这里，因为你 ${ageText}${g}。`;
+  }
+  return '';
 };
 
 /* ---------------- 清单里的一行 ---------------- */
@@ -368,7 +501,7 @@ export const legendHTML = () => `
     <summary>依据分类标准 —— 上面那些标签是什么意思</summary>
     <dl>
       <div><dt><span class="st st-strong">强推荐</span></dt><dd>指南明确建议做。有可靠证据显示做了能降低死亡率或发病率，收益明显大于代价。</dd></div>
-      <div><dt><span class="st st-cond">个体化决定</span></dt><dd>指南没替所有人拍板：获益和代价接近，要看你的年龄、家族史和个人意愿。建议咨询医生。</dd></div>
+      <div><dt><span class="st st-cond">个体化决定</span></dt><dd>指南明确说要你和医生商量后决定，取决于你的身体状况。建议咨询医生。</dd></div>
       <div><dt><span class="st st-against">不推荐</span></dt><dd>指南明确不建议作为常规筛查：对健康人弊大于利，或根本没有获益。</dd></div>
       <div><dt><span class="st st-ins">证据不足</span></dt><dd>缺少可靠研究，谁都说不准。</dd></div>
       <div><dt><span class="st st-guide">官方指南</span></dt><dd>国家机构发布的技术文件，比如中国疾控中心的疫苗接种技术指南。</dd></div>

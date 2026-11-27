@@ -22,7 +22,7 @@ import { vaccinesFor } from './engine.js';
 import { referrals, CGA_EVIDENCE } from './referral.js';
 import { bodyOf, BODY_EVIDENCE } from './body.js';
 import { splitOrg, stOf, liveEv, evCount } from './evfmt.js';
-import { legendHTML, titleOf, leanOf, whereHTML, whereBaseHTML } from './views13.js';
+import { legendHTML, titleOf, leanOf, whereHTML, whereBaseHTML, mountScrollHint } from './views13.js';
 import { whereOf, whereExtra, BASE_WHERE, VAX_WHERE, WHERE_SOURCES, WHERE } from './where.js';
 import { signLineEvidenceHTML } from './author.js';
 
@@ -295,6 +295,9 @@ function render() {
   <button class="backfab" id="backfab" type="button">← 回到我的清单</button>`;
 
   wire();
+  /* 手机上这一页几十条依据、七八屏长，更需要下滑引导（老板 2026-11-28）。
+   * 带锚点跳转进来（a=参数）时用户目标明确，不弹。 */
+  if (!anchor) mountScrollHint('evidence', '往下滑 · 每条依据都在下面');
 }
 
 function wire() {

@@ -23,7 +23,7 @@ import { revealAboveKeyboard, keyboardLikelyOpen } from './keyboard.js';
 import { evRows, evCount } from './evfmt.js';
 import {
   atomHTML, tocHTML, baseHTML, vacHTML, refHTML, foldHTML, legendHTML, decisionLegendHTML,
-  gapsTopHTML, soonHTML, evBoxHTML,
+  gapsTopHTML, soonHTML, evBoxHTML, triggerReason, mountScrollHint,
 } from './views13.js';
 
 const app = document.getElementById('app');
@@ -1497,6 +1497,9 @@ const renderResult = () => {
     vaccineWarn: vaccineMeta.severeWarn,
     disputeFor: disputeTextFor,
     flagOnCard,
+    /* 老板 2026-11-28：B 档卡依据折叠里的"为什么在你这"。
+     * 闭包把当前画像 p 传进去，views13 的 triggerReason 逐条生成文案。 */
+    triggerReason: (rule) => triggerReason(rule, p),
   };
 
   /* 目录按清单实况生成：没有疫苗就不出现「疫苗」那一格。
@@ -1579,7 +1582,9 @@ const renderResult = () => {
       ${!state.snapshot ? riskNoteHTML('oil', p) : ''}
       ${b.B.length ? `
       <section id="maybe">
-        <h2 class="sh">看你的情况 <span>指南没替你拍板：做不做，取决于你的年龄、家族史和身体状况。建议咨询医生。</span></h2>
+        ${/* 老板 2026-11-28 定稿：副标题改成主动语态 —— 你的信息已经用上了，
+              出现在这里是指南明确要"和医生商量"，不是我们没核对你的问卷。 */ ''}
+        <h2 class="sh">看你的情况 <span>已按你填的年龄、家族史筛过一遍。出现在这里的项目，是指南明确说要你和医生商量后决定。</span></h2>
         <div class="rows">${b.B.map((r) => atomHTML(r, 0, false, ctx)).join('')}</div>
       </section>` : ''}
       ${vacHTML(vacs, ctx)}
@@ -1622,6 +1627,9 @@ const renderResult = () => {
   mountMind(app);
   paintToc();
   syncTocHeight();
+  /* 手机上页面三四屏长，老年用户可能不知道往下滑 —— 引导一次（老板 2026-11-28）。
+   * 分享快照（state.snapshot）是给别人看的静态页，不打扰。 */
+  if (!state.snapshot) mountScrollHint('result', '往下滑 · 下面是你的完整清单');
 
   /* 进结果页的那一瞬放一次。只在第一次 —— 补完一题回来看结果时不该再挡一遍。 */
   if (!state.eggSeen && eggFor(p)) {

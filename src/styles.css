@@ -968,6 +968,27 @@ html[data-ls="big"] .bodyc .detail { font-size: 16px; }
   .peek-chev { animation: none; }
 }
 
+/* ---- 长页面下滑引导（老板 2026-11-28）----
+ * 结果页/依据页在手机上是三四屏的长文，老年用户可能不知道往下滑。
+ * 复用问卷页 .peek 的全部视觉零件（渐隐遮罩 + 青色跳动箭头 + 同款文案字号），
+ * 差异只在触发逻辑：这里不是"量溢出"，是"移动端 + 页面确实长 + 用户还没滚过"。
+ * 出现一次就够 —— sessionStorage 记账，同一页反复刷不重复弹（骚扰比不提示更糟）。
+ * 「减少动态效果」箭头不跳，文字保留；打印稿不显示（JS 侧不注入）。 */
+.scrollhint { position: fixed; left: 0; right: 0; bottom: 0; z-index: 90; pointer-events: none; }
+.scrollhint .peek-in {
+  position: absolute; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%); text-align: center;
+  animation: scrollhint-in .5s ease both;
+}
+@keyframes scrollhint-in { from { opacity: 0; } to { opacity: 1; } }
+.scrollhint.off { opacity: 0; transition: opacity .35s ease; }
+.scrollhint .peek-chev { margin-bottom: 6px; }
+/* 桌面端不出现：鼠标滚轮是共识，遮罩在宽屏上反而挡内容 */
+@media (min-width: 600px) { .scrollhint { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .scrollhint .peek-chev { animation: none; }
+}
+
 .veil {
   position: fixed; inset: 0; z-index: 200;
   background: #fbf7ee;
@@ -1076,7 +1097,7 @@ html[data-ls="big"] .rsum { font-size: 18px; }
    打出来一条依据都没有 —— 所以这里强制展开，并把按钮隐藏。 */
 @media print {
   .actions, .toast, .shared-tip, .skip, .back, .progress, .pword, .qmeta,
-  .ls, .sheet, .finger, .dots, .totop, .veil, .eggband, .peek { display: none !important; }
+  .ls, .sheet, .finger, .dots, .totop, .veil, .eggband, .peek, .scrollhint { display: none !important; }
   details { display: block; }
   details > summary { display: none; }
   .detail { padding-top: 0; }

@@ -78,10 +78,15 @@ export const INVARIANTS = [
     check(f) {
       // 只看代码，不看注释：注释里写「不能用 localStorage」是正常说明，
       // 如果连注释都拦，这条守卫会天天误报，最后一定被人关掉。
+      // 2026-11-28 老板批准放行一种例外：下滑引导（mountScrollHint）用 sessionStorage
+      // 记"本会话弹过没有"。它存的不是用户答案，是一个 UI 提示的去重标记，
+      // 关掉标签页即消失，与"答案不保存"的承诺不冲突；不用它则每次回结果页都会被闪一次。
+      const allow = /mountScrollHint|scrollhint-/;
       const hit = Object.entries(f).filter(([p, s]) => {
         if (!/^src\/.*\.js$/.test(p)) return false;
         const code = s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
-        return /(localStorage|sessionStorage|indexedDB)/.test(code);
+        return /(localStorage|sessionStorage|indexedDB)/.test(code)
+          && !(allow.test(code) && !/localStorage|indexedDB/.test(code));
       });
       return hit.length ? `${hit.map(([p]) => p).join('、')} 里用了浏览器存储，与"不保存"的承诺冲突` : null;
     },
@@ -964,7 +969,7 @@ export const INVARIANTS = [
       if (!/position: fixed/.test(css.match(/\.peek \{[^}]*\}/) || [''])) return '.peek 没有 fixed（会随内容滚走，遮罩等于没有）';
       if (!/pointer-events: none/.test(css.match(/\.peek \{[^}]*\}/) || [''])) return '.peek 没挡事件也要写明 pointer-events: none';
       if (!/@media \(prefers-reduced-motion: reduce\) \{\s*\.peek-chev \{ animation: none; \}/.test(css)) return '「减少动态效果」用户箭头还在跳';
-      if (!/\.totop, \.veil, \.eggband, \.peek \{ display: none !important; \}/.test(css)) return '打印稿里没有隐藏引导';
+      if (!/\.totop, \.veil, \.eggband, \.peek, \.scrollhint \{ display: none !important; \}/.test(css)) return '打印稿里没有隐藏引导';
       return null;
     },
   },
